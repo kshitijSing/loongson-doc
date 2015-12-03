@@ -1,0 +1,172 @@
+\documentclass[nofonts]{ctexbook}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}                             % font configuration
+\usepackage{xeCJK}                                % allow chinese font
+\setCJKmainfont{文泉驿微米黑}                     % default CJK font
+\setCJKsansfont{文泉驿点阵正黑}                   % default CJK sans font
+\setCJKmonofont{文泉驿等宽微米黑}                 % default CJK mono font
+\setmainfont{Droid Serif}                         % default main font
+\setromanfont{Droid Serif}                        % default romain font
+\setmonofont{Droid Sans Mono}                     % default mono font
+\CTEXoptions[today=big]
+\CTEXsetup[name={附录},number={\Alph{chapter}}]{appendix}
+\CTEXsetup[name={第,篇},nameformat={\centering},titleformat={\zihao{0}}]{part}
+\CTEXsetup[name={(,)},number={\arabic{paragraph}}]{paragraph}
+\setcounter{secnumdepth}{4}
+
+\linespread{1.2}\selectfont                       % linespace
+\XeTeXlinebreaklocale "zh"                        % chinese line breaking
+\XeTeXlinebreakskip = 0pt plus 1pt                % allow 1pt to line break
+\parindent 0em                                    % paragraph indent
+\setlength{\parskip}{0.75ex plus .2ex minus .5ex} % paragraph distance
+
+\usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
+colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
+
+\usepackage{longtable, array}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage{makeidx}
+\usepackage{bytefield}
+\usepackage{threeparttable}
+\usepackage{fancyvrb}
+\usepackage{changepage}
+
+%\usepackage{graphicx}
+%\DeclareGraphicsExtensions{.pdf,.eps}
+%\graphicspath{{images/}}
+%
+
+%\let\emph=\textit
+%\setlength{\headheight}{15pt}
+%
+%\usepackage{pstricks}
+%\input{lstsetting}
+
+% self-defined commands
+%\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+%\newcommand{\ptabincell}[2]{\vtop{\vskip-\ht\strutbox\null\hbox{\tabincell{#1}{#2}}}}
+%\newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
+%
+\newcommand{\hhline}{\hline\hline}
+\newcommand{\cellalign}[2]{\multicolumn{1}{#1}{#2}}
+\newcommand{\lmcol}[2]{\multicolumn{#1}{l}{#2}}
+\newcommand{\rmcol}[2]{\multicolumn{#1}{r}{#2}}
+\newcommand{\cmcol}[2]{\multicolumn{#1}{c}{#2}}
+\newcommand{\lmcolvb}[2]{\multicolumn{#1}{|l|}{#2}}
+\newcommand{\rmcolvb}[2]{\multicolumn{#1}{|r|}{#2}}
+\newcommand{\cmcolvb}[2]{\multicolumn{#1}{|c|}{#2}}
+\newcommand{\zhdash}{\kern0.5ex\rule[.2\baselineskip]{1.5em}{.4pt}\kern0.5ex}
+\newcommand{\remark}[1]{{\color{red} Remark: #1}}
+\newcommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcommand{\mtabsep}[1]{\hhline\multicolumn{3}{|l|}{#1}\tabularnewline\hline}
+\newenvironment{inslongtable}[2]{
+    \begin{longtable}{|>{\centering}p{3.5cm}|>{\hspace{.5cm}}p{8cm}
+        <{\hspace{.5cm}}|>{\centering}p{2cm}|}
+        \caption{#1}\label{#2} \tabularnewline \hline
+        指令 OpCode & \multicolumn{1}{c|}{描述} & MIPS ISA \tabularnewline
+        \endfirsthead
+        \caption{#1（续）} \tabularnewline \hline
+        指令 OpCode & \multicolumn{1}{c|}{描述} & MIPS ISA \tabularnewline\hhline
+        \endhead
+        \hline \multicolumn{3}{r}{\tiny 未完待续} \endfoot \endlastfoot
+}{\hline \end{longtable}}
+
+\newenvironment{implongtable}[2]{
+    \begin{longtable}{|>{\centering}p{2.3cm}|>{\hspace{.5cm}}p{3cm}
+        <{\hspace{.3cm}}|>{\centering}p{8.2cm}|}
+        \caption{#1}\label{#2} \tabularnewline \hline
+        指令 OpCode & \multicolumn{1}{c|}{描述} & GS464V 实现
+        \tabularnewline\hhline \endfirsthead
+}{\hline \end{longtable}}
+
+\renewcommand*{\maketitle}{%
+    \begin{titlepage}
+        \newlength{\centeroffset}
+        \setlength{\centeroffset}{-0.5\oddsidemargin}
+        \addtolength{\centeroffset}{0.5\evensidemargin}
+        %\addtolength{\textwidth}{-\centeroffset}
+        \thispagestyle{empty}
+        \vspace*{\stretch{1}}
+        \noindent\hspace*{\centeroffset}\makebox[0pt][l]{
+            \begin{minipage}{\textwidth}
+                \flushright
+                {\Huge \bfseries $title$ \\
+                \Huge \bfseries $subtitle$}
+                \noindent\rule[-1ex]{\textwidth}{5pt}\\[2.5ex]
+            \end{minipage}
+        }
+
+        \vspace{\stretch{1}}
+        \noindent\hspace*{\centeroffset}\makebox[0pt][l]{
+            \begin{minipage}{\textwidth}
+                \flushright
+                $for(author)$
+                {\bfseries $author$} \\[1.5ex]
+                $endfor$
+                {\bfseries 中文版本：} 版本~$version$
+            \end{minipage}
+        }
+        \vspace{\stretch{1}}
+    \end{titlepage}
+}
+
+\begin{document}
+\maketitle
+
+\newbox{\instformatbox}
+\catcode`\&=10
+\savebox{\instformatbox}{\parbox{14.5cm}{
+立即数型（I-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader[b]{31,26,25,21,20,16,15,0} \\
+  \bitbox{6}{op} & \bitbox{5}{rs} &
+  \bitbox{5}{rs} & \bitbox{16}{immediate}
+\end{bytefield} \vspace{.2cm}\mbox{} \\
+跳转型（J-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader[b]{31,26,25,0} \\
+  \bitbox{6}{op} & \bitbox{26}{target}
+\end{bytefield} \vspace{.2cm}\mbox{} \\
+寄存器型（R-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader[b]{31,26,25,21,20,16,15,11,10,6,5,0} \\
+  \bitbox{6}{op} & \bitbox{5}{rs} & \bitbox{5}{rt} & \bitbox{5}{rd} &
+  \bitbox{5}{sa} & \bitbox{6}{funct}
+\end{bytefield}}}
+\catcode`\&=4
+
+\section*{版权声明}
+
+本文档版权归龙芯中科技术有限公司所有，并保留一切权利。未经书面许可，任何公司和个
+人不得将此文档中的任何部分公开、转载或以其他方式散发给第三方。否则，必将追究其法
+律责任。
+
+\section*{免责声明}
+
+本文档仅提供阶段性信息，所含内容可根据产品的实际情况随时更新，恕不另行通知。如因
+文档使用不当造成的直接或间接损失，本公司不承担任何责任。
+
+\hfill\begin{minipage}{\dimexpr\textwidth-10cm}
+    \vspace{.5cm} 龙芯中科技术有限公司 \\
+    北京市海淀区中关村科学院南路 10 号 \\
+    电话：010-62546668 \\
+    传真：010-6260082
+\end{minipage}
+
+\section*{阅读指南}
+
+《龙芯 3B1500 处理器用户手册》分为上册和下册。《龙芯 3B1500 处理器用户手册》上册
+，介绍龙芯 3B 多核处理器架构，主要包括多核处理器架构与寄存器描述；《龙芯 3B1500
+处理器用户手册》下册，从系统软件开发者角度详细介绍龙芯 3B 所采用的 GS464V 高性能
+处理器核。
+
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
+
+$body$
+
+\end{document}
