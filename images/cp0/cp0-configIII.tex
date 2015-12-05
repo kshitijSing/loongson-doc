@@ -1,0 +1,20 @@
+\setlength{\byteheight}{1cm}
+\hspace{-.3cm}
+\begin{bytefield}[bitwidth=\singlebitwidth]{32}
+  \bitheader[b]{31,30,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \bitbox{1}{M} & \bitbox{20}{0} &
+  \bitbox{1}{\rv{\small DSPP}} &
+  \bitbox{2}{0} &
+  \bitbox{1}{\rv{LPA}} &
+  \bitbox{1}{\rv{VEIC}} &
+  \bitbox{1}{\rv{Vint}} &
+  \bitbox{1}{\small SP} &
+  \bitbox{1}{0} &
+  \bitbox{1}{\small MT} &
+  \bitbox{1}{\small SM} &
+  \bitbox{1}{\small TL} \\
+  \hspace{-1cm}\setlength{\byteheight}{.5cm}
+  \bw{1} & \bw{20} & \bw{1} & \bw{2} & \bw{1} & \bw{1} & \bw{1} &
+  \bw{1} & \bw{1} & \bw{1} & \bw{1} & \bw{1}
+\end{bytefield}
+

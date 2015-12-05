@@ -1,0 +1,15 @@
+\setlength{\byteheight}{.8cm}
+\begin{bytefield}[bitwidth=\singlebitwidth]{32}
+  \bitheader[b]{31,28,27,26,25,24,23,22,21,19,18,16,15,8,7,6,5,4,3,2,1,0} \\
+  \bitbox{4}{CU[3:0]} & \bitbox{1}{0} & \bitbox{1}{FR} &
+  \bitbox{2}{0} & \bitbox{1}{PX} & \bitbox{1}{\rv{BEV}} &
+  \bitbox{1}{0} & \bitbox{1}{SR} & \bitbox{1}{\rv{NMI}} &
+  \bitbox{3}{0} & \bitbox{8}{IM7-IM0} & \bitbox{1}{KX} &
+  \bitbox{1}{SX} & \bitbox{1}{UX} & \bitbox{2}{KSU} &
+  \bitbox{1}{\rv{ERL}} & \bitbox{1}{\rv{EXL}} & \bitbox{1}{IE} \\
+  \hspace{-1cm}\setlength{\byteheight}{.5cm}
+  \bw{4} & \bw{1} & \bw{1} & \bw{2} & \bw{1} & \bw{1} & \bw{1} & \bw{1} &
+  \bw{1} & \bw{3} & \bw{8} & \bw{1} & \bw{1} & \bw{1} & \bw{2} & \bw{1} &
+  \bw{1} & \bw{1}
+\end{bytefield}
+

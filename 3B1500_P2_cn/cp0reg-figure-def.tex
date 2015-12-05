@@ -37,6 +37,15 @@
 }
 
 \makeatletter
+\newenvironment{registertable}[2]{
+    \@float{table}[htbp] \centering\caption{#2}
+    \includegraphics{#1} \\
+    \begin{tabular}{|>{\centering}p{2cm}|p{12.8cm}|} \hline
+      位域  & \cellalign{c|}{描述} \tabularnewline \hhline
+}{\\ \hline\end{tabular}\end@float}
+\makeatother
+
+\makeatletter
 \newenvironment{regtable}
 { \@float{table}[htbp] \centering}
 { \end@float}

@@ -6,14 +6,8 @@
 指令格式，如图 2-1 所示，立即数指令（I-型），跳转指令（J-型）和寄存器指令（R-型
 ）。
 
-\begin{figure}[htbp]
-  \caption{龙芯处理器指令格式}
-  \label{fig:instructType}
-  \setlength\fboxsep{15pt}
-  \setlength\fboxrule{.5pt}
-  \fbox{\usebox{\instformatbox}}
-\end{figure}
-\noindent 其中各位域解释为：
+![龙芯处理器指令格式](../images/instruction-format-cn.pdf)
+\\ \noindent 其中各位域解释为：
 \begin{center}
   \begin{tabular}{ll@{\hspace{1cm}}ll@{\hspace{1cm}}}
     op：        & 6 位操作码;         & target：& 26 位跳转目标地址；    \\ 

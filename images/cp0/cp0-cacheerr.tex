@@ -1,0 +1,10 @@
+\setlength{\byteheight}{.9cm}
+\begin{bytefield}[bitwidth=\doublebitwidth]{64}
+  \bitheader[b]{63,6,5,2,1,0} \\
+  \bitbox{58}{0} &
+  \bitbox{4}{\parbox{1cm}{\begin{center}ECC \\ \vspace{-.25cm} Way\end{center}}} &
+  \bitbox[tbl]{1}{\rv{ECC}} & \bitbox[tbr]{1}{\rv{Type}} \\
+  \hspace{-1cm}\setlength{\byteheight}{.5cm}
+  \bw{58} & \bw{4} & \bw{2}
+\end{bytefield}
+

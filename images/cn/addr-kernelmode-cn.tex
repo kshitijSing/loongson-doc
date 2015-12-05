@@ -1,0 +1,58 @@
+\begin{bytefield}[bitwidth=.3cm,bitheight=.55cm]{32}
+  \begin{rightwordgroup}{CKSEG3}
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{0.5GB} \\
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_E000\_0000}} & \bitbox[lr]{16}{映射地址段}
+  \end{rightwordgroup} \\
+  \begin{rightwordgroup}{CKSSEG}
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_DFFF\_FFFF}} & \bitbox[ltr]{16}{0.5GB} \\
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_C000\_0000}} & \bitbox[lr]{16}{映射地址段}
+  \end{rightwordgroup} \\
+  \begin{rightwordgroup}{CKSEG1}
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_BFFF\_FFFF}} & \bitbox[ltr]{16}{0.5GB} \\
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_A000\_0000}} & \bitbox[lr]{16}{非映射、非Cache段}
+  \end{rightwordgroup} \\
+  \begin{rightwordgroup}{CKSEG0}
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_9FFF\_FFFF}} & \bitbox[ltr]{16}{0.5GB} \\
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_8000\_0000}} & \bitbox[lr]{16}{非映射地址段}
+  \end{rightwordgroup} \\
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_7FFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{地址错误} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{\texttt{0xC000\_00FF\_8000\_0000}} & \bitbox[lr]{16}{} \\
+  \begin{rightwordgroup}{XKSEG}
+    \bitbox[]{16}{\texttt{0xC000\_FFFF\_7FFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{256TB-2G，映射地址段} \\
+    \bitbox[]{16}{\texttt{0xC000\_0000\_0000\_0000}} & \bitbox[lr]{16}{}
+  \end{rightwordgroup} \\
+  \begin{rightwordgroup}{XKPHYS}
+    \bitbox[]{16}{\texttt{0xBFFF\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{非映射地址窗口} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{\texttt{0x8000\_0000\_0000\_0000}} & \bitbox[lr]{16}{}
+  \end{rightwordgroup} \\
+    \bitbox[]{16}{\texttt{0x7FFF\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{地址错误} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{\texttt{0x4001\_0000\_0000\_0000}} & \bitbox[lr]{16}{} \\
+  \begin{rightwordgroup}{XKSSEG}
+    \bitbox[]{16}{\texttt{0x4000\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{256TB 映射地址段} \\
+    \bitbox[]{16}{\texttt{0x4000\_0000\_0000\_0000}} & \bitbox[lr]{16}{}
+  \end{rightwordgroup} \\
+    \bitbox[]{16}{\texttt{0x3FFF\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{地址错误} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{\texttt{0x0001\_0000\_0000\_0000}} & \bitbox[lr]{16}{} \\
+  \begin{rightwordgroup}{XKUSEG}
+    \bitbox[]{16}{\texttt{0x0000\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{256TB 映射地址段} \\
+    \bitbox[]{16}{\texttt{0x0000\_0000\_0000\_0000}} & \bitbox[lbr]{16}{}
+  \end{rightwordgroup} \\
+\end{bytefield}
+

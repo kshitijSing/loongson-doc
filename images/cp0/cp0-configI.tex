@@ -1,0 +1,22 @@
+\begin{bytefield}[bitwidth=\singlebitwidth]{32}
+  \bitheader[b]{31,30,25,24,22,21,19,18,16,15,13,12,10,9,7,6,5,4,3,2,1,0} \\
+  \bitbox[tlr]{1}{M}         & \bitbox[tlr]{6}{MMU Size}  & \bitbox[tlr]{3}{IS}    & 
+  \bitbox[tlr]{3}{IL}        & \bitbox[tlr]{3}{IA}        & \bitbox[tlr]{3}{DS}    & 
+  \bitbox[tlr]{3}{DL}        & \bitbox[tlr]{3}{DA}        & \bitbox[tlr]{1}{\small C2}    & 
+  \bitbox[tlr]{1}{\small MD} & \bitbox[tlr]{1}{\small PC} & \bitbox[tlr]{1}{\small WR}    & 
+  \bitbox[tlr]{1}{\small CA} & \bitbox[tlr]{1}{\small EP} & \bitbox[tlr]{1}{\small FP} \\
+  \bitbox[blr]{1}{1}         & \bitbox[b]  {1}{1}  & \bitbox[b]  {1}{1}            & \bitbox[b]{1}{1}      & 
+  \bitbox[b]{1}{1}           & \bitbox[b]{1}{1}           & \bitbox[br]{1}{1}             & \bitbox[b]{1}{0}      & 
+  \bitbox[b]{1}{1}           & \bitbox[br]{1}{1}          & \bitbox[b]{1}{1}              & \bitbox[b]{1}{0}      & 
+  \bitbox[br]{1}{0}          & \bitbox[b]{1}{0}           & \bitbox[b]{1}{1}              & \bitbox[br]{1}{1}     & 
+  \bitbox[b]{1}{0}           & \bitbox[b]{1}{1}           & \bitbox[br]{1}{1}             & \bitbox[b]{1}{1}      & 
+  \bitbox[b]{1}{0}           & \bitbox[b]{1}{0}           & \bitbox[bl]{1}{0}             & \bitbox[b]{1}{1}      & 
+  \bitbox[b]{1}{1}           & \bitbox[blr]{1}{0}         & \bitbox[b]{1}{0}              & \bitbox[lrb]{1}{1}    & 
+  \bitbox[b]{1}{0}           & \bitbox[lrb]{1}{0}         & \bitbox[b]{1}{1}              & \bitbox[blr]{1}{1} \\
+  \bw{1}                     & \bw{6}                     & \bw{3}                        & 
+  \bw{3}                     & \bw{3}                     & \bw{3}                        & 
+  \bw{3}                     & \bw{3}                     & \bw{1}                        & 
+  \bw{1}                     & \bw{1}                     & \bw{1}                        & 
+  \bw{1}                     & \bw{1}                     & \bw{1}
+\end{bytefield}
+

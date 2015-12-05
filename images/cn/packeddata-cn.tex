@@ -1,0 +1,40 @@
+\noindent
+无符号字节包：\vspace{0.4cm}\mbox{}  \\
+\begin{bytefield}[bitwidth=\doublebitwidth]{64}
+    \bitheader{63,56,55,48,47,40,39,32,31,24,23,16,15,8,7,0} \\
+    \bitbox{8}{byte7} &
+    \bitbox{8}{byte6} &
+    \bitbox{8}{byte5} &
+    \bitbox{8}{byte4} &
+    \bitbox{8}{byte3} &
+    \bitbox{8}{byte2} &
+    \bitbox{8}{byte1} &
+    \bitbox{8}{byte0} \\
+    \bw{8} &
+    \bw{8} &
+    \bw{8} &
+    \bw{8} &
+    \bw{8} &
+    \bw{8} &
+    \bw{8} &
+    \bw{8}
+\end{bytefield} \\
+无符号半字包：\vspace{0.4cm}\mbox{} \\
+\begin{bytefield}[bitwidth=\doublebitwidth]{64}
+    \bitheader{63,48,47,32,31,16,15,0} \\
+    \bitbox{16}{halfword3} & \bitbox{16}{halfword2} &
+    \bitbox{16}{halfword1} & \bitbox{16}{halfword0} \\
+    \bw{16} & \bw{16} & \bw{16} & \bw{16}
+\end{bytefield} \\
+\phantom{字}无符号字包：\vspace{0.4cm}\mbox{} \\
+\begin{bytefield}[bitwidth=\doublebitwidth]{64}
+    \bitheader{63,32,31,0} \\
+    \bitbox{32}{word1} & \bitbox{32}{word0} \\
+    \bw{32} & \bw{32}
+\end{bytefield} \\
+无符号双字包：\vspace{0.4cm}\mbox{} \\
+\begin{bytefield}[bitwidth=\doublebitwidth]{64}
+    \bitheader{63,0} \\
+    \bitbox{64}{doubleword0} \\
+    \bw{64}
+\end{bytefield}

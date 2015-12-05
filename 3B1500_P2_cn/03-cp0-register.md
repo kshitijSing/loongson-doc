@@ -15,7 +15,7 @@ CP0 控制寄存器
   \caption{CP0 寄存器表（续）} \\
   \hline \cmcolvb{2}{寄存器号} &&& \\ \cline{1-2}
   总号 & 子号 & 寄存器名 & 位宽 & \cellalign{c|}{描述} \\ \hhline \endhead
-  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
+  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \hline \endlastfoot
 
   0  & 0   & Index      & 32 & TLB 表项索引寄存器                             \\ 
   1  & 0   & Random     & 32 & TLB 表项伪随机计数寄存器                       \\ 
@@ -39,37 +39,37 @@ CP0 控制寄存器
   15 & 1   & EBase      & 32 & 例外向量基地址寄存器                           \\ 
   16 & 0-3 & Config     & 32 & 配置寄存器，和辅助配置寄存器 1、2、3           \\ 
   17 & 0   & LLAddr     & 64 & 链接加载地址寄存器                             \\ 
-  18 & --- & ---        & -- & 保留                                           \\ 
-  19 & --- & ---        & -- & 保留                                           \\ 
+  18 & --  & --         & -- & 保留                                           \\ 
+  19 & --  & --         & -- & 保留                                           \\ 
   20 & 0   & Xcontext   & 64 & 页表入口（PTE）指针寄存器（64 位寻址模式）     \\ 
-  21 & --- & ---        & -- & 保留                                           \\ 
-  22 & 0   & Diagnostic & 32 & 诊断寄存器： 使能/禁用 BTB， RAS 以及清空 ITLB \\ 
+  21 & --  & --         & -- & 保留                                           \\ 
+  22 & 0   & Diagnostic & 32 & 诊断寄存器： 使能/禁用 BTB，RAS 以及清空 ITLB  \\ 
   23 & 0   & Debug      & 64 & EJTAG 调试寄存器                               \\ 
   24 & 0   & DEPC       & 64 & EJTAG 调试例外程序计数器                       \\ 
   25 & 0,2 & PerfCtl    & 32 & 性能控制寄存器0，1                             \\ 
   25 & 1,3 & PerfCnt    & 64 & 性能计数寄存器0，1                             \\ 
   26 & 0   & ErrCtl     & 64 & Parity/ECC 校验控制寄存器                      \\ 
-  27 & 0   & CacheErr   & 64 & Cache 校验错误寄存器                        \\ 
-  27 & 1   & CacheErr1  & 64 & Cache 校验错误虚地址寄存器                  \\ 
+  27 & 0   & CacheErr   & 64 & Cache 校验错误寄存器                           \\ 
+  27 & 1   & CacheErr1  & 64 & Cache 校验错误虚地址寄存器                     \\ 
   28 & 0   & TagLo      & 32 & Cache TAG 低半寄存器                           \\ 
   28 & 1   & DataLo     & 64 & 数据低半寄存器：Cache 数据队列交互和诊断       \\ 
   29 & 0   & TagHi      & 32 & Cache TAG 高半寄存器                           \\ 
   29 & 1   & DataHi     & 64 & 数据高半寄存器：Cache 数据队列交互和诊断       \\ 
   30 & 0   & ErrorEPC   & 64 & 错误例外程序计数寄存器                         \\ 
-  31 & 0   & DESAVE     & 64 & 调试暂存寄存器器                               \\ \hline
+  31 & 0   & DESAVE     & 64 & 调试暂存寄存器器                               \\
 \end{longtable}
 
-这些 CP0 寄存器的值可以通过 MFC0/DMFC0 指令来获取，或者通过 MTC0/DMTC0 指令来设置。
-表~\ref{tab:mips64-cp0-ins} 列出了所有的龙芯 GS464 处理器核 CP0 指令。
-注意， 只有当处理器运行在核心模式时或状态寄存器（Status 寄存器）中的第 28 位
-（CU[0]）被设置时， 才可以使用 CP0 指令，否则将产生一个``协处理器不可用例外''。
+这些 CP0 寄存器的值可以通过 MFC0/DMFC0 指令来获取，或者通过 MTC0/DMTC0 指令来设
+置。 表~\ref{tab:mips64-cp0-ins} 列出了所有的龙芯 GS464 处理器核 CP0 指令。 注意
+， 只有当处理器运行在核心模式时或状态寄存器（Status 寄存器）中的第 28 位 （CU[0]
+）被设置时， 才可以使用 CP0 指令，否则将产生一个"协处理器不可用例外"。
 
 CP0 寄存器详解
 --------------
 
 下面各小节将对每个寄存器进行详细说明。 以下对寄存器位域的注解中，如果一个位域为
 保留，则该位域必须写入其保留值（一般为 0）， 并在读的时返回保留值： 在保留字段写
-入非保留值的结果为{\bf 未定义}；如果一个域为只读， 则在读的时候，返回其保留值，
+入非保留值的结果为**未定义**；如果一个域为只读， 则在读的时候，返回其保留值，
 而任何写入值将被忽略。
 
 龙芯 GS464 实现了对 48 位物理地址的支持（见 PageGrain 寄存器
@@ -78,104 +78,82 @@ CP0 寄存器详解
 域解释。在\ref{sec:40vs48}~节中，我们将简述 40 位和 48 位物理地址模式，可能影响
 到的寄存器位域。
 
-Index 寄存器（0）
------------------
+### Index 寄存器（0）
 
 Index 寄存器是一个 32 位可读写寄存器。该寄存器的最高位表示最近的 TLB 探测 (TLBP)
 指令执行是否成功， 其最后六位为 Index 域， 用于在 TLBR 和 TLBWI 指令中指示操作的
 TLB 表项。 表~\ref{tab:cp0-index} 给出了 Index 寄存器的格式， 及各域的含义。
 
-\begin{regtable}
-  \includeregsingle{\cpOindex} \\
-  \begin{regtabular}
-    P     & 探测失败位： 最近一次 TLB 探测（TLBP）指令失败时置 1。 \tabularnewline
-    Index & TLB 表项索引域， 用于指示 TLBR 和 TLBWI 指令操作。 \tabularnewline
-    0     & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: Index 寄存器}
-  \label{tab:cp0-index}
-\end{regtable}
+\begin{registertable}{cp0-index}{CP0: Index 寄存器}
+  P     & 探测失败位：最近一次 TLB 探测（TLBP）指令失败时置 1。 \\
+  Index & TLB 表项索引域，用于指示 TLBR 和 TLBWI 指令操作。     \\
+  0     & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
-### Random 寄存器（1） ###
+### Random 寄存器（1）
 
 Random 寄存器是一个 32 位只读寄存器， 其低六位为 Random 域，每执行完一
 条指令，该寄存器值减 1。 它被用作伪随机数，用于指示 TLB 随机写指令操作的 TLB 项。
 Random 域的值在一个上下界之间浮动：
-\begin{itemize}
-  \item 上界为 TLB 最大表项索引值，即总项数减 1，在 GS464 上其值为 63；
-  \item 下界为 Wired 寄存器的值， 即保留给操作系统专用的 TLB 表项数。
-\end{itemize}
-一般而言，无需读取 Random 寄存器值。不过该寄存器是可读的，
-主要用于验证处理器的操作是否正确。
-Random 寄存器在系统重起时将置为上界； 此外，当 Wired 寄存器被重写时，
-该寄存器也会被自动置为上界。
-表~\ref{tab:cp0-random} 给出了 Random 寄存器的格式， 及各域的含义。
 
-\begin{regtable}
-  \includeregsingle{\cpOrandom}
-  \begin{regtabular}
-    Random & 伪随机 TLB 索引值域。 \tabularnewline
-    0      & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: Random 寄存器}
+1. 上界为 TLB 最大表项索引值，即总项数减 1，在 GS464 上其值为 63；
+1. 下界为 Wired 寄存器的值， 即保留给操作系统专用的 TLB 表项数。
+
+一般而言，无需读取 Random 寄存器值。不过该寄存器是可读的， 主要用于验证处理器的
+操作是否正确。 Random 寄存器在系统重起时将置为上界； 此外，当 Wired 寄存器被重写
+时， 该寄存器也会被自动置为上界。 表~\ref{tab:cp0-random} 给出了 Random 寄存器的
+格式， 及各域的含义。
+
+\begin{registertable}{cp0-random}{CP0: Random 寄存器}
   \label{tab:cp0-random}
-\end{regtable}
+  Random & 伪随机 TLB 索引值域。 \\
+  0      & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
-### EntryLo0、EntryLo1 寄存器（2，3） ###
+### EntryLo0、EntryLo1 寄存器（2，3）
 
-EntryLo 寄存器组包括两个具有相同格式的 64 位可读写寄存器： EntryLo0 和
-EntryLo1。 龙芯的 TLB 表项是按成对页面组织的， EntryLo0 和 EntryLo1 分别对应
-TLB 表项的偶、奇虚页面。 当执行 TLB 读写操作时， 它们包含有当前 TLB
-表项对应页面的页帧号（Page-frame number, 简称 PFN）和其他页面信息。
-表~\ref{tab:cp0-entrylo} 给出了 EntryLo 寄存器的格式， 及各域的含义。
+EntryLo 寄存器组包括两个具有相同格式的 64 位可读写寄存器： EntryLo0 和 EntryLo1
+。 龙芯的 TLB 表项是按成对页面组织的， EntryLo0 和 EntryLo1 分别对应 TLB 表项的
+偶、奇虚页面。 当执行 TLB 读写操作时， 它们包含有当前 TLB 表项对应页面的页帧号（
+Page-frame number, 简称 PFN）和其他页面信息。 表~\ref{tab:cp0-entrylo} 给出了
+EntryLo 寄存器的格式， 及各域的含义。
 
-\begin{regtable}
-  \includeregdouble{\cpOentrylo}
-  \begin{regtabular}
-    PFN\footnotemark & 页帧号，即虚实地址转换中物理地址的高位。 \tabularnewline
-    C   & Cache 一致性属性位（具体细节见\ref{sec:cacheAttr} 节）。 \tabularnewline
-    D   & 脏位：该位置 1 时，对应页面脏，即可写； 亦可用作为数据写保护位。 \tabularnewline
-    V   & 有效位： TLB 表项是否有效；如未设置，TLB 访问将触发 TLBL/TLBS 例外。 \tabularnewline
-    G   & 全局位： 如果为 1，TLB 查找时将忽略 ASID 域。 \tabularnewline
-    0   & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: EntryLo 寄存器}
+\begin{registertable}{cp0-entrylo}{CP0: EntryLo 寄存器}
   \label{tab:cp0-entrylo}
-\end{regtable}
-\footnotetext{在 MIPS64 的文档中，该域被写作 PFNX 和 PFN
-域。我们这里将其合并在一起，从概念和理解上都更直接。}
+  PFN\footnotemark & 页帧号，即虚实地址转换中物理地址的高位。               \\ 
+  C   & Cache 一致性属性位（具体细节见\ref{sec:cacheAttr} 节）。            \\ 
+  D   & 脏位：该位置 1 时，对应页面脏，即可写； 亦可用作为数据写保护位。    \\ 
+  V   & 有效位： TLB 表项是否有效；如未设置，TLB 访问将触发 TLBL/TLBS 例外。\\ 
+  G   & 全局位： 如果为 1，TLB 查找时将忽略 ASID 域。                       \\ 
+  0   & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
+\footnotetext{在 MIPS64 的文档中，该域被写作 PFNX 和 PFN 域。我们这里将其合并在
+一起，从概念和理解上都更直接。}
 \noindent 由于一个 TLB 表项对应两个页面，却只有一个全局位。 所以在 TLB 写操作时，
 只有当两个页面全局位都为 1 时， TLB 的全局位才会被写入 1。关于 TLB 表项格式
 的具体信息见\ref{subsec:tlb-format} 节。
 
 ### Context 寄存器（4）
 
-Context 寄存器是一个 64 位可读写寄存器， 在 32 位地址模式下，
-包含一个指向页表（Pagetable entry, PTE）的指针。
-作为一个重要的操作系统数据结构，页表存储有虚拟地址到物理地址转换的信息。
-当 TLB 脱靶例外发生时，CPU 需要从页表中将缺失页的信息加载到 TLB 中。这时，
-操作系统将通过 Context 寄存器在页表中寻找当前缺失页的映射信息：
-这些信息一般存储在 KSEG0 段中。
-同时， Context 寄存器还包含有 BadVAddr 寄存器的部分信息， 方便软件 TLB
-例外的处理。 表~\ref{tab:cp0-context} 给出了 Context 寄存器的格式，
-及各域的含义。
+Context 寄存器是一个 64 位可读写寄存器， 在 32 位地址模式下， 包含一个指向页表（
+Pagetable entry, PTE）的指针。 作为一个重要的操作系统数据结构，页表存储有虚拟地
+址到物理地址转换的信息。 当 TLB 脱靶例外发生时，CPU 需要从页表中将缺失页的信息加
+载到 TLB 中。这时， 操作系统将通过 Context 寄存器在页表中寻找当前缺失页的映射信
+息： 这些信息一般存储在 KSEG0 段中。 同时， Context 寄存器还包含有 BadVAddr 寄存
+器的部分信息， 方便软件 TLB 例外的处理。 表~\ref{tab:cp0-context} 给出了 Context
+寄存器的格式， 及各域的含义。
 
-\begin{regtable}
-  \includeregdouble{\cpOcontext} \\
-  \begin{regtabular}
-    PTEBase & 页表入口数列基地址域。 \tabularnewline
-    BadVPN2 & 待转换虚地址虚页号域（VPN2）： 由硬件在 TLB 例外时写入。 \tabularnewline
-    0       & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: Context 寄存器}
+\begin{registertable}{cp0-context.pdf}}{CP0: Context 寄存器}
   \label{tab:cp0-context}
-\end{regtable}
-\noindent 这里， 在 32 位地址模式下， BadVPN2（即未能转换的虚页 VPN2） 是一个
-19 位的字段，它对应着待转换虚地址的 31:13 位：12 位被
-排除在外，是因为每个 TLB 表项对应着一个奇偶页面对。
-如果页面大小为 4K 字节， 那么 VPN2 可以直接寻址按 8
-个字节长的，按对组织的页表入口数列。 对于更大尺寸的页面设置，
-则需要屏蔽掉 VPN2 中相应的多余位以产生合适的地址。
+  PTEBase & 页表入口数列基地址域。                                   \\
+  BadVPN2 & 待转换虚地址虚页号域（VPN2）： 由硬件在 TLB 例外时写入。 \\
+  0       & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
+\noindent 这里，在 32 位地址模式下， BadVPN2（即未能转换的虚页 VPN2） 是一个 19
+位的字段，它对应着待转换虚地址的 31:13 位：12 位被 排除在外，是因为每个 TLB 表项
+对应着一个奇偶页面对。 如果页面大小为 4K 字节， 那么 VPN2 可以直接寻址按 8 个字
+节长的，按对组织的页表入口数列。 对于更大尺寸的页面设置， 则需要屏蔽掉 VPN2 中相
+应的多余位以产生合适的地址。
 
 ### PageMask 寄存器（5）
 
@@ -205,7 +183,8 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
 页面地址在更高的位上对齐， 也就是说，更大的页面。 由上表可知， GS464 核支持的最
 小页面为 4K， 最大为 16MB， 每级之间以 4 的倍数增加。
 
-### PageGrain 寄存器（5）
+### PageGrain 寄存器（5）###
+\label{subsec:pagegrain}
 
 PageGrain 寄存器是一个 32 位可读写的寄存器，龙芯 GS464 只定义了这个寄存器的 第 29
 位：大物理地址支持位（Enable Large Physical Adress，简称 ELPA），其余位保留。 当
@@ -213,46 +192,30 @@ ELPA=1 时， 龙芯 GS464 支持 48 位物理地址； ELPA=0 时， GS464 只�
 位物理地址。 表~\ref{tab:cp0-pagegrain} 给出了 PageGrain 寄存器的格式，
 及各域的含义。
 
-\begin{regtable}
-  \includeregsingle{\cpOpagegrain} \\
-  \begin{regtabular}
-    ELPA  & 大物理地址支持位。 \tabularnewline
-    0     & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: PageGrain 寄存器}
+\begin{registertable}{cp0-pagegrain}{CP0: PageGrain 寄存器}
   \label{tab:cp0-pagegrain}
-\end{regtable}
+  ELPA  & 大物理地址支持位。                \\
+  0     & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
 在本手册中， 所有的描述和示例都主要以 48 位物理地址模式为标准给出。
-关于不同物理地址模式的影响， 请参见 \ref{sec:40vs48}~节。
+关于不同物理地址模式的影响，请参见 \ref{sec:40vs48}~节。
 
 ### Wired 寄存器（6）
 
 Wired 寄存器是一个 32 位可读写寄存器，该寄存器的值指定了 TLB 中固定连线表
 项与随机表项之间的界限。 表~\ref{tab:cp0-wired}
 给出了 Wired 寄存器的格式， 及各域含义。
-\begin{regtable}
-  \includeregsingle{\cpOwired}
-  \begin{regtabular}
-    Wired & TLB 固定表项大小域。 \tabularnewline
-    0     & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: Wired 寄存器}
+\begin{registertable}{cp0-wired}{CP0: Wired 寄存器}
   \label{tab:cp0-wired}
-\end{regtable}
+  Wired & TLB 固定表项大小域。 \\
+  0     & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
 如图~\ref{fig:wired} 所示， Wired 表项是固定的不会被 TLB 随机写操作修改的 TLB
 表项。 Wired 寄存器在系统复位时置 0； 写该寄存器的同时，Random 寄存器的值也会被
 置为其上限值（参阅前面 Random 寄存器的说明）。 
-\begin{figure}[htpb]
-  \centering
-  \setlength\fboxsep{15pt}
-  \setlength\fboxrule{.5pt}
-  \fbox{\includegraphics[scale=.6]{wired-illustration}}
-  \caption{Wired 寄存器示意图}
-  \label{fig:wired}
-\end{figure}
-
+![Wired 寄存器示意图](../images/wired-illustration.pdf)\label{fig:wired}
 
 ### HWREna 寄存器（7）
 
@@ -277,19 +240,14 @@ HWREna 寄存器是一个 32 位可读写寄存器， GS464 只定义了该寄�
   \label{tab:cp0-hwrena}
 \end{regtable}
 
-
 ### BadVAddr 寄存器（8）
 
-BadVAddr 寄存器是一个 64 位只读寄存器。当软复位，NMI 或 Cache 错误例外
-发生时，BadVAddr 寄存器记录下导致 TLB 或寻址错误例外的虚拟地址，
-否则寄存器值将一直保持不变。在一般运行情况下，该寄存器的值为{\bf 未定义}。
-表~\ref{tab:cp0-badvaddr} 给出了 BadVAddr 寄存器的格式。
+BadVAddr 寄存器是一个 64 位只读寄存器。当软复位，NMI 或 Cache 错误例外 发生时，
+BadVAddr 寄存器记录下导致 TLB 或寻址错误例外的虚拟地址， 否则寄存器值将一直保持
+不变。在一般运行情况下，该寄存器的值为**未定义**。 表 \ref{tab:cp0-badvaddr}
+给出了 BadVAddr 寄存器的格式。
 
-\begin{regtable}
-  \includeregsingle{\cpObadvaddr}
-  \caption{CP0: BadVAddr 寄存器}
-  \label{tab:cp0-badvaddr}
-\end{regtable}
+![CP0: BadVAddr 寄存器](../images/cp0-badvaddr.pdf)\label{tab:cp0-badvaddr}
 
 ### Count、Compare 寄存器（9，11）}
 
@@ -312,7 +270,7 @@ IP[7] 位置位。 当 Compare 寄存器被再次重写时， Cause 寄存器的
   \label{tab:cp0-cntcmp}
 \end{regtable}
 
-### EntryHi（10） 寄存器}
+### EntryHi（10） 寄存器
 
 EntryHi 寄存器是一个 64 位可读写寄存器， 它用于在使用 TLB 指令时存放 TLB 表项的高位。
 表~\ref{tab:cp0-badvaddr} 给出了 EntryHi 寄存器的格式及各域的说明。
@@ -320,19 +278,15 @@ EntryHi 寄存器是一个 64 位可读写寄存器， 它用于在使用 TLB �
 重填，TLB 无效，或者 TLB 修改例外发生时， 引起例外的虚拟地址的虚拟页号（VPN2）
 和 ASID 将被加载到 EntryHi 寄存器中。
 
-\begin{regtable}
-  \includeregdouble{\cpOentryhi}
-  \begin{regtabular}
-    R    & 区域位 --- $00_2$: 用户； $01_2$: 管理； $11_2$: 核心 --- 匹配虚地址位 [63:62]。 \tabularnewline
-    VPN2 & 虚页号抹去地址的最低位，即虚拟地址的最高有效 35 位。 \tabularnewline
-    ASID & 地址空间标识域：用于区分不同进程， 及多进程数据共享。 \tabularnewline
-    0    & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: EntryHi 寄存器}
+\begin{registertable}{cp0-entryhi}{CP0: EntryHi 寄存器}
   \label{tab:cp0-entryhi}
-\end{regtable}
+  R    & 区域位 --- $00_2$: 用户； $01_2$: 管理； $11_2$: 核心 --- 匹配虚地址位 [63:62]。 \\
+  VPN2 & 虚页号抹去地址的最低位，即虚拟地址的最高有效 35 位。 \\
+  ASID & 地址空间标识域：用于区分不同进程， 及多进程数据共享。 \\
+  0    & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
-### Status（12） 寄存器}
+### Status（12） 寄存器
 
 Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作模式， 中断允许和处理器
 状态诊断等丰富的信息。 在龙芯 GS464 上，Status 寄存器复位时的初始值为 0x30C0\_00E4。
@@ -359,41 +313,35 @@ Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作�
 \end{reglongtable}
 
 \noindent 一些关于 Status 寄存器重要字段的说明：
-\begin{itemize}
-  \item 4 位的协处理器使能域，CU，控制着 4 个可能的协处理器的可用性。注意，不管 CU[0]
-    位如何设置，在内核模式下 CP0 总是可用的。
-  \item 8 位的中断屏蔽域，IM，控制着 8 个中断的使能：一个中断必须被使能才可能被触发。同时，
-    中断屏蔽域 IM 和 Cause 寄存器的中断待定域（IP）位一一对应，并合作处理中断发生的信息。
-    更多细节请参考 Cause 寄存器的中断待定域。
-  \item 中断的使能被多个条件控制。只有在以下条件符合时， IM 位中的设置才会生效：
+  1. 4 位的协处理器使能域，CU，控制着 4 个可能的协处理器的可用性。注意，不管
+     CU[0] 位如何设置，在内核模式下 CP0 总是可用的。
+  1. 8 位的中断屏蔽域，IM，控制着 8 个中断的使能：一个中断必须被使能才可能被触发
+     。同时， 中断屏蔽域 IM 和 Cause 寄存器的中断待定域（IP）位一一对应，并合作
+     处理中断发生的信息。更多细节请参考 Cause 寄存器的中断待定域。
+  1. 中断的使能被多个条件控制。只有在以下条件符合时， IM 位中的设置才会生效：
+     \verb+    IE == 1 && EXL == 0 && ERL ==  0。+
+  1. 操作模式。龙芯 GS464 处理器有三种操作模式，他们分别是：用户模式，管理模式，
+     和内核模式。由Status 寄存器的值决定了处理器的工作模式，这些模式的设置列表如
+     下。
+     \begin{table}[htbp]
+       \centering
+       \begin{tabular}{|c|c|c|>{\centering}p{5cm}|} \hline
+         KSU    & ERL & EXL & 运行模式 \tabularnewline \hhline
+         $10_2$ & 0   & 0   & 用户模式 \tabularnewline 
+         $01_2$ & 0   & 0   & 管理模式 \tabularnewline 
+         $00_2$ & 0   & 0   & 内核模式 \tabularnewline 
+                & 0   & 1   & 内核模式（例外状态） \tabularnewline 
+                & 1   &     & 内核模式（错误状态） \tabularnewline \hline
+       \end{tabular}
+       \caption{CP0： 处理器的工作模式}
+       \label{tab:cpu-mode}
+     \end{table}
+  1. 地址空间访问（具体空间划分见 \ref{sec:virtualspace} 节）。
+       * 内核地址空间：当处理器处在内核模式时， 可以访问内核地址空间；
+       * 管理地址空间：当处理器处在内核或管理模式时，可以访问管理地址空间；
+       * 用户地址空间：处理器在三种操作模式下都可以访问用户地址空间。
 
-    \verb+    IE == 1 && EXL == 0 && ERL ==  0。+
-  \item 操作模式。龙芯 GS464
-    处理器有三种操作模式，他们分别是：用户模式，管理模式， 和内核模式。由Status
-    寄存器的值决定了处理器的工作模式，这些模式的设置列表如下。
-    \begin{table}[htbp]
-      \centering
-      \begin{tabular}{|c|c|c|>{\centering}p{5cm}|} \hline
-        KSU    & ERL & EXL & 运行模式 \tabularnewline \hhline
-        $10_2$ & 0   & 0   & 用户模式 \tabularnewline 
-        $01_2$ & 0   & 0   & 管理模式 \tabularnewline 
-        $00_2$ & 0   & 0   & 内核模式 \tabularnewline 
-               & 0   & 1   & 内核模式（例外状态） \tabularnewline 
-               & 1   &     & 内核模式（错误状态） \tabularnewline \hline
-      \end{tabular}
-      \caption{CP0： 处理器的工作模式}
-      \label{tab:cpu-mode}
-    \end{table}
-  \item 地址空间访问（具体空间划分见 \ref{sec:virtualspace} 节）。
-    \begin{itemize}
-      \item 内核地址空间：当处理器处在内核模式时， 可以访问内核地址空间；
-      \item 管理地址空间：当处理器处在内核或管理模式时，可以访问管理地址空间；
-      \item 用户地址空间：处理器在三种操作模式下都可以访问用户地址空间。
-    \end{itemize}
-\end{itemize}
-
-
-### IntCtl（12/1） 寄存器}
+### IntCtl（12/1） 寄存器
 
 龙芯 GS464 实现了 MIPS64 R2 体系中扩充的向量中断（vectored interrupt）支持。
 IntCtl 是一个 32 位可读写寄存器，
@@ -417,7 +365,7 @@ IntCtl 是一个 32 位可读写寄存器，
   \label{tab:cp0-intctl}
 \end{regtable}
 
-### SRSCtl（12/2） 寄存器}
+### SRSCtl（12/2） 寄存器
 
 SRSCtl 寄存器是一个 32 位可读写寄存器， 用于管理处理器的影子寄存器组。
 龙芯 GS464 中的 SRSCtl 寄存器只实现两个域：PSS 和 ESS。 同时，因为龙芯
@@ -425,18 +373,14 @@ GS464 还没有实现影子寄存器，而只有一组通用寄存器， 所以�
 子即为该寄存器本身。表~\ref{tab:cp0-srsctl} 给出了 SRSCtl 寄存器的格式，
 及各域的含义。
 
-\begin{regtable}
-  \includeregsingle{\cpOsysctl}
-  \begin{regtabular}
-    ESS  & 用于例外的影子寄存器组，在龙芯 GS464 上只能为 0。 \tabularnewline
-    PSS  & 前一个影子寄存器组，在龙芯 GS464 上只能为 0。 \tabularnewline
-    0    & 保留：必须按 0 写入，读时返回 0。
-  \end{regtabular}
-  \caption{CP0: SRSCtl 寄存器}
+\begin{registertable}{cp0-sysctl}{CP0: SRSCtl 寄存器}
   \label{tab:cp0-srsctl}
-\end{regtable}
+  ESS  & 用于例外的影子寄存器组，在龙芯 GS464 上只能为 0。 \\
+  PSS  & 前一个影子寄存器组，在龙芯 GS464 上只能为 0。     \\
+  0    & 保留：必须按 0 写入，读时返回 0。
+\end{registertable}
 
-### Cause（13） 寄存器}
+### Cause（13） 寄存器
 
 Cause 寄存器是一个 32 位的可读写寄存器， 所有关于最近发生的例外的
 相关信息都存储在这个寄存器中。 表~\ref{tab:cp0-cause}
@@ -530,7 +474,7 @@ PRid (Processor Revision Identifier， 处理器修改版本标识) 寄存器是
 PRid 寄存器中；另一方面， 版本号的改动也不能保证必须体现处理器的修改。
 因此，软件不能过分依赖 PRid 寄存器中的版本号信息来标识处理器。
 
-### EBase（15） 寄存器}
+### EBase（15） 寄存器
 
 EBase 寄存器是一个 32\footnote{32 位的 EBase
 寄存器就足够决定例外向量基地址，这是因为出于兼容 32 位系统
@@ -554,7 +498,7 @@ EBase 寄存器中的例外向量基址域来决定向量入口。具体细节�
 \end{regtable}
 
 
-### Config 寄存器}
+### Config 寄存器
 
 Config 寄存器是一个 64 位寄存器， 它存有龙芯 GS464 处理器核中各种配置选择项信息。
 \begin{itemize}
@@ -584,7 +528,7 @@ Config 寄存器的初值为 0x0003\_0932(\remark{有问题！})。 表~\ref{tab
 \end{regtable}
 
 
-### Config1 寄存器}
+### Config1 寄存器
 
 Config1 寄存器是一个 32 位的只读寄存器。 作为 Config 寄存器的附加内容， 它含有龙芯 GS464
 处理器核的 Cache 配置，和各种其他附加信息。 该寄存器在复位时被自动设置； 在 GS464 核上，
@@ -634,7 +578,7 @@ Config1 寄存器是一个 32 位的只读寄存器。 作为 Config 寄存器�
   FP       & FPU 实现位 --- 0: 未实现; 1: 实现。
 \end{reglongtable}
 
-### Config2 寄存器}
+### Config2 寄存器
 
 Config2 寄存器是一个 32 位的只读寄存器。 同样作为 Config 寄存器的附加内容，
 它含有龙芯 GS464 处理器二、三级 Cache 的配置信息。 该寄存器在复位时被自动设置； 在
@@ -946,7 +890,7 @@ CacheErr1 寄存器中，然后触发 Cache 错例外由软件来纠正错误。
 \end{regtable}
 
 
-### TagLo、TagHi 寄存器}
+### TagLo、TagHi 寄存器
 
 TagLo 和 TagHi 寄存器是一对 32 位可读写寄存器，用于保存一、二级 Cache 的
 标签和状态，并将在使用 CACHE 和 MTC0 指令时将其内容写入 Tag 寄存器。
@@ -988,7 +932,8 @@ DataLo 和 DataHi 是一对 64 位只读寄存器，用于 Cache 数据队列交
 ErrorEPC 是一个 64 位可读写寄存器。与 EPC 寄存器类似，ErrorEPC
 寄存器含有错误例外后，指令重新开始执行的虚拟地址。 除了 ECC
 和奇偶错误例外之外， 它还用于，在复位、软复位、和不可屏蔽中断（NMI）
-例外发生时，存储程序返回的地址。 表~\ref{tab:cp0-ErrorEPC} 显示了 ErrorEPC 寄存器的格式。
+例外发生时，存储程序返回的地址。 表 \ref{tab:cp0-ErrorEPC} 显示了 ErrorEPC
+寄存器的格式。
 
 \begin{regtable}
   \includeregsingle{\cpOerrorepc}
@@ -999,14 +944,11 @@ ErrorEPC 是一个 64 位可读写寄存器。与 EPC 寄存器类似，ErrorEPC
 ### DESAVE 寄存器
 
 DESAVE 寄存器是一个 64 位可读写寄存器。它是一个功能简单的暂存器，用于在处理
-Debug 异常处理时保存一个通用寄存器的值。 DESAVE
-寄存器的格式显示在表~\ref{tab:cp0-DESAVE} 中。
+Debug 异常处理时保存一个通用寄存器的值。 DESAVE 寄存器的格式显示在表
+\ref{tab:cp0-DESAVE} 中。
+
 \begin{regtable}
   \includeregsingle{\cpOdesave}
   \label{tab:cp0-DESAVE}
   \caption{CP0: DESAVE 寄存器}
 \end{regtable}
-
-
-\section{40 vs 48 位物理地址}\label{sec:40vs48}
-

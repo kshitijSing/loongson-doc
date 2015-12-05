@@ -14,10 +14,10 @@ $(TARGET): $(SOURCES)
 	pandoc $+ -o $@ $(OPTIONS) --latex-engine=xelatex
 
 tex: $(SOURCES)
-	pandoc $+ -o 00-main.tex $(OPTIONS) -t latex
+	pandoc $+ -o main.tex $(OPTIONS) -t latex
 
 json: $(SOURCES)
-	pandoc $+ -o 00-main.json $(OPTIONS) -t json
+	pandoc $+ -o main.json $(OPTIONS) -t json
 
 clean:
-	@rm -f $(TARGET) 00-main.tex
+	@rm -f $(TARGET) main.tex main.json

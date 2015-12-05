@@ -1,0 +1,27 @@
+\newbox{\tempbox}
+\catcode`\&=10
+\savebox{\tempbox}{\parbox{14.5cm}{
+立即数型（I-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader{31,26,25,21,20,16,15,0} \\
+  \bitbox{6}{op} & \bitbox{5}{rs} &
+  \bitbox{5}{rs} & \bitbox{16}{immediate}
+\end{bytefield} \vspace{.2cm}\mbox{} \\
+跳转型（J-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader{31,26,25,0} \\
+  \bitbox{6}{op} & \bitbox{26}{target}
+\end{bytefield} \vspace{.2cm}\mbox{} \\
+寄存器型（R-Type）: \vspace{.2cm}\mbox{} \\
+\begin{bytefield}[bitwidth=.45cm]{32}
+  \bitheader{31,26,25,21,20,16,15,11,10,6,5,0} \\
+  \bitbox{6}{op} & \bitbox{5}{rs} & \bitbox{5}{rt} & \bitbox{5}{rd} &
+  \bitbox{5}{sa} & \bitbox{6}{funct}
+\end{bytefield}}}
+\catcode`\&=4
+
+\begin{figure}[htbp]
+  \setlength\fboxsep{15pt}
+  \setlength\fboxrule{.5pt}
+  \fbox{\usebox{\tempbox}}
+\end{figure}

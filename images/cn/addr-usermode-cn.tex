@@ -1,0 +1,19 @@
+\begin{bytefield}[bitwidth=.3cm,bitheight=.55cm]{32}
+    \bitbox[]{16}{\texttt{0xFFFF\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{地址错误} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{} \\
+    \bitbox[]{16}{\texttt{0x0001\_0000\_0000\_0000}} & \bitbox[lr]{16}{} \\
+  \begin{rightwordgroup}{XUSEG}
+    \bitbox[]{16}{\texttt{0x0000\_FFFF\_FFFF\_FFFF}} & \bitbox[ltr]{16}{} \\
+    \bitbox[]{16}{} & \bitbox[lr]{16}{256TB 映射地址段} \\
+    \bitbox[]{16}{\texttt{0x0000\_0000\_0000\_0000}} & \bitbox[lbr]{16}{}
+  \end{rightwordgroup}
+\end{bytefield}
+

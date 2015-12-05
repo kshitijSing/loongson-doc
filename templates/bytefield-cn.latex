@@ -1,0 +1,111 @@
+\documentclass[nofonts]{ctexbook}
+
+\usepackage[margin=0.1in]{geometry}
+\usepackage{fontspec}                             % font configuration
+\usepackage{xeCJK}                                % allow chinese font
+\setCJKmainfont{文泉驿微米黑}                     % default CJK font
+\setCJKsansfont{文泉驿点阵正黑}                   % default CJK sans font
+\setCJKmonofont{文泉驿等宽微米黑}                 % default CJK mono font
+\setmainfont{Droid Serif}                         % default main font
+\setromanfont{Droid Serif}                        % default romain font
+\setmonofont{Droid Sans Mono}                     % default mono font
+\usepackage[endianness=big]{bytefield}
+
+% 0. Common definitions for bytefield package
+\newlength{\bitwidth}
+\newlength{\byteheight}
+\newlength{\singlebitwidth}
+\newlength{\doublebitwidth}
+\setlength{\singlebitwidth}{.56cm}
+\setlength{\doublebitwidth}{.28cm}
+\newlength{\dftbyteht}
+\setlength{\dftbyteht}{.6cm}
+
+% 1. Definitions for cp0 register
+\newcommand{\field}[3]{\bitbox{#1}{\parbox{#1\bitwidth}{\centering \small #2 \\ {#3}}}}
+\newcommand{\nfour}[4]{\hfill #1 \hhfill #2 \hhfill #3 \hhfill #4 \hfill}
+\newcommand{\nfive}[5]{\hfill #1 \hhfill #2 \hhfill #3 \hhfill #4 \hhfill #5 \hfill}
+\newcommand{\nsix} [6]{\hfill #1 \hhfill #2 \hhfill #3 \hhfill #4 \hhfill #5 \hhfill #6 \hfill}
+\newcommand{\hhfill}{\hfill\hfill}
+\newcommand{\bw}[1]{\bitbox[]{#1}{\raisebox{.1cm}{\small #1}}}
+\newcommand{\bwII}[2]{\bitbox[]{#1}{\raisebox{.1cm}{\small #2}}}
+\newcommand{\bwup}[2]{\bitbox[]{#2}{\raisebox{#1}{\small #2}}}
+\newcommand{\bwupII}[3]{\bitbox[]{#2}{\raisebox{#1}{\small #3}}}
+\newcommand{\bhdr}[1]{\bitbox[]{1}{\tiny #1}}
+\newcommand{\bhdrdn}[2]{\bitbox[]{1}{\raisebox{-#1}{\tiny #2}}}
+\newcommand{\hdrbox}[1]{\bitbox[]{1}{\rotatebox{35}{\tiny #1}}}
+\newcommand{\rv}[1]{\rotatebox{90}{\small #1}}
+
+\newcommand{\setnarrowbyteheight}{\hspace{-0cm}\vspace{-.2cm}\setlength{\byteheight}{.4cm}}
+\newcommand{\setnormalbyteheight}{\hspace{-0cm}\setlength{\byteheight}{.5cm}}
+
+\newcommand{\defregister}[2]{
+  \newsavebox{#1}
+  \setlength{\byteheight}{\dftbyteht}
+  \savebox{#1}{{#2}}
+}
+
+% 2. Definitions for instructions
+\newcommand{\definstruction}[2]{
+  \newbox{#1}
+  \sbox{#1}{\hspace{-.3cm}\scalebox{.88}{#2}}
+}
+
+\catcode`\&=10
+\newcommand{\LSint}[1]{
+  \begin{bytefield}[bitwidth=0.55cm,bitheight=.9cm]{32}
+    \bitheader[b]{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+    \LSopcode & \bitbox{5}{rs} & \bitbox{5}{rt} & \bitbox{5}{rd} & \bitbox{5}{0} & #1 \\
+    \bw{6} & \bw{5} & \bw{5} & \bw{5} & \bw{5} & \bw{6}
+  \end{bytefield}
+}
+
+\newcommand{\LSfloat}[1]{
+  \begin{bytefield}[bitwidth=0.55cm,bitheight=.9cm]{32}
+    \bitheader[b]{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+    \LSopcode & \bitbox{5}{fmt} & \bitbox{5}{ft} & \bitbox{5}{fs} & \bitbox{5}{fd} & #1 \\
+    \bw{6} & \bw{5} & \bw{5} & \bw{5} & \bw{5} & \bw{6}
+  \end{bytefield}
+}
+
+\newcommand{\SIMD}[2]{
+  \begin{bytefield}[bitwidth=0.55cm,bitheight=.9cm]{32}
+    \bitheader[b]{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+    \COPtwo & \bitbox{5}{#1} & \bitbox{5}{ft} & \bitbox{5}{fs} & \bitbox{5}{fd} & #2 \\
+    \bw{6} & \bw{5} & \bw{5} & \bw{5} & \bw{5} & \bw{6}
+  \end{bytefield}
+}
+\catcode`\&=4
+
+\setlength{\bitwidth}{.55cm}  % default width for instruction set
+\newcommand{\offset}{\bitbox{16}{offset}}
+\newcommand{\COPzero}{\field{6}{COP0}{\nsix{0}{1}{0}{0}{0}{0}}}
+\newcommand{\COone}{\field{1}{CO}{1}}
+\newcommand{\DMT}{\field{5}{DMT}{\nsix{0}{0}{1}{0}{1}}}
+\newcommand{\DMF}{\field{5}{DMF}{\nsix{0}{0}{0}{0}{1}}}
+\newcommand{\MT}{\field{5}{MT}{\nsix{0}{0}{1}{0}{0}}}
+\newcommand{\MF}{\field{5}{MF}{\nsix{0}{0}{0}{0}{0}}}
+\newcommand{\TLBP}{\field{6}{TLBP}{\nsix{0}{0}{1}{0}{0}{0}}}
+\newcommand{\TLBR}{\field{6}{TLBR}{\nsix{0}{0}{0}{0}{0}{1}}}
+\newcommand{\TLBWI}{\field{6}{TLBWI}{\nsix{0}{0}{0}{0}{1}{0}}}
+\newcommand{\TLBWR}{\field{6}{TLBWR}{\nsix{0}{0}{0}{1}{1}{0}}}
+\newcommand{\ERET}{\field{6}{ERET}{\nsix{0}{1}{1}{0}{0}{0}}}
+\newcommand{\LSopcode}{\field{6}{SPECIAL2}{\nsix{0}{1}{1}{1}{0}{0}}}
+\newcommand{\COPtwo}{\field{6}{COP2}{\nsix{0}{1}{0}{0}{1}{0}}}
+\newcommand{\funcADD}{\field{6}{ADD}{\nsix{0}{0}{0}{0}{0}{0}}}
+\newcommand{\funcSUB}{\field{6}{SUB}{\nsix{0}{0}{0}{0}{0}{1}}}
+\newcommand{\funcMUL}{\field{6}{MUL}{\nsix{0}{0}{0}{0}{1}{0}}}
+\newcommand{\funcDIV}{\field{6}{DIV}{\nsix{0}{0}{0}{0}{1}{1}}}
+\newcommand{\funcROUNDL}{\field{6}{ROUND.L}{\nsix{0}{0}{1}{0}{0}{0}}}
+\newcommand{\funcTRUNCL}{\field{6}{TRUNC.L}{\nsix{0}{0}{1}{0}{0}{1}}}
+\newcommand{\funcCELLL}{\field{6}{CELL.L}{\nsix{0}{0}{1}{0}{1}{0}}}
+\newcommand{\funcFLOORL}{\field{6}{FLOOR.L}{\nsix{0}{0}{1}{0}{1}{1}}}
+\newcommand{\funcROUNDW}{\field{6}{ROUND.W}{\nsix{0}{0}{1}{1}{0}{0}}}
+\newcommand{\funcTRUNCW}{\field{6}{TRUNC.W}{\nsix{0}{0}{1}{1}{0}{1}}}
+\newcommand{\funcCELLW}{\field{6}{CELL.W}{\nsix{0}{0}{1}{1}{1}{0}}}
+\newcommand{\funcFLOORW}{\field{6}{FLOOR.W}{\nsix{0}{0}{1}{1}{1}{1}}}
+
+\begin{document}
+\pagestyle{empty}
+$body$
+\end{document}

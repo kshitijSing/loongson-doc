@@ -1,0 +1,10 @@
+\setlength{\bitwidth}{\singlebitwidth}
+\begin{bytefield}[bitwidth=\singlebitwidth,bitheight=.85cm]{32}
+  \bitheader[b]{31,12,11,7,6,3,2,1,0} \\
+  \bitbox{20}{0} & \field{5}{Enables}{\nfive{V}{Z}{O}{U}{I}} &
+  \bitbox{4}{0}  & \bitbox{1}{\rv{FS}} & \bitbox{2}{RM} \\
+  \setnormalbyteheight
+  \bw{20} & \bw{5} & \bw{4} & \bw{1} & \bw{2}
+\end{bytefield}
+\vspace{-.3cm}
+

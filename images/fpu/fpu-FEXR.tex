@@ -1,0 +1,13 @@
+\setlength{\bitwidth}{\singlebitwidth}
+\begin{bytefield}[bitwidth=\singlebitwidth,bitheight=.85cm]{32}
+  \bitheader[b]{31,18,17,12,11,7,6,2,1,0} \\
+  \bitbox{14}{0} &
+  \field{6}{Cause}{\nsix{E}{V}{Z}{O}{U}{I}} &
+  \bitbox{5}{0} &
+  \field{5}{Flags}{\nfive{V}{Z}{O}{U}{I}}
+  \bitbox{2}{0} \\
+  \setnormalbyteheight
+  \bw{14} & \bw{6} & \bw{5} & \bw{5} \bw{2}
+\end{bytefield}
+\vspace{-.3cm}
+

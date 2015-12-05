@@ -1,0 +1,28 @@
+\begin{bytefield}[bitwidth=\singlebitwidth,bitheight=.85cm]{32}
+  \bitheader[b]{31,28,27,24,23,22,21,20,19,18,17,16,15,8,7,0} \\
+  \bitbox[ltr]{4}{0} &
+  \bitbox[ltr]{4}{Impl} &
+  \bitbox[ltr]{1}{0} &
+  \bitbox[ltr]{1}{\rv{F64}} &
+  \bitbox[ltr]{1}{L} &
+  \bitbox[ltr]{1}{W} &
+  \bitbox[ltr]{1}{3D} &
+  \bitbox[ltr]{1}{PS} &
+  \bitbox[ltr]{1}{D} &
+  \bitbox[ltr]{1}{S} &
+  \bitbox[ltr]{8}{ProcessorID} &
+  \bitbox[ltr]{8}{Revision}
+  \setnarrowbyteheight \\
+  \bitbox[lb]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} &
+  \bitbox[lb]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} &
+  \bitbox[lb]{1}{0} & \bitbox[lb]{1}{1} & \bitbox[lb]{1}{1} & \bitbox[lb]{1}{1} &
+  \bitbox[lb]{1}{0} & \bitbox[lb]{1}{1} & \bitbox[lb]{1}{1} & \bitbox[lbr]{1}{1} &
+  \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} &
+  \bitbox[b]{1}{0} & \bitbox[b]{1}{1} & \bitbox[b]{1}{0} & \bitbox[br]{1}{1} &
+  \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} &
+  \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[b]{1}{0} & \bitbox[br]{1}{1} \\
+  \setnormalbyteheight
+  \bw{4} & \bw{4} & \bw{1} & \bw{1} & \bw{1} & \bw{1} &
+  \bw{1} & \bw{1} & \bw{1} & \bw{1} & \bw{8} & \bw{8}
+\end{bytefield}
+

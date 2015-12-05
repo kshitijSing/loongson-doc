@@ -1,0 +1,20 @@
+\setlength{\byteheight}{.75cm}
+\hspace{-.17cm}
+\begin{bytefield}[bitwidth=\singlebitwidth]{32}
+  \bitheader[b]{31,30,29,28,27,26,25,24,23,22,16,15,8,7,6,2,1,0} \\
+  \bitbox{1}{BP} & 
+  \bitbox{1}{TI} & 
+  \bitbox{2}{CE} &
+  \bitbox{1}{DC} & 
+  \bitbox{1}{\rv{PCI}} & 
+  \bitbox{2}{0} &
+  \bitbox{1}{IV} & 
+  \bitbox{7}{0} & 
+  \bitbox{8}{IP7-IP0} &
+  \bitbox{1}{0} & 
+  \bitbox{5}{ExcCode} & 
+  \bitbox{2}{0} \\
+  \bw{1} & \bw{1} & \bw{2} & \bw{1} & \bw{1} & \bw{2} & \bw{1} & \bw{7} &
+  \bw{8} & \bw{1} & \bw{5} & \bw{2}
+\end{bytefield}
+

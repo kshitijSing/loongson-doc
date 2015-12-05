@@ -1,0 +1,12 @@
+\setlength{\bitwidth}{\singlebitwidth}
+\begin{bytefield}[bitwidth=\singlebitwidth,bitheight=.85cm]{32}
+  \bitheader[b]{31,25,24,23,22,21,18,17,12,11,7,6,2,1,0} \\
+  \bitbox{7}{CC7-CC1} & \bitbox{1}{\rv{FS}} & \bitbox{1}{\rv{CC0}} &
+  \bitbox{1}{T} & \bitbox{4}{0} & \field{6}{Cause}{\nsix{E}{V}{Z}{O}{U}{I}} &
+  \field{5}{Enables}{\nfive{V}{Z}{O}{U}{I}} &
+  \field{5}{Flags}{\nfive{V}{Z}{O}{U}{I}} & \bitbox{2}{RM} \\
+  \setnormalbyteheight
+  \bw{7} & \bw{1} & \bw{1} & \bw{1} &
+  \bw{4} & \bw{6} & \bw{5} & \bw{5} & \bw{2}
+\end{bytefield}
+

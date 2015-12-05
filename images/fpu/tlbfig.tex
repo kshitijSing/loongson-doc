@@ -1,0 +1,51 @@
+\begin{bytefield}[bitwidth=\doublebitwidth,bitheight=.85cm]{64}
+  \hdrbox{255} &
+  \bitbox[b]{37}{} &
+  \hdrbox{217} &
+  \hdrbox{216} &
+  \bitbox[b]{10}{} &
+  \hdrbox{205} &
+  \hdrbox{204} &
+  \bitbox[b]{11}{} &
+  \hdrbox{192} \\
+  \bitbox{39}{0} & \bitbox{12}{Mask} & \bitbox{13}{0} \\
+  \bw{39} & \bw{12} & \bw{13} \\
+  \hdrbox{191} &
+  \hdrbox{190} &
+  \hdrbox{189} &
+  \bitbox[]{12}{} &
+  \hdrbox{168} &
+  \hdrbox{167} &
+  \bitbox[]{33}{} &
+  \hdrbox{141} &
+  \hdrbox{140} &
+  \hdrbox{139} &
+  \bitbox[]{2}{} &
+  \hdrbox{136} &
+  \hdrbox{135} &
+  \bitbox[]{6}{} &
+  \hdrbox{128} \\
+  \bitbox{2}{R} & \bitbox{14}{0} & \bitbox{35}{VPN2} &
+  \bitbox{1}{G} & \bitbox{4}{0} & \bitbox{8}{ASID} \\
+  \bw{2} & \bw{14} & \bw{35} & \bw{1} & \bw{4} & \bw{8} \\
+  \bitbox[b]{1}{\tiny 127} &
+  \bitbox[b]{20}{} &
+  \bitbox[b]{1}{\tiny 98} &
+  \bitbox[b]{1}{\tiny 97} &
+  \bitbox[b]{34}{} &
+  \bitbox[b]{1}{\tiny 71} &
+  \bitbox[b]{1}{\tiny 70} &
+  \bitbox[b]{1}{} &
+  \bitbox[b]{1}{\tiny 67} &
+  \bitbox[b]{1}{\tiny 66 } &
+  \bitbox[b]{1}{\tiny 65} &
+  \bitbox[b]{1}{\tiny 64} \\
+  \bitbox{22}{0} & \bitbox{36}{PFN} & \bitbox{3}{C} &
+  \bitbox{1}{D} & \bitbox{1}{V} & \bitbox{1}{0} \\
+  \bw{22} & \bw{36} & \bw{3} & \bw{1} & \bw{1} & \bw{1} \\
+  \bitheader[b]{63,42,41,6,5,3,2,1,0} \\
+  \bitbox{22}{0} & \bitbox{36}{PFN} & \bitbox{3}{C} &
+  \bitbox{1}{D} & \bitbox{1}{V} & \bitbox{1}{0} \\
+  \bw{22} & \bw{36} & \bw{3} & \bw{1} & \bw{1} & \bw{1}
+\end{bytefield}
+

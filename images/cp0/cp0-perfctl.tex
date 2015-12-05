@@ -1,0 +1,18 @@
+\setlength{\byteheight}{.8cm}
+\hspace{-.2cm}
+\begin{bytefield}[bitwidth=\singlebitwidth]{32}
+  \bitheader[b]{31,30,29,11,10,5,4,3,2,1,0} \\
+  \bitbox{1}{M} &
+  \bitbox{1}{W} &
+  \bitbox{19}{0} &
+  \bitbox{6}{Event} &
+  \bitbox{1}{\rv{IE}} &
+  \bitbox{1}{U} &
+  \bitbox{1}{S} &
+  \bitbox{1}{K} &
+  \bitbox{1}{\rv{EXL}} \\
+  \hspace{-1cm}\setlength{\byteheight}{.5cm}
+  \bw{1}  &  \bw{1}  & \bw{19} & \bw{6}  & \bw{1}  & \bw{1}  & \bw{1}  &
+  \bw{1}  & \bw{1}
+\end{bytefield}
+

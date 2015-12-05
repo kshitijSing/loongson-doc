@@ -1,0 +1,20 @@
+\begin{bytefield}[bitwidth=\singlebitwidth,bitheight=1.3cm]{32}
+  \bhdrdn{1.1cm}{63} &
+  \bitbox[b]{22}{} &
+  \bhdrdn{1.1cm}{8} &
+  \bhdrdn{1.1cm}{7} &
+  \bhdrdn{1.1cm}{6} &
+  \bhdrdn{1.1cm}{5} &
+  \bhdrdn{1.1cm}{4} &
+  \bhdrdn{1.1cm}{3} &
+  \bhdrdn{1.1cm}{2} &
+  \bhdrdn{1.1cm}{1} &
+  \bhdrdn{1.1cm}{0} \\
+  \bitbox{24}{0} & \bitbox{1}{\rv{\small W-CAC}} & \bitbox{1}{\rv{\small W-ISS}} &
+  \bitbox{1}{\rv{\small S-ISS}} & \bitbox{1}{\rv{\small S-FET}} & \bitbox{1}{0} &
+  \bitbox{1}{\rv{\small ITLB}} & \bitbox{1}{\rv{\small BTB}} & \bitbox{1}{\rv{\small RAS}} \\
+  \bytefieldsetup{bitheight=2em}
+  \bwII{24}{56} & \bw{1} & \bw{1} & \bw{1} & \bw{1} &
+  \bw{1} & \bw{1} & \bw{1} & \bw{1}
+\end{bytefield}
+
