@@ -34,7 +34,7 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{fancyvrb}
 \usepackage{changepage}
 
-%\usepackage{graphicx}
+\usepackage{graphicx}
 \newlength{\bitwidth}
 \newlength{\byteheight}
 \DeclareGraphicsExtensions{.pdf,.eps}
@@ -82,6 +82,32 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
         指令 OpCode & \multicolumn{1}{c|}{描述} & GS464V 实现
         \tabularnewline\hhline \endfirsthead
 }{\hline \end{longtable}}
+
+% Definitions for Chapter 3: overlay an image over a table
+\makeatletter
+\newenvironment{floattable}{\@float{table}[htbp]\centering}{\end@float}
+\makeatother
+\newcommand{\regdesc}[1]{{\small #1: \hfill \mbox{}}}
+\newenvironment{regtabular}
+{ \begin{tabular}{|>{\centering}p{2cm}|p{12.8cm}|} \hline
+    位域  & \cellalign{c|}{描述} \tabularnewline \hhline
+}{  \\ \hline
+  \end{tabular}
+}
+
+\newenvironment{reglongtable}[2]{
+  \begin{longtable}{|>{\centering}p{2cm}|p{12.8cm}|}
+    \caption{#2} \tabularnewline
+    \multicolumn{2}{@{}c@{}}{\includegraphics[scale=0.875]{#1}}  \tabularnewline
+    \hline 位域 & \cellalign{c|}{描述} \tabularnewline \hhline \endfirsthead
+    \caption{#2 （续）} \tabularnewline
+    \hline 位域 & \cellalign{c|}{描述} \tabularnewline \hhline \endhead
+    \hline \multicolumn{2}{r}{\tiny 未完待续} \endfoot
+    \hline \endlastfoot
+}{
+    \tabularnewline \hline
+  \end{longtable}
+}
 
 \renewcommand*{\maketitle}{%
     \begin{titlepage}

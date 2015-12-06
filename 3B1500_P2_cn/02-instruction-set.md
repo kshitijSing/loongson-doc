@@ -6,8 +6,9 @@
 指令格式，如图 2-1 所示，立即数指令（I-型），跳转指令（J-型）和寄存器指令（R-型
 ）。
 
-![龙芯处理器指令格式](../images/instruction-format-cn.pdf)
-\\ \noindent 其中各位域解释为：
+![龙芯处理器指令格式](../images/ins-format-cn.pdf)
+
+\noindent 其中各位域解释为：
 \begin{center}
   \begin{tabular}{ll@{\hspace{1cm}}ll@{\hspace{1cm}}}
     op：        & 6 位操作码;         & target：& 26 位跳转目标地址；    \\ 
