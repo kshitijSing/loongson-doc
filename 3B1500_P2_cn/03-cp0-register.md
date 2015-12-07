@@ -163,7 +163,7 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
 的； 寄存器的其他位保留，必须按 0 写入，读时返回 0。
 
 \begin{floattable}
-  \includegraphics[scale=0.9]{../images/cp0-pagemask.pdf} \\
+  \includegraphics[scale=0.875]{../images/cp0-pagemask.pdf} \\
   \begin{tabular}{|c*{12}{|>{\hspace{.170cm}}c<{\hspace{.170cm}}}|} \hline
     & \multicolumn{12}{c|}{Mask 位} \\ \cline{2-13}
     页面大小 & 24 & 23 & 22 & 21 & 20 & 19 & 18 & 17 & 15 & 16 & 14 & 13 \\ \hhline
@@ -183,7 +183,7 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
 页面地址在更高的位上对齐， 也就是说，更大的页面。 由上表可知， GS464 核支持的最
 小页面为 4K， 最大为 16MB， 每级之间以 4 的倍数增加。
 
-### PageGrain 寄存器（5）###
+### PageGrain 寄存器（5）
 \label{subsec:pagegrain}
 
 PageGrain 寄存器是一个 32 位可读写的寄存器，龙芯 GS464 只定义了这个寄存器的 第 29
@@ -216,7 +216,7 @@ Wired 寄存器是一个 32 位可读写寄存器，该寄存器的值指定了 
 表项。 Wired 寄存器在系统复位时置 0； 写该寄存器的同时，Random 寄存器的值也会被
 置为其上限值（参阅前面 Random 寄存器的说明）。 
 
-![Wired 寄存器示意图](../images/wired-illustration.pdf)  \label{fig:wired}
+![Wired 寄存器示意图](../images/wired-illustration.pdf)
 
 ### HWREna 寄存器（7）
 
@@ -227,7 +227,7 @@ HWREna寄存器的格式，及 Mask 域对应的硬件寄存器。 寄存器的�
 写入，读时返回 0。
 
 \begin{floattable}
-  \includegraphics[scale=0.9]{../images/cp0-hwrena} \\
+  \includegraphics[scale=0.875]{../images/cp0-hwrena} \\
   \begin{tabular}{*{4}{|>{\hspace{.3cm}}c<{\hspace{.3cm}}}|
                   >{\hspace{.4cm}}c<{\hspace{.5cm}}|p{7cm}|} \hline
      \cmcolvb{4}{Mask 位} &              & \\ \cline{1-4}
@@ -248,9 +248,12 @@ BadVAddr 寄存器记录下导致 TLB 或寻址错误例外的虚拟地址， �
 不变。在一般运行情况下，该寄存器的值为**未定义**。 表 \ref{tab:cp0-badvaddr}
 给出了 BadVAddr 寄存器的格式。
 
-![CP0: BadVAddr 寄存器](../images/cp0-badvaddr.pdf)\label{tab:cp0-badvaddr}
+\begin{reglongtable}{cp0-badvaddr}{CP0: BadVAddr 寄存器}
+  BadVAddr & Cache 错误例外时导致 TLB 或寻址错误例外的虚拟地址
+  \label{tab:cp0-badvaddr}
+\end{reglongtable}
 
-### Count、Compare 寄存器（9，11）}
+### Count、Compare 寄存器（9，11）
 
 Count 和 Compare 寄存器是一对 32 位可读写寄存器： Count
 寄存器是一个实时的计数器， 它的值每两个 CPU 时钟周期加 1； 而 Compare
@@ -264,9 +267,9 @@ IP[7] 位置位。 当 Compare 寄存器被再次重写时， Cause 寄存器的
 
 \begin{floattable}
   \regdesc{Count 寄存器} \\[.2cm] 
-  \includegraphics[scale=0.9]{../images/cp0-count} \\[-.2cm]
+  \includegraphics[scale=0.875]{../images/cp0-count} \\[-.2cm]
   \regdesc{Compare 寄存器} \\[.2cm]
-  \includegraphics[scale=0.9]{../images/cp0-compare}
+  \includegraphics[scale=0.875]{../images/cp0-compare}
   \caption{CP0: Count 和 Compare 寄存器}
   \label{tab:cp0-cntcmp}
 \end{floattable}
@@ -437,7 +440,7 @@ EPC（Exception Program Counter，例外程序计数器）寄存器是一个 64 
 寄存器的格式。
 
 \begin{floattable}
-  \includegraphics[scale=0.9]{../images/cp0-epc}
+  \includegraphics[scale=0.875]{../images/cp0-epc}
   \caption{CP0: EPC 寄存器}
   \label{tab:cp0-epc}
 \end{floattable}
@@ -886,9 +889,9 @@ DataLo 和 DataHi 是一对 64 位只读寄存器，用于 Cache 数据队列交
 
 \begin{floattable}
   \regdesc{DataLo} \\[.1cm]
-  \includegraphics[scale=0.9]{../images/cp0-datalohi} \\[-.3cm]
+  \includegraphics[scale=0.875]{../images/cp0-datalohi} \\[-.3cm]
   \regdesc{DataHi} \\[.1cm]
-  \includegraphics[scale=0.9]{../images/cp0-datalohi}
+  \includegraphics[scale=0.875]{../images/cp0-datalohi}
   \caption{CP0: DataLo、 DataHi 寄存器}
   \label{tab:cp0-DataLoHi}
 \end{floattable}

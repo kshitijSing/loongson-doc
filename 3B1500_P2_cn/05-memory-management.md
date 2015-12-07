@@ -1,8 +1,8 @@
 内存管理
 ========
 
-龙芯 GS464 处理器核提供了一个功能完备的内存管理单元（MMU），它利用片上的 TLB 实现虚
-拟地址到物理地址的转换。
+龙芯 GS464 处理器核提供了一个功能完备的内存管理单元（MMU），它利用片上的 TLB 实
+现虚拟地址到物理地址的转换。
 
 本章节描述了处理器核的虚拟地址和物理地址空间，虚拟地址到物理地址的转换，TLB 在实
 现这 些转换时的操作，Cache，以及为 TLB 提供软件接口的系统控制协处理器（CP0）寄存
@@ -73,8 +73,8 @@ TLB，因此多项命 中的探测机制是不必要的。但是多项命中的�
 处理器模式
 ----------
 
-龙芯 GS464 处理器核有 3 种工作模式，但是与其它 MIPS 处理器不同，龙芯 GS464 处理器核只
-支持一种地址模式，一种指令集模式和一种尾端模式。
+龙芯 GS464 处理器核有 3 种工作模式，但是与其它 MIPS 处理器不同，龙芯 GS464 处理
+器核只支持一种地址模式，一种指令集模式和一种尾端模式。
 
 
 ### 处理器工作模式
@@ -95,14 +95,11 @@ TLB，因此多项命 中的探测机制是不必要的。但是多项命中的�
          KSU           ERL           EXL       描述
          4:3           2             1
          10            0             0         用户模式
-
          01            0             0         管理模式
-
          00            0             0         内核模式
-
                        0             1         例外级别
-
                        1                       错误级别
+
 ### 地址模式
 
 龙芯 GS464 处理器核只支持 64 位的虚拟地址模式，并且硬件保证兼容 32 位的地址模式。
@@ -140,35 +137,28 @@ TLB，因此多项命 中的探测机制是不必要的。但是多项命中的�
 （VPN）等于某个 TLB 表项的 VPN 域，并且如果下面两种情况中的任何一种成立：
 
 * TLB 表项的 Global 位为 1
-
 * 两个虚拟地址的 ASID 域一样。
 
-TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效异常，以使软件能够根据内存
-中存放的页表重新填写 TLB。
+TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效异常，以使软件能够根据
+内存中存放的页表重新填写 TLB。如果 TLB 命中了，则物理页号将从 TLB 中取出，并与页
+内偏移量 Offset 合并，形成物理地址。页内偏移量 Offset 在虚实地址转换的过程中不经
+过 TLB。
 
-如果 TLB 命中了，则物理页号将从 TLB 中取出，并与页内偏移量 Offset 合并，形成物理地址。
-页内偏移量 Offset 在虚实地址转换的过程中不经过 TLB。
+虚地址
+（1）用虚页号（VPN）表示的虚拟地址（VA）               ASID         VPN      Offset
 
-                                                           虚地址
-      （1）用虚页号（VPN）表示的虚拟地址（VA）               ASID         VPN      Offset
+与 TLB 中的对应域作比较；
 
-      与 TLB 中的对应域作比较；
-
-
-
-      （2）如果有一致的情况，则表示物理地址               G    ASID        VPN
+（2）如果有一致的情况，则表示物理地址               G    ASID        VPN
                                                                   TLB
       （PA）高位的页框号（PFN）从 TLB 中输
                                                                   Entry
       出；                                            PFN
-
-
       （3）偏移量 Offset 不经过 TLB，而是和   TLB
       PFN 合并形成物理地址
-
                                                    PFN            Offset
                                                            物理地址
-                           图 5-1 虚实地址转换概览
+图 5-1 虚实地址转换概览
 
 图 5-1 所示为虚实地址转换，虚拟地址被一个 8 位的地址空间标识符（ASID）扩展了，该
 措施 降低了上下文切换时进行 TLB 刷新的频率。ASID 存放在 CP0 EntryHi 寄存器中。
@@ -191,20 +181,14 @@ Global 位（G）在 相应的 TLB 表项中。
       于选择用户、管理和                       47                                                    0
       核心地址空间
                                                     PFN                        Offset
-
-
                             TLB 完成虚         TLB                                  Offset 直接传
                             实转换                                                  递给物理内存
-
-
            71            64 6362 61       48 47            24 23                        0
                 ASID                              VPN                   Offset
                     8                14               24                  24
                                             24bits = 16M pages
-
                                 虚地址空间包含 16M 个 16-Mbyte 页
-
-                                           图 5-2 64 位模式虚拟地址转换
+图 5-2 64 位模式虚拟地址转换
 
 ### 用户地址空间
 
@@ -216,21 +200,17 @@ Global 位（G）在 相应的 TLB 表项中。
 XUSEG 段的映射处理方式都一样，并控制是否可以访问 Cache。 当处理器的 Status 寄存
 器的值同时满足三个条件：KSU=102、EXL=0、ERL=0 时，处理器工作在 用户模式下。
 
-                    0xFFFF FFFF FFFF FFFF
-
-                                             Address
-                                              Error
-
-                     0x0001 0000 0000 0000
-                     0x0000 FFFF FFFF FFFF
-                                             256 TB
-                                                          XUSEG
-                                             mapped
-
-                     0x0000 0000 0000 0000
+0xFFFF FFFF FFFF FFFF
+                         Address
+                          Error
+ 0x0001 0000 0000 0000
+ 0x0000 FFFF FFFF FFFF
+                         256 TB
+                                      XUSEG
+                         mapped
+ 0x0000 0000 0000 0000
 
 图 5-3 用户模式下用户虚拟地址空间概况
-
 
 所有可用的用户模式下虚拟地址的第 63 位到第 48 位必须都为 0，访问任何一个第 63 位
 到第 40 位不全为 0 的地址都将导致地址错误异常，在 XUSEG 地址段的 TLB 缺失使用
@@ -247,241 +227,126 @@ XTLB 重填向量。龙 芯 GS464 处理器核的 XTLB 重填向量与 32 位模
 个条件：KSU=012、EXL=0、ERL=0 时，处理器工作在 管理模式下。图 5-4 显示了管理模式
 下的用户和管理地址空间概况。
 
-                    0xFFFF FFFF FFFF FFFF
-                                              Address Error
-                     0xFFFF FFFF E000 0000
-                    0xFFFF FFFF DFFF FFFF
-                                              0.5GB Mapped       CSSEG
-                    0xFFFF FFFF C000 0000
-                    0xFFFF FFFF BFFF FFFF
-                                              Address Error
-                      0x4001 0000 0000 0000
-                     0x4000 FFFF FFFF FFFF
-                                              256TB Mapped       XSSEG
-                      0x4000 0000 0000 0000
-                    0x3FFF FFFF FFFF FFFF
-                                              Address Error
-                      0x0001 0000 0000 0000
-                     0x0000 FFFF FFFF FFFF
-                                              256TB Mapped       XSUSEG
-                      0x0000 0000 0000 0000
-
-                             图 5-4 管理模式下用户空间和管理空间
+0xFFFF FFFF FFFF FFFF
+                          Address Error
+ 0xFFFF FFFF E000 0000
+0xFFFF FFFF DFFF FFFF
+                          0.5GB Mapped       CSSEG
+0xFFFF FFFF C000 0000
+0xFFFF FFFF BFFF FFFF
+                          Address Error
+  0x4001 0000 0000 0000
+ 0x4000 FFFF FFFF FFFF
+                          256TB Mapped       XSSEG
+  0x4000 0000 0000 0000
+0x3FFF FFFF FFFF FFFF
+                          Address Error
+  0x0001 0000 0000 0000
+ 0x0000 FFFF FFFF FFFF
+                          256TB Mapped       XSUSEG
+  0x0000 0000 0000 0000
+图 5-4 管理模式下用户空间和管理空间
 
       64 位管理模式，用户地址空间（XSUSEG）
 
-     在管理模式下，当访问用户地址空间并且 64 位地址的最高两位（第 63 和第 62 位）为 002 时，
-程序使用一个名字为 XSUSEG 的虚拟地址空间，XSUSEG 覆盖了当前用户地址空间的全部 248（1T）
-字节。此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系统中唯一的虚拟地址。此地址空间从
-0x0000 0000 0000 0000 开始，到 0x0000 FFFF FFFF FFFF 结束。
+在管理模式下，当访问用户地址空间并且 64 位地址的最高两位（第 63 和第 62 位）为
+002 时，程序使用一个名字为 XSUSEG 的虚拟地址空间，XSUSEG 覆盖了当前用户地址空间
+的全部 248（1T）字节。此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系统中唯
+一的虚拟地址。此地址空间从 0x0000 0000 0000 0000 开始，到 0x0000 FFFF FFFF FFFF
+结束。
+
       64 位管理模式，当前管理地址空间（XSSEG）
 
-     在管理模式下，当 64 位地址的最高两位（第 63 和第 62 位）为 012 时，程序使用一个名字为 XSSEG
-的当前管理虚拟地址空间。此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系统中唯一的虚拟
-地址。此地址空间从 0x4000 0000 0000 0000 开始，到 0x4000 FFFF FFFF FFFF 结束。
+在管理模式下，当 64 位地址的最高两位（第 63 和第 62 位）为 012 时，程序使用一个
+名字为 XSSEG 的当前管理虚拟地址空间。此时虚拟地址被扩展，加上 8 位的 ASID 域，形
+成一个系统中唯一的虚拟地址。此地址空间从 0x4000 0000 0000 0000 开始，到 0x4000
+FFFF FFFF FFFF 结束。
+
       64 位管理模式，独立管理地址空间（CSSEG）
 
-     在管理模式下，当 64 位地址的最高两位（第 63 和第 62 位）为 112 时，程序使用一个名字为 CSSEG
-的独立管理虚拟地址空间。在 CSSEG 中的寻址与 32 位模式下在 SSEG 中的寻址是兼容的。此时虚拟
-地址被扩展，加上 8 位的 ASID 域，形成一个系统中唯一的虚拟地址。此地址空间从 0xFFFF FFFF C000
-0000 开始，到 0xFFFF FFFF DFFF FFFF 结束。
+在管理模式下，当 64 位地址的最高两位（第 63 和第 62 位）为 112 时，程序使用一个
+名字为 CSSEG 的独立管理虚拟地址空间。在 CSSEG 中的寻址与 32 位模式下在 SSEG 中的
+寻址是兼容的。此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系统中唯一的虚拟
+地址。此地址空间从 0xFFFF FFFF C000 0000 开始，到 0xFFFF FFFF DFFF FFFF 结束。
 
-5.4.6.       内核地址空间
-     当处理器的 Status 寄存器的值满足下述条件：KSU=002 或 EXL=1 或 ERL=1 时，处理器工作在内
+### 内核地址空间
+
+当处理器的 Status 寄存器的值满足下述条件：KSU=002 或 EXL=1 或 ERL=1 时，处理器工作在内
 核模式下。
-     每当处理器检测到一个例外时便进入内核模式，并一直保持到执行例外返回指令（ERET）。ERET
+
+每当处理器检测到一个例外时便进入内核模式，并一直保持到执行例外返回指令（ERET）。ERET
 指令将处理器恢复到例外发生前所在的模式。
-     根据虚拟地址高位的不同，内核模式虚拟地址空间被分为不同的区域，如图 5-5 所示。
+
+根据虚拟地址高位的不同，内核模式虚拟地址空间被分为不同的区域，如图 5-5 所示。
       64 位内核模式，用户地址空间（XKUSEG）
 
-     在内核模式下，当访问用户空间并且 64 位虚拟地址的最高两位为 002 时，程序使用一个名字为
+在内核模式下，当访问用户空间并且 64 位虚拟地址的最高两位为 002 时，程序使用一个名字为
 XKUSEG 的虚拟地址空间，XKUSEG 覆盖了当前用户地址空间。此时虚拟地址被扩展，加上 8 位的
 ASID 域，形成一个系统中唯一的虚拟地址。
+
       64 位内核模式，当前管理地址空间（XKSSEG）
 
-     在内核模式下，当访问管理空间并且 64 位地址的最高两位为 012 时，程序使用一个名字为
+在内核模式下，当访问管理空间并且 64 位地址的最高两位为 012 时，程序使用一个名字为
 XKSSEG 的虚拟地址空间，XKSSEG 是当前管理虚拟地址空间。此时虚拟地址被扩展，加上 8 位的
 ASID 域，形成一个系统中唯一的虚拟地址。
+
       64 位内核模式，物理地址空间（XKPHY）
 
-     在内核模式下，当 64 位地址的最高两位为 102 时，程序使用一个名字为 XKPHY 的虚拟地址空间，
+在内核模式下，当 64 位地址的最高两位为 102 时，程序使用一个名字为 XKPHY 的虚拟地址空间，
 XKPHY 是八个 248 字节的内核物理地址空间的集合。访问任何地址第 58 到第 48 位不为 0 的存储单
 元都将引起地址错误。对 XKPHY 的访问不经过 TLB 进行地址变换，而是将虚拟地址的第 47 到第 0
 位作为物理地址。虚拟地址的第 61 到第 59 位控制是否通过 Cache 和 Cache 的一致性属性，与表 3-2
 描述的 TLB 页的 C 位值含义相同。
+
       64 位内核模式，内核地址空间（XKSEG）
 
      在内核模式下，当 64 位地址的最高两位为 112 时，程序使用以下两个地址空间之一：
-            内核虚拟地址空间 XKSEG，此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系
+           内核虚拟地址空间 XKSEG，此时虚拟地址被扩展，加上 8 位的 ASID 域，形成一个系
      统中唯一的虚拟地址；
 
-            四个 32 位内核兼容地址空间，下一小节详述。
+           四个 32 位内核兼容地址空间，下一小节详述。
 
       64 位内核模式，兼容地址空间（CKSEG1：0，CKSSEG，CKSEG3）
 
-     在内核模式下，64 位地址的最高两位为 112，并且虚拟地址的第 61 到第 31 位所有位都等于 1 时，
+在内核模式下，64 位地址的最高两位为 112，并且虚拟地址的第 61 到第 31 位所有位都等于 1 时，
 程序使用的以下四个 512M 字节地址空间中的一个，具体哪一个根据第 30、29 位决定：
 
-                    0xFFFF FFFF FFFF FFFF
-                                              0.5GB         CKSEG3
-                                              Mapped
-                    0xFFFF FFFF E000 0000
+图 5-5 内核模式下的用户、管理、内核地址空间概况
 
-                                              0.5GB         CKSSEG
-                                              Mapped
-                    0xFFFF FFFF C000 0000
+CKSEG0：该 64 位虚拟地址空间不经过 TLB，与 32 位模式下的 KSEG0 兼容。Config 寄存
+器的 K0 域控制是否通过 Cache 和 Cache 的一致性属性，
 
-                                               0.5GB        CKSEG1
-                                             Unmapped
-                                              Cached
-                    0xFFFF FFFF A000 0000
+CKSEG1：该 64 位虚拟地址空间不经过 TLB 也不经过 Cache，与 32 位模式下的 KSEG1 兼
+容。
 
-                                               0.5GB        CKSEG0
-                                             Unmapped
-                    0xFFFF FFFF 8000 0000     Cached
+CKSSEG：该 64 位虚拟地址空间为当前管理虚拟地址空间，与 32 位模式下的 KSSEG 兼容
+。
+
+CKSEG3：该 64 位虚拟地址空间为内核虚拟地址空间，与 32 位模式下的 KSEG3 兼容。
 
 
-                                             Address
-                                              Error
-                     0xC000 00FF 8000 0000
+系统控制协处理器
+----------------
 
-                                              Mapped         XKSEG
+系统控制协处理器(CP0)负责支持存储管理，虚实地址转换，例外处理，以及一些特权操作
+。龙芯 GS464 处理器核有 26 个 CP0 寄存器和一个 64 项的 TLB，每个寄存器都有唯一的
+寄存器号。下面的章节将给出与内存管理相关的寄存器的概述。
 
-                     0xC000 0000 0000 0000
+### TLB 表项的格式
 
-                                             Unmapped        XKPHY
+图 5-6 表示 TLB 表项的格式，项中的每个域在 EntryHi，EntryLo0，EntryLo1，PageMask
+寄存器中都有相应的域。
 
-                     0x8000 0000 0000 0000
-
-                                             Address
-                                              Error
-                     0x4001 0000 0000 0000
-
-                                              256TB         XKSSEG
-                                              Mapped
-                     0x4000 0000 0000 0000
-
-                                             Address
-                                              Error
-                     0x0001 0000 0000 0000
-
-                                              256TB         XKUSEG
-                                              Mapped
-                     0x0000 0000 0000 0000
-
-
-
-
-                    图 5-5 内核模式下的用户、管理、内核地址空间概况
-
-           CKSEG0：该 64 位虚拟地址空间不经过 TLB，与 32 位模式下的 KSEG0 兼容。Config
-     寄存器的 K0 域控制是否通过 Cache 和 Cache 的一致性属性，
-
-           CKSEG1：该 64 位虚拟地址空间不经过 TLB 也不经过 Cache，与 32 位模式下的 KSEG1
-     兼容。
-
-           CKSSEG：该 64 位虚拟地址空间为当前管理虚拟地址空间，与 32 位模式下的 KSSEG
-75
-                                                                                                     龙芯 3B 处理器用户手册
-
-
-     兼容。
-
-                 CKSEG3：该 64 位虚拟地址空间为内核虚拟地址空间，与 32 位模式下的 KSEG3 兼容。
-
-
-5.5. 系统控制协处理器
-     系统控制协处理器(CP0)负责支持存储管理，虚实地址转换，例外处理，以及一些特权操作。龙
-芯 GS464 处理器核有 26 个 CP0 寄存器和一个 64 项的 TLB，每个寄存器都有唯一的寄存器号。下面
-的章节将给出与内存管理相关的寄存器的概述。
-
-5.5.1.            TLB 表项的格式
-     图 5-6 表示 TLB 表项的格式，项中的每个域在 EntryHi，EntryLo0，EntryLo1，PageMask 寄存器
-中都有相应的域。
-     EntryHi，EntryLo0，EntryLo1，以及 PageMask 寄存器和 TLB 项的格式类似。唯一的不同就是
-TLB 项有一个 Global 域（G 位），EntryHi 寄存器中没有，而作为保留域出现。图 5-7、图 5-8 和图 5-9
+EntryHi，EntryLo0，EntryLo1，以及 PageMask 寄存器和 TLB 项的格式类似。唯一的不同
+就是 TLB 项有一个 Global 域（G 位），EntryHi 寄存器中没有，而作为保留域出现。图
+5-7、图 5-8 和图 5-9
 分别表示了在图 5-6 TLB 项的各个域。
 
-             255                                                     217 216                         205 204                 192
+图 5-7 PageMask 寄存器
 
-                                            0                                          Mask                          0
+图 5-8 EntryHi 寄存器
 
-                                        39                                                  12                   13
-
-             191 190 189                     176 175                                141 140 139 136 135                      128
-
-                      R             0                           VPN2                        G    0               ASID
-
-                  2                14                           35                          1    4               8
-
-             127                                106 105                                                    70 69 67 66 65 64
-
-                               0                                               PFN                               C       D   V       0
-
-                              21                                               36                                3       1 1 1
-
-             63                                  42 41                                                      65        3 2      1 0
-
-                               0                                               PFN                               C       D   V       0
-
-                              21                                               36                                3       1 1 1
-
-
-
-                                                           图 5-6 TLB 表项
-
-
-             31                     25 24                                           13 12                                        0
-
-                          0                                Mask                                         0
-
-                          7                                12                                         13
-
-              Mask……页比较掩码
-
-                  0………..保留。写入必须是 0，读时返回 0。
-
-
-
-                                                         图 5-7 PageMask 寄存器
-
-
-
-76
-                                                                      龙芯 3B 处理器用户手册
-
-           63 62 61              48 47                        13 12            87                  0
-
-            R             Fill                 VPN2                   0                 ASID
-
-            2             14                    35                    5                    8
-
-      VPN2….虚页号除 2（映射 2 个页）。
-
-      ASID….地址空间 ID 域。一个 8 位域，用于让多个进程共享 TLB；对于与其它进程同样的虚页号，每个
-     进程有不同的映射。
-
-      R………区域。（00->用户，01->管理，11->核心）用户匹配虚地址 63:62 位。
-
-      Fill…….保留。读为 0，写忽略。
-
-      0………保留。写入必须是 0，读时返回 0。
-
-
-
-
-                                         图 5-8 EntryHi 寄存器
-
-
-
-
-      63              42 41                                               65       3 2 1       0
-                0                              PFN                             C    D    V     G
-            22                                  36                             3    1    1     1
-      63              42 41                                               65       3 2 1       0
-                0                              PFN                             C    D    V     G
-            22                                  36                             3    1    1     1
-       PFN…页框号；物理地址的高位。
+PFN…页框号；物理地址的高位。
        C…….指定 TLB 页的一致性属性；见表 3-2。
        D…….脏位。如该位值设置为 1，则对应的页标记为脏，因而可写。该位实际上是写保护位，软件可用
      此位保护数据的改动。
@@ -489,42 +354,31 @@ TLB 项有一个 Global 域（G 位），EntryHi 寄存器中没有，而作为�
        G…….全局位。如果 Lo0 和 Lo1 中对应的位都设置为 1，则在 TLB 查找时处理器忽略 ASID。
        0……..保留。写入必须是 0，读时返回 0。
 
-
-
-
-                                   图 5-9 EntryLo0 和 EntryLo1 寄存器
+图 5-9 EntryLo0 和 EntryLo1 寄存器
 
 TLB 页一致性属性位（C）指定访问该页时是否需要通过 Cache，如果通过 Cache，则需要
 选择 Cache 的一致性属性。表 5-2 表示 C 位对应的 Cache 一致性属性。
 
-                             表 5-2 TLB 页的 C 位的值
-                C(5:3) 值                Cache一致性属性
+表 5-2 TLB 页的 C 位的值
 
+C(5:3) 值                Cache一致性属性
                 0               保留
-
                 1               保留
-
                 2               非高速缓存（Uncached）
-
                 3               非一致性高速缓存（Cacheable Noncoherent）
-
                 4               保留
-
                 5               保留
-
                 6               保留
-
                 7               非高速缓存加速（Uncached Accelerated）
 
 
+### CP0 寄存器
 
+表 5-3 列出了与内存管理相关的 CP0 寄存器，第 3 章对 CP0 寄存器进行了完备的描述。
 
-5.5.2.    CP0 寄存器
-     表 5-3 列出了与内存管理相关的 CP0 寄存器，第 3 章对 CP0 寄存器进行了完备的描述。
+表 5-3 内存管理相关的 CP0 寄存器
 
-                           表 5-3 内存管理相关的 CP0 寄存器
-               寄存器号                    寄存器名
-
+寄存器号                    寄存器名
                0                       Index
                1                       Random
                2                       EntryLo0
@@ -534,75 +388,21 @@ TLB 页一致性属性位（C）指定访问该页时是否需要通过 Cache，
                10                      EntryHi
                15                      PRID
                16                      Config
-
                17                      LLAddr
                28                      TagLo
                29                      TagHi
 
 
-5.5.3.    虚拟地址到物理地址的转换过程
-     在虚地址到物理地址转换时，CPU 将虚地址的 8 位 ASID（如果全局位 G 没有设置）和 TLB 项
-的 ASID 进行比较，看是否匹配。在比较 ASID 的同时还需要根据页掩码（PageMask）的值将虚地址
-的高 15~27 位和 TLB 项的虚页号进行匹配比较。如果有 TLB 项匹配，从匹配的 TLB 项中取出物理地
-址和访问控制位（C，D 和 V）。对一个有效的地址转换来说，匹配的 TLB 项的 V 位必须设置，但是
-在匹配比较时不考虑 V 位的值。图 5-10 表示了 TLB 地址转换过程。
+### 虚拟地址到物理地址的转换过程
 
-                                    虚地址(输入)
+在虚地址到物理地址转换时，CPU 将虚地址的 8 位 ASID（如果全局位 G 没有设置）和
+TLB 项的 ASID 进行比较，看是否匹配。在比较 ASID 的同时还需要根据页掩码（PageMask
+）的值将虚地址的高 15~27 位和 TLB 项的虚页号进行匹配比较。如果有 TLB 项匹配，从
+匹配的 TLB 项中取出物理地址和访问控制位（C，D 和 V）。对一个有效的地址转换来说，
+匹配的 TLB 项的 V 位必须设置，但是在匹配比较时不考虑 V 位的值。图 5-10 表示了
+TLB 地址转换过程。
 
-                                     VPN 和
-                                      ASID
-
-
-             否                  是                否             否                     否
-     地址错           有 效 地             用 户             管 理                 有效地             地址错
-      误            址？                态？              态？                  址？               误
-     例外                                                                                  例外
-                                                         是                   是
-
-                                             否                                       是
-                                    地址错              有效地                 非映射             非映射
-                                                     址？                  地址？
-                                     误                                                   访问
-                                     例外
-                                                         是                   否
-
-
-
-                    VPN 匹       否
-                     配？
-
-                         是
-
-                    G=1?        否         ASID 匹     否
-                   （全局）                    配？
-                                      是                                  XTLB /TLB
-                   是                                                       Refill
-
-                    V=1?        否                                          例外
-                   （有效）
-
-                       是                                        TLB
-                                                               Invalid
-
-                    D=1?        否          写？        是          例外
-                    （脏）
-                                      否
-
-                                                         TLB
-         否                      是                        Mod
-                    C=0112?
-                   (cacheable                            例外
-                  Noncoherent
-                        )
-     不通过                             访问
-     Cache                           Cache
-                 物理地址（输出）
-
-
-
-
-                                       图 5-10 TLB 地址转换
-
+图 5-10 TLB 地址转换
 
 ### TLB 失效
 
@@ -613,36 +413,32 @@ TLB 页一致性属性位（C）指定访问该页时是否需要通过 Cache，
 ### TLB 指令
 
 表 5-4 列出了所有的 CPU 所提供的用于和 TLB 操作有关的指令。
-                                                   表 5-4 TLB 指令
 
+表 5-4 TLB 指令
                                    操作码                            指令描述
-
                                     TLBP                    在 TLB 中搜索匹配项
-
                                     TLBR                      读索引的 TLB 项
-
                                    TLBWI                      写索引的 TLB 项
-
                                    TLBWR                      写随机的 TLB 项
 
+### 代码例子
 
-5.5.6.            代码例子
-     第一个例子是如何配置 TLB 表项来映射一对 4KB 的页面。实时系统的内核大多都这么做，这种
-简单的内核 MMU 只用于进行内存保护，所以静态映射就足够了，在所有静态映射的系统中所有 TLB
-例外都被作为是错误条件（不可访问）。
+第一个例子是如何配置 TLB 表项来映射一对 4KB 的页面。实时系统的内核大多都这么做，
+这种简单的内核 MMU 只用于进行内存保护，所以静态映射就足够了，在所有静态映射的系
+统中所有 TLB 例外都被作为是错误条件（不可访问）。
 
-     1.      mtc0 r0,C0_WIRED                     -- make all entries available to random replacement
-     2.      li r2, (vpn2<<13)|(asid & 0xff);
-     3.      mtc0 r2, C0_ENHI              -- set the virtual address
-     4.      li r2, (epfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
-     5.      mtc0 r2, C0_ENLO0             -- set the physical address for the even page
-     6.      li r2, (opfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
-     7.      mtc0 r2, C0_ENLO1             -- set the physical address for the odd page
-     8.      li r2, 0                      -- set the page size to 4KB
-     9.      mtc0 r2,C0_PAGEMASK
-     10.     li r2, index_of_some_entry    -- needed for tlbwi only
-     11.     mtc0 r2, C0_INDEX             -- needed for tlbwi only
-             tlbwr                           -- or tlbwi
+     1.  mtc0 r0,C0_WIRED                   -- make all entries available to random replacement
+     2.  li r2, (vpn2<<13)|(asid & 0xff);
+     3.  mtc0 r2, C0_ENHI                   -- set the virtual address
+     4.  li r2, (epfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
+     5.  mtc0 r2, C0_ENLO0                  -- set the physical address for the even page
+     6.  li r2, (opfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
+     7.  mtc0 r2, C0_ENLO1                  -- set the physical address for the odd page
+     8.  li r2, 0                           -- set the page size to 4KB
+     9.  mtc0 r2,C0_PAGEMASK
+     10. li r2, index_of_some_entry         -- needed for tlbwi only
+     11. mtc0 r2, C0_INDEX                  -- needed for tlbwi only
+         tlbwr                              -- or tlbwi
 
 一个完备的虚拟存储操作系统（如 UNIX），用 MMU 进行内存保护，并进行主存和大容量存
 储 设备的换页。这个机制使程序可以访问更大的存储设备而不仅仅局限于系统物理分配的
@@ -650,19 +446,19 @@ TLB 页一致性属性位（C）指定访问该页时是否需要通过 Cache，
 MMU 例外实施，TLB 重填 是这种系统中最常见的例外。下面是一个可能的 TLB 重填例外控
 制。
 
-     12.    refill_exception:
-     13. mfc0 k0,C0_CONTEXT
-     14. sra k0,k0,1           -- index into the page table
-     15. lw k1,0(k0)           -- read page table
-     16. lw k0,4(k0)
-     17. sll k1,k1,6
-     18. srl k1,k1,6
-     19. mtc0 k1,C0_TLBLO0
-     20. sll k0,k0,6
-     21. srl k0,k0,6
-     22. mtc0 k0,C0_TLBLO1
-     23. tlbwr                 -- write a random entry
-            eret
+    12. refill_exception:
+    13. mfc0 k0,C0_CONTEXT
+    14. sra k0,k0,1           -- index into the page table
+    15. lw k1,0(k0)           -- read page table
+    16. lw k0,4(k0)
+    17. sll k1,k1,6
+    18. srl k1,k1,6
+    19. mtc0 k1,C0_TLBLO0
+    20. sll k0,k0,6
+    21. srl k0,k0,6
+    22. mtc0 k0,C0_TLBLO1
+    23. tlbwr                 -- write a random entry
+        eret
 
 这个例外控制处理非常简单，因为它的经常执行会影响系统性能，这就是 TLB 重填例外分
 配独 立的例外向量的原因。这段代码假设需要的映射在主存储器的页表中已经建立起来了
@@ -672,20 +468,12 @@ TLB 修改例外用于实现只读页面和标 记进程清除代码需要修改
 和用户不受相互的干扰，虚拟存储操作系统通常 在用户模式执行用户程序。下面的例子表
 示如何从内核模式进入用户模式。
 
-     24.    mtc0 r10, C0_EPC                              -- assume r10 holds desired usermode address
-
-     25.    mfc0 r1, C0_SR                           -- get current value of Status register
-
-     26.    and r1,r1, ~(SR_KSU || SR_ERL)           -- clear KSU and ERL field
-
-     27.    or r1, r1, (KSU_USERMODE || SR_EXL)      -- set usermode and EXL bit
-
-     28.    mtc0 r1, C0_SR
-
-     eret                                       -- jump to user mode
-
-
-
+    24. mtc0 r10, C0_EPC                     -- assume r10 holds desired usermode address
+    25. mfc0 r1, C0_SR                       -- get current value of Status register
+    26. and r1,r1, ~(SR_KSU || SR_ERL)       -- clear KSU and ERL field
+    27. or r1, r1, (KSU_USERMODE || SR_EXL)  -- set usermode and EXL bit
+    28. mtc0 r1, C0_SR
+        eret                                 -- jump to user mode
 
 物理地址空间分布
 ----------------
@@ -694,3 +482,4 @@ TLB 修改例外用于实现只读页面和标 记进程清除代码需要修改
 应地址空 间所在的结点编号，每个结点拥有固定的 44 位地址空间。而在结点内 44 位的
 地址空间又进一步划分 为 8 个 41 位的地址空间，采用 41 位的空间主要是由于一个端口
 可能会接两个 HT 控制器，而每个 HT 需要 40 位的地址空间。
+
