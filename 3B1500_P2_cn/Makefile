@@ -1,28 +1,25 @@
 VERSION=1.1
 SOURCES=$(sort $(wildcard *.md))
-TARGET=龙芯3B1500用户手册（下）-v${VERSION}.pdf
-TEXFILE=龙芯3B1500用户手册（下）-v${VERSION}.tex
+TARGET=LS3B1500-user-manual-II-v${VERSION}-zh.pdf
+TEXFILE=LS3B1500-user-manual-II-v${VERSION}-zh.tex
+JSONFILE=LS3B1500-user-manual-II-v${VERSION}-zh.json
 TEMPLATE=../templates/loongson-3b1500-cn.latex
 OPTIONS=--chapters --template=$(TEMPLATE)
 
-ifdef V
-	OPTIONS=$(OPTIONS) --verbose
-endif
+all: $(SOURCES) $(TARGET) $(TEMPLATE)
 
-all: $(SOURCES) $(TARGET)
-
-$(TARGET): $(SOURCES)
-	pandoc $+ -o $(TEXFILE) $(OPTIONS) -t latex
+$(TARGET): $(SOURCES) $(TEMPLATE)
+	pandoc $(SOURCES) -o $(TEXFILE) $(OPTIONS) -t latex
 	perl -0777 -i -pe 's/\\beginblock\n/{/g' $(TEXFILE)
 	perl -0777 -i -pe 's/\n\\endblock/}/g'   $(TEXFILE)
 	xelatex $(TEXFILE)
 	xelatex $(TEXFILE)
 
-tex: $(SOURCES)
+tex: $(SOURCES) $(TEMPLATE)
 	pandoc $+ -o $(TEXFILE) $(OPTIONS) -t latex
 
-json: $(SOURCES)
-	pandoc $+ -o main.json $(OPTIONS) -t json
+json: $(SOURCES) $(TEMPLATE)
+	pandoc $+ -o $(JSONFILE) $(OPTIONS) -t json
 
 clean:
-	@rm -f $(TARGET) main.tex main.json
+	@rm -f $(TARGET) $(TEXFILE) $(JSONFILE)

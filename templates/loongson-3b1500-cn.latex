@@ -33,10 +33,13 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{threeparttable}
 \usepackage{fancyvrb}
 \usepackage{changepage}
-
-\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{mips}
 \newlength{\bitwidth}
 \newlength{\byteheight}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.eps}
 \graphicspath{{../images/}}
 
@@ -172,6 +175,21 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
     {\bf 服务} & #3 \\[.3cm]
   \end{longtable}
 }
+
+\newenvironment{instructionblk}
+{\begin{longtable}{p{1.2cm}p{14cm}}}
+{\end{longtable}}
+
+\newcommand{\instructionbody}[5]{
+  {\bf 格式：} & {\tt #1} \\[.12cm]
+  {\bf 功能：} & #2 \\[.12cm]
+  {\bf 描述：} & #3 \\[.12cm]
+  {\bf 操作：} & {\tt #4} \\[.12cm]
+  {\bf 例外：} & #5
+}
+
+\newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
+\newcommand{\narrownewline}{\vspace{-.1cm}\newline}
 
 \section*{版权声明}
 
