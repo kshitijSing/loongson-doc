@@ -269,7 +269,7 @@ Cache 一致性
 在宿主二 级 Cache 模块中维护。目录利用 32 位的位向量来记录拥有每个 Cache 行备份
 的一级 Cache（包括一 级指令 Cache 和一级数据 Cache）。每个一级 Cache 块有三种可
 能状态：INV（无效状态）、SHD（共 享状态，可读）和 EXC（独占状态，可读可写）。三
-个状态的转移情况如图 4-6。当读指令或者取指 发生一级 Cache 失效时，处理器核向二级
+个状态的转移情况如图\ \ref{fig:cache-status-diagram}。当读指令或者取指 发生一级 Cache 失效时，处理器核向二级
 Cache 模块发出 Reqread 请求，在得到二级 Cache 模块送回 的 Repread 应答后，处理器
 核的一级 Cache 获得了一个 SHD 状态的 Cache 备份；当写指令发生一级 Cache 失效时，
 处理器核向二级 Cache 模块发出 Reqwrite 请求，在得到二级 Cache 模块送回的
@@ -285,7 +285,7 @@ Cache 备份变为 INV 状态并通过 Repinv 应答二级 Cache 模块；二级
 块。
 
 
-图 龙芯 3 号 cache 状态转换
+![龙芯 3 号 cache 状态转换 \label{fig:cache-status-diagram}](../images/cache-status-diagram.pdf)
 
 
 Cache 指令

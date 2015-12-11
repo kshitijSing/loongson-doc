@@ -16,10 +16,10 @@ $(TARGET): $(SOURCES) $(TEMPLATE)
 	xelatex $(TEXFILE)
 
 tex: $(SOURCES) $(TEMPLATE)
-	pandoc $+ -o $(TEXFILE) $(OPTIONS) -t latex
+	pandoc $(SOURCES) -o $(TEXFILE) $(OPTIONS) -t latex
 
 json: $(SOURCES) $(TEMPLATE)
-	pandoc $+ -o $(JSONFILE) $(OPTIONS) -t json
+	pandoc $(SOURCES) -o $(JSONFILE) $(OPTIONS) -t json
 
 clean:
 	@rm -f $(TARGET) $(TEXFILE) $(JSONFILE)

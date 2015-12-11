@@ -25,7 +25,7 @@ FALU2 执行浮点乘加运算部件（可计算浮点乘、加和浮点乘加�
 FPU 支持执行 MIPS64 指令集中的并行单精度（Paired-Single，简称 PS）浮点指令。图\
 \ref{fig:function-units} 对龙芯 3B 体系结构中功能单元的组织构成进行了图解说明。
 
-![龙芯 3B 功能单元的组织构成 \label{fig:function-units}](../images/functional-units.pdf)
+![龙芯 3B 功能单元的组织构成 \label{fig:function-units}](../images/architect-functional-units.pdf)
 
 浮点队列每个时钟周期可以分别发射 1 条指令到 FALU1 单元、1 条指令到 FALU2 单元。
 浮点寄存器文件为 FALU1 单元与 FALU2 单元各提供三个专用的读端口和一个专用的写端

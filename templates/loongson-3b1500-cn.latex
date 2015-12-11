@@ -143,6 +143,29 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
     \end{titlepage}
 }
 
+\newcommand{\exceptionblk}[3]{
+  \begin{longtable}{p{1cm}p{14cm}}
+    {\bf 原因} & #1 \\[.3cm]
+    {\bf 处理} & #2 \\[.3cm]
+    {\bf 服务} & #3 \\[.3cm]
+  \end{longtable}
+}
+
+\newenvironment{instructionblk}
+{\begin{longtable}{p{1.2cm}p{14cm}}}
+{\end{longtable}}
+
+\newcommand{\instructionbody}[5]{
+  {\bf 格式：} & {\tt #1} \\[.12cm]
+  {\bf 功能：} & #2 \\[.12cm]
+  {\bf 描述：} & #3 \\[.12cm]
+  {\bf 操作：} & {\tt #4} \\[.12cm]
+  {\bf 例外：} & #5
+}
+
+\newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
+\newcommand{\narrownewline}{\vspace{-.1cm}\newline}
+
 \begin{document}
 \maketitle
 
@@ -167,29 +190,6 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
   \bitbox{5}{sa} & \bitbox{6}{funct}
 \end{bytefield}}}
 \catcode`\&=4
-
-\newcommand{\exceptionblk}[3]{
-  \begin{longtable}{p{1cm}p{14cm}}
-    {\bf 原因} & #1 \\[.3cm]
-    {\bf 处理} & #2 \\[.3cm]
-    {\bf 服务} & #3 \\[.3cm]
-  \end{longtable}
-}
-
-\newenvironment{instructionblk}
-{\begin{longtable}{p{1.2cm}p{14cm}}}
-{\end{longtable}}
-
-\newcommand{\instructionbody}[5]{
-  {\bf 格式：} & {\tt #1} \\[.12cm]
-  {\bf 功能：} & #2 \\[.12cm]
-  {\bf 描述：} & #3 \\[.12cm]
-  {\bf 操作：} & {\tt #4} \\[.12cm]
-  {\bf 例外：} & #5
-}
-
-\newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
-\newcommand{\narrownewline}{\vspace{-.1cm}\newline}
 
 \section*{版权声明}
 

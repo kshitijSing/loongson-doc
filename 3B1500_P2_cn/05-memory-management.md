@@ -153,7 +153,6 @@ TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效
 号（PFN）从 TLB 中输 出；偏移量 Offset TLB PFN 合并形成物理地址。
 
 ![虚实地址转换概览 \label{fig:v2p}](../images/addr-virtual2physical.pdf)
-:mark a
 
 图 5-2 显示了 64 位模式的虚实地址转换过程，这个图显示了最大页面 16MB 和最小页面
 4KB 的 情况。 图的上半部分显示了页面大小为 4K 字节的情况，页内偏移量 Offset 占用
