@@ -276,18 +276,18 @@ IP[7] 位置位。 当 Compare 寄存器被再次重写时， Cause 寄存器的
 
 ### EntryHi（10） 寄存器
 
-EntryHi 寄存器是一个 64 位可读写寄存器， 它用于在使用 TLB 指令时存放 TLB 表项的高位。
-表 \ref{tab:cp0-badvaddr} 给出了 EntryHi 寄存器的格式及各域的说明。
-注意， 其实 VPN2 域是 64 位虚拟地址的 47:13 位， 而 63:62 位为区域位。 当 TLB
-重填，TLB 无效，或者 TLB 修改例外发生时， 引起例外的虚拟地址的虚拟页号（VPN2）
-和 ASID 将被加载到 EntryHi 寄存器中。
+EntryHi 寄存器是一个 64 位可读写寄存器， 它用于在使用 TLB 指令时存放 TLB 表项的
+高位。表\ \ref{tab:cp0-badvaddr} 给出了 EntryHi 寄存器的格式及各域的说明。注意，
+其实 VPN2 域是 64 位虚拟地址的 47:13 位， 而 63:62 位为区域位。 当 TLB 重填，TLB
+无效，或者 TLB 修改例外发生时， 引起例外的虚拟地址的虚拟页号（VPN2）和 ASID 将被
+加载到 EntryHi 寄存器中。
 
 \begin{reglongtable}{cp0-entryhi}{CP0: EntryHi 寄存器}
-  R    & 区域位 --- $00_2$: 用户； $01_2$: 管理； $11_2$: 核心 --- 匹配虚地址位 [63:62]。 \\
+  \label{tab:cp0-entryhi}
+  R    & 区域位: $00_2$, 用户； $01_2$, 管理； $11_2$, 核心 --- 匹配虚地址位 [63:62]。 \\
   VPN2 & 虚页号抹去地址的最低位，即虚拟地址的最高有效 35 位。 \\
   ASID & 地址空间标识域：用于区分不同进程， 及多进程数据共享。 \\
   0    & 保留：必须按 0 写入，读时返回 0。
-  \label{tab:cp0-entryhi}
 \end{reglongtable}
 
 ### Status（12） 寄存器

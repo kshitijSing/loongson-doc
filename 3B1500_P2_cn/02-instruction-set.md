@@ -263,11 +263,10 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见�
 龙芯扩展指令
 ------------
 
-龙芯 GS464V 处理器在 MIPS64
-指令集的基础上为提高某些应用的性能对指令集有所扩展，主要包括：
+龙芯 GS464V 处理器在 MIPS64 基础上对指令集有如下主要扩展：
 
-- 扩展访存指令：带偏移访存，四字访存指令
-- 单目标定点乘除指令
+* 扩展访存指令：带偏移访存，四字访存指令
+* 单目标定点乘除指令
 
 \begin{inslongtable}{龙芯扩展指令}{tab:extended-ins}
   \mtabsep{访存指令}
@@ -299,8 +298,8 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见�
 实现相关指令
 ------------
 
-龙芯 GS464V 处理器核对所有 MIPS64 R2 指令都作了支持。但对一些与实现相关的指令作
-了重定义，见表~\ref{tab:impdependent-ins}。
+\noindent 龙芯 GS464V 处理器核支持所有 MIPS64 R2 指令，但对重定义一些实现相关的
+指令，见表\ \ref{tab:impdependent-ins}。
 
 \begin{implongtable}{龙芯实现相关指令}{tab:impdependent-ins}
   PREF   & 预取指令     & 空操作，预取可通过 Load 到 0 号寄存器实现   \tabularnewline
