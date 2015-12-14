@@ -1,0 +1,68 @@
+\documentclass[10pt]{standalone}
+\usepackage{fontspec}                             % font configuration
+\usepackage{xeCJK}                                % allow chinese font
+\setCJKmainfont{文泉驿微米黑}                     % default CJK font
+\setCJKsansfont{文泉驿点阵正黑}                   % default CJK sans font
+\setCJKmonofont{文泉驿等宽微米黑}                 % default CJK mono font
+\usepackage{tikz}
+\usetikzlibrary{matrix,calc,shapes}
+
+\tikzset{
+    base/.style={draw,align=center,inner sep=0,font=\small},
+    start/.style = {draw, rectangle, text width=1.9cm},
+    decision/.style = {base, diamond,aspect=1.5,
+        minimum height=1.8cm, minimum width=2.7cm
+    },
+    term/.style = {draw, align=center, rectangle, fill=green!60,
+        rounded corners,text width=6em, minimum height=1cm
+    },
+    except/.style={term, fill=pink!50},
+    dot/.style = {
+        circle,fill=#1,inner sep=0,minimum size=3pt
+    }
+}
+
+\newcommand{\xy}[1]{\coordinate (#1);}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{tikzpicture}
+
+% 1. matrix layout
+\node[matrix,very thin,column sep=3.3cm,row sep=2.2cm] (matrix) at (0,0) {
+    \xy{start} &             &              &          &            & \\
+    \xy{VPN}   & \xy{G}      & \xy{V}       & \xy{D}   & \xy{C}     & \\
+               & \xy{refill} & \xy{invalid} & \xy{mod} & \xy{noncache} & \xy{cache}\\
+};
+
+% 2. put block boxes
+\node[start] (start) at (start) {有效虚地址：\\ VPN, ASID};
+\node[decision] (VPN) at (VPN) {VPN匹配？};
+\node[decision] (G)   at (G)   {$G=1$ or \\ ASID匹配？};
+\node[decision] (V)   at (V)   {$V=1$?};
+\node[decision] (D)   at (D)   {$D=1$?};
+\node[decision] (C)   at (C)   {$C=011_2$?};
+
+\node[except] (refill) at (refill) {XTLB/TLB \\ 重填例外};
+\node[except] (invalid) at (invalid) {TLB \\ 无效例外};
+\node[except] (mod) at (mod) {TLB \\ MOD例外};
+
+\node[term] (cache) at (cache) {访问Cache};
+\node[term] (noncache) at (noncache) {不通过\\ Cache访问};
+
+% 3. arrows
+\draw[-latex] (start) -- (VPN);
+\draw[-latex] (VPN) -- (G) node[pos=0,right,above] {\tiny 是};
+\draw[-latex] (VPN) |- (refill) node[pos=0,left] {\tiny 否};
+\draw[-latex] (G) -- (V) node[pos=0,right,above] {\tiny 是};
+\draw[-latex] (G) -- (refill) node[pos=0,left] {\tiny 否};
+\draw[-latex] (V) -- (D) node[pos=0,right,above] {\tiny 是};
+\draw[-latex] (V) -- (invalid) node[pos=0,left] {\tiny 否};
+\draw[-latex] (D) -- (C) node[pos=0,right,above] {\tiny 是};
+\draw[-latex] (D) -- (mod) node[pos=0,left] {\tiny 否};
+\draw[-latex] (C) -| (cache) node[pos=0,right,above] {\tiny 是};
+\draw[-latex] (C) -- (noncache) node[pos=0,left] {\tiny 否};
+\end{tikzpicture}
+\end{document}
+

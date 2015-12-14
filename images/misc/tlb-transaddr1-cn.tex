@@ -1,0 +1,82 @@
+\documentclass[10pt]{standalone}
+\usepackage{fontspec}                             % font configuration
+\usepackage{xeCJK}                                % allow chinese font
+\setCJKmainfont{文泉驿微米黑}                     % default CJK font
+\setCJKsansfont{文泉驿点阵正黑}                   % default CJK sans font
+\setCJKmonofont{文泉驿等宽微米黑}                 % default CJK mono font
+\usepackage{tikz}
+\usetikzlibrary{matrix,calc,shapes}
+
+\tikzset{
+    base/.style={draw,align=center,inner sep=0,font=\small},
+    start/.style = {draw, trapezium, text width=1.9cm,
+        trapezium left angle=60,trapezium right angle=120
+    },
+    decision/.style={base,diamond,minimum height=1.6cm,minimum width=2.4cm,aspect=1.5},
+    term/.style={draw,align=center,rectangle,rounded corners,text width=6em},
+    exception/.style={term, fill=pink!50},
+    dot/.style = {
+        circle,fill=#1,inner sep=0,minimum size=3pt
+    }
+}
+
+\newcommand{\xy}[1]{\coordinate (#1);}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{tikzpicture}
+
+% 1. matrix layout
+\node[matrix,very thin,column sep=3cm,row sep=2cm] (matrix) at (0,0) {
+  \xy{start}  &[-1.5cm]   & \xy{addrst}&              &[-1.5cm] \\[.8cm]
+              & \xy{user} & \xy{super} & \xy{kernel}  & \\[0.2cm]
+              &           &            & \xy{mapaddr} & \\[-0.8cm]
+              &           & \xy{nod}   &              & \\[-1.0cm]
+  \xy{except} &           & \xy{mapv}  &              & \xy{nomapv} \\
+};
+
+% 2. put block boxes
+\node[start] (start) at (start) {虚地址：\\ VPN, ASID};
+\node[decision] (addrst) at (addrst) {进程状态？};
+\node[decision] (user) at (user) {用户态 \\ 有效地址？};
+\node[decision] (super) at (super) {管理态 \\ 有效地址？};
+\node[decision] (kernel) at (kernel) {内核态 \\ 有效地址？};
+\node[decision] (mapaddr) at (mapaddr) {映射地址？};
+
+\node[term] (mapv) at (mapv) {映射访问};
+\node[term] (nomapv) at (nomapv) {非映射访问};
+\node[exception] (except) at (except) {地址错例外};
+
+% 3. lines, arrows
+\draw[-latex] (start) -- (addrst);
+\draw[-latex] (user)  |- (nod) node[pos=0,right] {\tiny 是} -- (mapv);
+\draw[-latex] (kernel) -- (mapaddr) node[pos=0,right] {\tiny 是};
+\draw (super) -- (nod) node[pos=0,right] {\tiny 是} node[dot=black, pos=1] {};;
+\draw (mapaddr) |- (nod) node[pos=0,right] {\tiny 是};
+
+\draw[-latex] (user) -| (except) node[pos=0,above] {\tiny 否};
+\draw[-latex] (mapaddr) -| (nomapv) node[pos=0,above] {\tiny 否};
+
+\draw[-latex] (addrst) -- (super);
+\draw[-latex] ($(addrst)+(0,-1.1)$) -| (user) node[dot=black, pos=0] {};
+\draw[-latex] ($(addrst)+(0,-1.1)$) -| (kernel);
+
+\node[fill=white,inner sep=0.05cm] at ($(user)  +(0,1.3)$) {\tiny 用户态};
+\node[fill=white,inner sep=0.05cm] at ($(super) +(0,1.3)$) {\tiny 管理态};
+\node[fill=white,inner sep=0.05cm] at ($(kernel)+(0,1.3)$) {\tiny 内核态};
+
+% 4.
+\coordinate (c1) at ($(user.south) +(0.1,-0.7)$);
+\coordinate (c2) at ($(super.south)+(0.1,-0.7)$);
+
+\draw (super) -- ($(super.west)+(-.2, 0)$)
+      node[pos=0,above] {\tiny 否} |- (c1) arc(0:180:0.1cm) -| (except)
+      node[dot=black,pos=.5] {};
+\draw (kernel) -- ($(kernel.west)+(-.2, 0)$)
+      node[pos=0,above] {\tiny 否} |- (c2) arc(0:180:0.1cm) -- (c1);
+
+
+\end{tikzpicture}
+\end{document}
+
