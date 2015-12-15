@@ -2,3 +2,5 @@
 *.lst
 *.aux
 *.pdf
+*.log
+*.toc

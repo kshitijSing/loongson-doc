@@ -24,15 +24,19 @@
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
 colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 
-\usepackage{longtable, array}
+%\usepackage{longtable,array}
+%\usepackage{booktabs}
+%\usepackage{enumerate}
+%\usepackage{multirow}
+%\usepackage{makeidx}
+%\usepackage{threeparttable}
+%\usepackage{fancyvrb}
+%\usepackage{changepage}
+
+\usepackage{longtable,array}
 \usepackage{booktabs}
-\usepackage{enumerate}
-\usepackage{multirow}
-\usepackage{makeidx}
+\usepackage{caption}
 \usepackage{bytefield}
-\usepackage{threeparttable}
-\usepackage{fancyvrb}
-\usepackage{changepage}
 \usepackage{listings}
 \usepackage{mips}
 \newlength{\bitwidth}

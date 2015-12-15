@@ -163,8 +163,9 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
 的； 寄存器的其他位保留，必须按 0 写入，读时返回 0。
 
 \begin{floattable}
+  \label{tab:cp0-pagemask}
   \includegraphics[scale=0.875]{../images/cp0-pagemask.pdf} \\
-  \begin{tabular}{|c*{12}{|>{\hspace{.170cm}}c<{\hspace{.170cm}}}|} \hline
+  \begin{tabular}{|c*{12}{|>{\hspace{.160cm}}c<{\hspace{.160cm}}}|} \hline
     & \multicolumn{12}{c|}{Mask 位} \\ \cline{2-13}
     页面大小 & 24 & 23 & 22 & 21 & 20 & 19 & 18 & 17 & 15 & 16 & 14 & 13 \\ \hhline
     4KB    & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0 \\
@@ -176,7 +177,6 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
     16MB   & 1  & 1  & 1  & 1  & 1  & 1  & 1  & 1  & 1  & 1  & 1  & 1 \\ \hline
   \end{tabular}
   \caption{CP0: PageMask 寄存器}
-  \label{tab:cp0-pagemask}
 \end{floattable}
 
 进行虚实地址转换时， Mask 域的某位为 1 则表示虚地址的对应位将 不用于地址比较，即
@@ -227,9 +227,9 @@ HWREna寄存器的格式，及 Mask 域对应的硬件寄存器。 寄存器的�
 写入，读时返回 0。
 
 \begin{floattable}
+  \caption{CP0: HWREna 寄存器}
   \includegraphics[scale=0.875]{../images/cp0-hwrena} \\
-  \begin{tabular}{*{4}{|>{\hspace{.3cm}}c<{\hspace{.3cm}}}|
-                  >{\hspace{.4cm}}c<{\hspace{.5cm}}|p{7cm}|} \hline
+  \begin{tabular}{*{4}{|>{\hspace{.3cm}}c<{\hspace{.3cm}}}|>{\hspace{.4cm}}c<{\hspace{.5cm}}|p{7cm}|} \hline
      \cmcolvb{4}{Mask 位} &              & \\ \cline{1-4}
      3 & 2 & 1 & 0        &  硬件寄存器  & \cellalign{c|}{描述} \\ \hhline
      0 & 0 & 0 & 1        &  CPUnum      & 运行当前程序的 CPU 数寄存器 \\
@@ -237,7 +237,6 @@ HWREna寄存器的格式，及 Mask 域对应的硬件寄存器。 寄存器的�
      0 & 1 & 0 & 0        &  CC          & CP0 计数寄存器 \\
      1 & 0 & 0 & 0        &  CCRes       & 计数寄存器的精度 \\ \hline
   \end{tabular}
-  \caption{CP0: HWREna 寄存器}
   \label{tab:cp0-hwrena}
 \end{floattable}
 
@@ -265,14 +264,14 @@ IP[7] 位置位。 当 Compare 寄存器被再次重写时， Cause 寄存器的
 由于 GS464 核上实现了动态调频， Count 寄存器的计数频率不是固定的，
 其值总为当前 CPU 频率的一半。
 
-\begin{floattable}
+\begin{longtable}{c}
+  \caption{CP0: Count 和 Compare 寄存器}
   \regdesc{Count 寄存器} \\[.2cm] 
   \includegraphics[scale=0.875]{../images/cp0-count} \\[-.2cm]
   \regdesc{Compare 寄存器} \\[.2cm]
-  \includegraphics[scale=0.875]{../images/cp0-compare}
-  \caption{CP0: Count 和 Compare 寄存器}
+  \includegraphics[scale=0.875]{../images/cp0-compare} \\[-.2cm]
   \label{tab:cp0-cntcmp}
-\end{floattable}
+\end{longtable}
 
 ### EntryHi（10） 寄存器
 
@@ -335,6 +334,7 @@ Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作�
 
 \begin{table}[htbp]
   \centering
+  \caption{CP0： 处理器的工作模式}
   \begin{tabular}{|c|c|c|>{\centering}p{5cm}|} \hline
     KSU    & ERL & EXL & 运行模式 \tabularnewline \hhline
     $10_2$ & 0   & 0   & 用户模式 \tabularnewline 
@@ -343,7 +343,6 @@ Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作�
            & 0   & 1   & 内核模式（例外状态） \tabularnewline 
            & 1   &     & 内核模式（错误状态） \tabularnewline \hline
   \end{tabular}
-  \caption{CP0： 处理器的工作模式}
   \label{tab:cpu-mode}
 \end{table}
 
@@ -355,8 +354,9 @@ IntCtl 是一个 32 位可读写寄存器，它的 VS 域用来指示中断向�
 系。寄存器的其他域： 1 域为只读域；0 域为保留域，必须按 0 写入，读时返回 0。
 
 \begin{floattable}
+  \caption{CP0: IntCtl 寄存器}
   \includegraphics[scale=0.875]{../images/cp0-intctl} \\
-  \begin{tabular}{|>{\centering}p{4.2cm}|>{\centering}p{5.5cm}|>{\centering}p{5cm}|} \hline
+  \begin{tabular}{|>{\centering}p{4.2cm}|>{\centering}p{5cm}|>{\centering}p{5cm}|} \hline
     编码 & 向量空间（16 进制） & 向量空间（10 进制） \tabularnewline \hhline
     0x00 & 0x000               & 0                   \tabularnewline 
     0x01 & 0x020               & 32                  \tabularnewline 
@@ -365,7 +365,6 @@ IntCtl 是一个 32 位可读写寄存器，它的 VS 域用来指示中断向�
     0x08 & 0x100               & 256                 \tabularnewline 
     0x10 & 0x200               & 512                 \tabularnewline \hline
   \end{tabular}
-  \caption{CP0: IntCtl 寄存器}
   \label{tab:cp0-intctl}
 \end{floattable}
 
@@ -440,8 +439,8 @@ EPC（Exception Program Counter，例外程序计数器）寄存器是一个 64 
 寄存器的格式。
 
 \begin{floattable}
-  \includegraphics[scale=0.875]{../images/cp0-epc}
   \caption{CP0: EPC 寄存器}
+  \includegraphics[scale=0.875]{../images/cp0-epc}
   \label{tab:cp0-epc}
 \end{floattable}
 
@@ -737,30 +736,31 @@ DEPC（Debug Exception Program Counter, 调试例外程序计数）是一个 64 
 龙芯 GS464 处理器定义了四个（两组）性能计数器 (Performance Counter)，他们分别映
 射到 CP0 寄存器的 25 号的选择子号 0，1，2，3。表 \ref{tab:perfcnt-sel} 列出了这
 四个选择子号对应的性能计数器含义。
-\begin{floattable}
-  \begin{tabular}{|c||c|c|c|c|} \hline
+
+\captionof{table}{CP0: PerfCnt 控制、计数寄存器选择号列表}
+\begin{center}
+  \begin{tabular}{|c||c|c|c|c|}\hline
+    \label{tab:perfcnt-sel}
     选择号 & 0            & 1            & 2            & 3            \\ \hline
     寄存器 & 控制寄存器 0 & 计数寄存器 0 & 控制寄存器 1 & 计数寄存器 1 \\ \hline
   \end{tabular}
-  \label{tab:perfcnt-sel}
-  \caption{CP0: PerfCnt 控制、计数寄存器选择号列表}
-\end{floattable}
+\end{center}
 
 这两组计数器格式相同：其中性能控制是 32 位的寄存器，而 性能计数器则为 64 位。表
 \ref{tab:cp0-PerfCnt} 给出了 PerfCnt 寄存器的格式， 及各域的含义。龙芯 GS464 在
 复位时， PerfCnt 寄存器的两个控制寄存器赋的初始值分别为：
-\begin{itemize}
-  \item PerfCnt0 (select 0) = 0xC000\_0000
-  \item PerfCnt1 (select 2) = 0x4000\_0000 
-\end{itemize}
 
-每组计数器都可以独立对一种事件计数，并且在相关的事件域（Event）中对应的
-可数事件发生时自增。当性能计数器溢出，即首位（63 位）变成 1，则将触发一个中断：
-Cause 寄存器中的 PCI 位被置 1 （如果有多组计数器，则 PCI 位的值为多组计数器的
-溢出位取或）。计数器溢出后，无论中断是否被处理，计数都将继续。表 3-26 描述计数使能位的 定义。表
-计数器 0 和计数器 1 各自的事件。
+- PerfCnt0 (select 0) = 0xC000\_0000
+- PerfCnt1 (select 2) = 0x4000\_0000 
+
+每组计数器都可以独立对一种事件计数，并且在相关的事件域（Event）中对应的可数事件
+发生时自增。当性能计数器溢出，即首位（63 位）变成 1，则将触发一个中断： Cause 寄
+存器中的 PCI 位被置 1 （如果有多组计数器，则 PCI 位的值为多组计数器的溢出位取或
+）。计数器溢出后，无论中断是否被处理，计数都将继续。表 3-26 描述计数使能位的 定
+义。表计数器 0 和计数器 1 各自的事件。
 
 \begin{floattable}
+  \caption{CP0: PerfCnt 寄存器}
   \regdesc{性能控制寄存器} \\[.2cm]
   \includegraphics[scale=0.875]{../images/cp0-perfctl} \\[-.2cm]
   \regdesc{性能计数寄存器} \\[.1cm] 
@@ -773,7 +773,6 @@ Cause 寄存器中的 PCI 位被置 1 （如果有多组计数器，则 PCI 位�
       U    & 用户模式位。 \tabularnewline
       EXL  & 例外级指示位。
   \end{regtabular}
-  \caption{CP0: PerfCnt 寄存器}
   \label{tab:cp0-PerfCnt}
 \end{floattable}
 
@@ -845,6 +844,7 @@ CacheErr1 寄存器中，然后触发 Cache 错例外由软件来纠正错误。
 \ref{tab:cp0-CacheErr} 给出了这两个寄存器的格式， 及各域的含义。
 
 \begin{floattable}
+  \caption{CP0: CacheErr、 CacheErr1 寄存器}
   \regdesc{CacheErr} \\[.2cm]
   \includegraphics[scale=0.875]{../images/cp0-cacheerr} \\[-.3cm]
   \regdesc{CacheErr1} \\[.2cm] 
@@ -855,7 +855,6 @@ CacheErr1 寄存器中，然后触发 Cache 错例外由软件来纠正错误。
     ECCAddr & 校验错虚地址域。                                                            \\ 
     0       & 保留：必须按 0 写入，读时返回 0。
   \end{regtabular}
-  \caption{CP0: CacheErr、 CacheErr1 寄存器}
   \label{tab:cp0-CacheErr}
 \end{floattable}
 
@@ -867,6 +866,7 @@ TagLo 和 TagHi 寄存器是一对 32 位可读写寄存器，用于保存一、
 寄存器格式, 及相应 TagLo 和 TagHi 寄存器各域的定义。
 
 \begin{floattable}
+  \caption{CP0: TagLo、 TagHi 寄存器}
   \regdesc{TagLo} \\[.2cm]
   \includegraphics[scale=0.875]{../images/cp0-taglo} \\[-.3cm]
   \regdesc{TagHi} \\[.2cm]
@@ -877,7 +877,6 @@ TagLo 和 TagHi 寄存器是一对 32 位可读写寄存器，用于保存一、
     SCSETI & 对应 Cache 行在二级 Cache 的组号（二级 Cache 该域为 0） \\ 
     0      & 保留：必须按 0 写入，读时返回 0。
   \end{regtabular}
-  \caption{CP0: TagLo、 TagHi 寄存器}
   \label{tab:cp0-TagLoHi}
 \end{floattable}
 
@@ -888,11 +887,11 @@ DataLo 和 DataHi 是一对 64 位只读寄存器，用于 Cache 数据队列交
 \ref{tab:cp0-DataLoHi} 给出了 DataLo 和 DataHi 寄存器的格式。
 
 \begin{floattable}
+  \caption{CP0: DataLo、 DataHi 寄存器}
   \regdesc{DataLo} \\[.1cm]
   \includegraphics[scale=0.875]{../images/cp0-datalohi} \\[-.3cm]
   \regdesc{DataHi} \\[.1cm]
   \includegraphics[scale=0.875]{../images/cp0-datalohi}
-  \caption{CP0: DataLo、 DataHi 寄存器}
   \label{tab:cp0-DataLoHi}
 \end{floattable}
 
