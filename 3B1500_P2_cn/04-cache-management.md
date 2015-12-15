@@ -103,7 +103,11 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 当一级指令 Cache 被索引时，四个组都会返回它们相应的 Cache 行，Cache 行大小为 32
 字节， Cache 行采用了 34 位作为标志和 1 位作为有效位。
 
-![指令 Cache 的组织 \label{cache-int-structure}](../images/cache-structure.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.9]{../images/cache-structure.pdf}
+\caption{指令 Cache 的组织 \label{cache-int-structure}}
+\end{figure}
 
 ### 指令 Cache 的访问
 
@@ -151,8 +155,11 @@ Cache，其中含有 512 个索引项。 当对 Cache 索引时，同时访问�
 INV，SHD 和 EXC 三种状态）。INV 状态表示该 Cache 行无效，SHD 状态表示该 Cache 行
 可读，EXC 状态表示该 Cache 行可读可写。
 
-![数据 Cache 的组织 \label{cache-data-structure}](../images/cache-structure.pdf)
-
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.9]{../images/cache-structure.pdf}
+\caption{数据 Cache 的组织 \label{cache-data-structure}}
+\end{figure}
 
 ### 数据 Cache 的访问
 

@@ -104,7 +104,7 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 
 \newenvironment{reglongtable}[2]{
   \begin{longtable}{|>{\centering}p{2cm}|p{12.8cm}|}
-    \caption{#2} \tabularnewline
+    \caption{#2} \tabularnewline[-.3cm]
     \multicolumn{2}{@{}c@{}}{\includegraphics[scale=0.875]{#1}}  \tabularnewline
     \hline 位域 & \cellalign{c|}{描述} \tabularnewline \hhline \endfirsthead
     \caption{#2 （续）} \tabularnewline
