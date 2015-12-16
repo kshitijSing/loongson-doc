@@ -105,7 +105,7 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[scale=0.9]{../images/cache-structure.pdf}
+\includegraphics[scale=0.6]{../images/cache-structure.pdf}
 \caption{指令 Cache 的组织 \label{cache-int-structure}}
 \end{figure}
 
@@ -122,8 +122,11 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 使用该组中的数据。这就被称为一次“一 级 Cache 命中(Hit)”。若四组的 Tag 都不与其匹
 配，那么中止操作，并开始访问二级 Cache。这就被 称为“一级 Cache 失效(miss)”。
 
-![指令 Cache 访问 \label{cache-int-visit}](../images/cache-instruction-visit.pdf)
-
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.5]{../images/cache-instruction-visit.pdf}
+\caption{指令 Cache 访问 \label{cache-int-visit}}
+\end{figure}
 
 一级数据 Cache
 --------------
@@ -157,7 +160,7 @@ INV，SHD 和 EXC 三种状态）。INV 状态表示该 Cache 行无效，SHD �
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[scale=0.9]{../images/cache-structure.pdf}
+\includegraphics[scale=0.6]{../images/cache-structure.pdf}
 \caption{数据 Cache 的组织 \label{cache-data-structure}}
 \end{figure}
 
@@ -166,8 +169,11 @@ INV，SHD 和 EXC 三种状态）。INV 状态表示该 Cache 行无效，SHD �
 龙芯 3 号数据 Cache 采用虚地址索引和物理地址标志的二路组相联结构。图 4-4 给出了
 访问一次 数据 Cache 时，虚地址如何被分解。
 
-![数据 Cache 访问 \label{cache-data-visit}](../images/cache-data-visit.pdf)
-
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.5]{../images/cache-data-visit.pdf}
+\caption{数据 Cache 访问 \label{cache-data-visit}}
+\end{figure}
 
 如图 4-4 所示，地址的低 14 位用作对数据 Cache 的索引。其中 13:5 位用作索引 512
 个项，其中 每个项又包括 4 个 64 位的双字。使用 4:3 位对四个双字进行选择，2:0 位
@@ -218,7 +224,11 @@ home 结点。根据 Cache 一 致性的要求，龙芯 3 号的二级 Cache 具
 位的双字数据。使用 4:3 位在 4 个双 字中进行选择。2:0 位用于选择一个双字中的某 8
 个字节。
 
-![二级 Cache 访问 \label{cache-l2-visit}](../images/cache-l2-visit.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.5]{../images/cache-l2-visit.pdf}
+\caption{二级 Cache 访问 \label{cache-l2-visit}}
+\end{figure}
 
 Cache 算法和 Cache 一致性属性
 -----------------------------

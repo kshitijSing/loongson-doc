@@ -152,7 +152,11 @@ TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效
 地址（VA）与 TLB 中的对应域作比较； 如果有一致的情况，则物理地址（PA）高位的页框
 号（PFN）从 TLB 中输 出；偏移量 Offset TLB PFN 合并形成物理地址。
 
-![虚实地址转换概览 \label{fig:v2p}](../images/addr-virtual2physical.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.6]{../images/addr-virtual2physical.pdf}
+\caption{虚实地址转换概览 \label{fig:v2p}}
+\end{figure}
 
 图 5-2 显示了 64 位模式的虚实地址转换过程，这个图显示了最大页面 16MB 和最小页面
 4KB 的 情况。 图的上半部分显示了页面大小为 4K 字节的情况，页内偏移量 Offset 占用
@@ -160,7 +164,11 @@ TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效
 ； 图的下半部分显示了页面大小为 16M 字节的情况，页内偏移量 Offset 占用虚拟地址中
 的 24 位， 虚拟地址中剩下的 24 位为虚页号 VPN，用于索引 16M 个页表表项。
 
-![64 位模式虚拟地址转换 \label{fig:addrtrans-64bit}](../images/addr-v2p-16k-16m.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.6]{../images/addr-v2p-16k-16m.pdf}
+\caption{64 位模式虚拟地址转换 \label{fig:addrtrans-64bit}}
+\end{figure}
 
 ### 用户地址空间 \label{ssec:useraddr}
 
@@ -263,7 +271,11 @@ XTLB 重填向量。龙 芯 GS464 处理器核的 XTLB 重填向量与 32 位模
 图 \ref{fig:tlbfig} 表示 TLB 表项的格式，项中的每个域在 EntryHi，EntryLo0，
 EntryLo1，PageMask 寄存器中都有相应的域。
 
-![TLB 表项的格式 \label{fig:tlbfig}](../images/tlbfig.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.9]{../images/tlbfig.pdf}
+\caption{TLB 表项的格式 \label{fig:tlbfig}}
+\end{figure}
 
 EntryHi，EntryLo0，EntryLo1，以及 PageMask 寄存器和 TLB
 项的格式类似。唯一的不同 就是 TLB 项有一个 Global 域（G 位），EntryHi
