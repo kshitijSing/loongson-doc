@@ -35,7 +35,7 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 
 \usepackage{longtable,array}
 \usepackage{booktabs}
-\usepackage{caption}
+\usepackage{zhnumber}
 \usepackage{bytefield}
 \usepackage{listings}
 \usepackage{mips}
@@ -140,7 +140,7 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
                 $for(author)$
                 {\bfseries $author$} \\[1.5ex]
                 $endfor$
-                {\bfseries 中文版本：} 版本~$version$
+                {\bfseries 中文版本：} 版本~$version$，\zhdate{$date$}
             \end{minipage}
         }
         \vspace{\stretch{1}}
@@ -165,6 +165,16 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
   {\bf 描述：} & #3 \\[.12cm]
   {\bf 操作：} & {\tt #4} \\[.12cm]
   {\bf 例外：} & #5
+}
+
+\newcommand{\fpuexceptout}[2]
+{ \vspace{-.4cm}
+  \begin{flushleft}
+    \begin{tabular}[h]{@{}l@{\hspace{.2cm}}p{12cm}}
+      {\bf 结果（陷阱被使能）}： & #1 \\[.2cm]
+      {\bf 结果（陷阱未使能）}： & #2 \\
+    \end{tabular}
+  \end{flushleft}
 }
 
 \newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
@@ -206,8 +216,9 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 本文档仅提供阶段性信息，所含内容可根据产品的实际情况随时更新，恕不另行通知。如因
 文档使用不当造成的直接或间接损失，本公司不承担任何责任。
 
-\hfill\vspace{1.5cm}
-\begin{minipage}{\dimexpr\textwidth-10cm}
+\hfill
+\begin{minipage}{7cm}
+    \vspace{1cm}
     龙芯中科技术有限公司 \\
     北京市海淀区中关村科学院南路 10 号 \\
     电话：010-62546668 \\
