@@ -14,30 +14,29 @@
 为内核模式， 同时将 EXL 位置回为 0。当恢复现场状态并且重新执行时，处理程序则会把
 KSU 字段恢复回上次的 值，同时置 EXL 位为 1。 从例外返回也会将 EXL 位置为 0。
 
-### 例外向量位置
+### 例外向量位置 \label{sec:excVectorLocation}
 
 冷 重 置 、 软 重 置 和 非 屏 蔽 中 断 (NMI) 例 外 的 向 量 地 址 是 专 用 的 重
 置 例 外 向 量 地 址 0xFFFFFFFFBFC00000，这个地址既不通过 Cache 进行存取，也无需
 地址映射。此外，EJTAG 调试中 断的入口根据其控制寄存器中的 ProbeTrap 位是 0 还是
 1 分别选用 0xFFFFFFFFBFC00480 和 0xFFFFFFFFFF200200。所有其它例外向量地址的形式
 都是基地址加上向量偏移。当状态寄存器中的 BEV 位为 0 时用户可定义例外向量的基址，
-详见表 6-1 例外向量基址。
+详见表\ \ref{tab:excvec-base} 例外向量基址。
 
-Table: 例外向量基址
+Table: 例外向量基址 \label{tab:excvec-base}
 
-|                   例外   | BEV=0                                     | BEV=1                 |
-|------------------------  | ----------------------------------------  | --------------------  |
-| Reset, Soft Reset, NMI   | 0xFFFFFFFF                                | BFC00000              |
-| EJTAG Debug(ProbEn=0)    | 0xFFFFFFFF                                | BFC00480              |
-| EJTAG Debug(ProbEn=1)    | 0xFFFFFFFF                                | FF200200              |
-| Cache Error              | 0xFFFFFFFF \|\| EBase31..30 \|\| 1 \|\|   | 0xFFFFFFFF BFC00300   |
-|                          | EBase28..12 \|\| 0x000                    |                       |
-| Others                   | 0xFFFFFFFF \|\| EBase31..12 \|\| 0x000    | 0xFFFFFFFF BFC00200   |
+|                   例外   | BEV=0                             | BEV=1               |
+|------------------------  | --------------------------------  | --------------------|
+| Reset, Soft Reset, NMI   | 0xFFFFFFFF                        | BFC00000            |
+| EJTAG Debug(ProbEn=0)    | 0xFFFFFFFF                        | BFC00480            |
+| EJTAG Debug(ProbEn=1)    | 0xFFFFFFFF                        | FF200200            |
+| Cache Error              | 0xFFFFFFFF \|\| EBase31..30 \|\|  | 0xFFFFFFFF BFC00300 |
+|                          |  1 \|\| EBase28..12 \|\| 0x000    |                     |
+| Others              | 0xFFFFFFFF \|\| EBase31..12 \|\| 0x000 | 0xFFFFFFFF BFC00200 |
 
-表 6-2 列出了龙芯 GS464V 处理器核中例外向量的偏移。
+表 \ref{tab:excvec-offset} 列出了龙芯 GS464V 处理器核中例外向量的偏移。
 
-
-Table: 例外向量偏移
+Table: 例外向量偏移 \label{tab:excvec-offset}
 
 | 例外                   | 例外向量偏移     |
 |------------------------|------------------|
@@ -58,12 +57,13 @@ Table: 例外向量偏移
 
 ### 例外优先级
 
-这一章的剩余部分将按照表 6-3 中给出的优先顺序依次介绍各个例外(对某些特定例外，如
-TLB 例外和指令/数据例外，为了方便而放在一起介绍)。当一条指令同时产生一个以上例外
+这一章的剩余部分将按照表 \ref{tab:except-order} 中给出的优先顺序依次介绍各个例外
+(对某些特定例外，如 TLB 例外和指令/数据例外，为了方便而放在一起介绍)。当一条指令
+同时产生一个以上例外
 时，只向处理器报告其中优先级最高的例外。有些例外并不是由当时正在执行的指令产生的
 ，而有些例外可能被推迟处理。更多细节请查看本章对各个例外的单独介绍。
 
-Table: 例外优先顺序
+Table: 例外优先顺序 \label{tab:except-order}
 
 | 例外优先顺序                                                       |
 | ------------------------------------------------------------       |

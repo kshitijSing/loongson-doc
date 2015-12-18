@@ -3,10 +3,10 @@
 
 龙芯 GS464V 处理器核兼容 MIPS64 R2 体系结构，提供了其所定义的全套必需指令。在此
 基础上还提供部分媒体与 X86 虚拟机扩展指令。处理器指令编码为 32 位，主要包括三种
-指令格式，如图 2-1 所示，立即数指令（I-型），跳转指令（J-型）和寄存器指令（R-型
-）。
+指令格式，如图\ \ref{fig:instruction-format} 所示，立即数指令（I-型），跳转指令
+（J-型）和寄存器指令（R-型）。
 
-![龙芯处理器指令格式](../images/ins-format-cn.pdf)
+![龙芯处理器指令格式 \label{fig:instruction-format}](../images/ins-format-cn.pdf)
 
 \noindent 其中各位域解释为：
 \begin{center}
@@ -224,7 +224,8 @@ MIPS 定义中，所有转移指令后都紧跟一条延迟槽指令。Likely �
 
 ### 其它指令
 
-MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见表 2-9 至表 2-12：
+MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
+表\ \ref{tab:mips64-other-ins}。
 
 \begin{inslongtable}{MIPS64 其他指令}{tab:mips64-other-ins}
   \mtabsep{特殊指令}

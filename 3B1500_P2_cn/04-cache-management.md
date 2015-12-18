@@ -51,7 +51,7 @@ Cache，看所需数据是否在其中，若二级 Cache 仍然失 效，则需�
 龙芯 3 号中的非阻塞 Cache 结构能更有效的使用循环展开和软件流水。为了尽可能最大限
 度地发挥 Cache 优势，在使用访存数据的指令之前，尽可能早的执行相应的 Load 操作。
 
-针对那些需要顺序存取的 I/O 系统，龙芯 3 号的默认设置是采用阻塞式的 Uncached 访问
+针对那些需要顺序存取的 I/O 系统，龙芯 3 号的默认设置是采用阻塞式的 UnCached 访问
 方式。 龙芯 3 号提供了预取指令，可以通过 load 到 0 号定点寄存器的方式来将数据预
 取到一级数据 Cache。此外龙芯 3 号中的 DSP 引擎可以将内存或 IO 中的数据预取到二级
 Cache 中。
@@ -60,8 +60,8 @@ Cache 中。
 ### 替换策略
 
 一级 Cache 和二级 Cache 均采用随机替换算法。但二级 Cache 提供了锁机制。通过配置
-锁窗口寄存器，可以确保最多 4 个被锁住的区域不被替换出二级 Cache（具体配置方法见
-第 12 章）。
+锁窗口寄存器，可以确保最多 4 个被锁住的区域不被替换出二级 Cache。具体配置方法见
+龙芯 3B1500 处理器用户手册（上）第X章：二级Cache。
 
 ### Cache 参数
 
@@ -95,7 +95,7 @@ Cache 中获取正确的值。整个过程无需软件干预。 一个物理地�
 
 ### 指令 Cache 的组织
 
-图 \ref{cache-int-structure} 给出了一级指令 Cache 的组织结构。该
+图 \ref{Cache-int-structure} 给出了一级指令 Cache 的组织结构。该
 Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项。根据索引(Index)选择相
 应的标志(Tag)和数据 (Data)。从 Cache 读出 Tag 后，它被用来和虚地址中的被转换的部
 分进行比较，从而确定包含正确数据的组。
@@ -106,15 +106,15 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.6]{../images/cache-structure.pdf}
-\caption{指令 Cache 的组织 \label{cache-int-structure}}
+\caption{指令 Cache 的组织 \label{Cache-int-structure}}
 \end{figure}
 
 ### 指令 Cache 的访问
 
-龙芯 3 号指令 Cache 采用虚地址索引和物理地址标志的四路组相联结构。如图
-\ref{caceh-int-visit} 所示，地址的 低 14 位被用作指令 Cache 的索引。其中 13:5 位
-用于索引 512 个项。其中每个项中又包含四个 64 位 的双字，使用 4:3 位在这四个双字
-中进行选择。
+龙芯 3 号指令 Cache 采用虚地址索引和物理地址标志的四路组相联结构。如
+图\ \ref{Cache-int-visit} 所示，地址的 低 14 位被用作指令 Cache 的索引。其中
+13:5 位用于索引 512 个项。其中每个项中又包含四个 64 位 的双字，使用 4:3 位在这四
+个双字中进行选择。
 
 当对 Cache 索引时，从 Cache 中取出四个块中的 Data 和相应的物理地址 Tag，同时，高
 位地址通 过指令 TLB(Instruction Translation Look-aside Buffer，简称 ITLB)进行转
@@ -125,7 +125,7 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.5]{../images/cache-instruction-visit.pdf}
-\caption{指令 Cache 访问 \label{cache-int-visit}}
+\caption{指令 Cache 访问 \label{Cache-int-visit}}
 \end{figure}
 
 一级数据 Cache
@@ -148,7 +148,7 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 
 ### 数据 Cache 的组织
 
-图 \ref{cache-data-structure} 给出了数据 Cache 的组织结构。这是一个二路组相联的
+图 \ref{Cache-data-structure} 给出了数据 Cache 的组织结构。这是一个二路组相联的
 Cache，其中含有 512 个索引项。 当对 Cache 索引时，同时访问两个组中的 Tag 和 Data
 。然后将两个组中的 Tag 与转换后的物理地址 部分进行比较，从而确定命中哪一个数据行
 。
@@ -161,23 +161,22 @@ INV，SHD 和 EXC 三种状态）。INV 状态表示该 Cache 行无效，SHD �
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.6]{../images/cache-structure.pdf}
-\caption{数据 Cache 的组织 \label{cache-data-structure}}
+\caption{数据 Cache 的组织 \label{Cache-data-structure}}
 \end{figure}
 
 ### 数据 Cache 的访问
 
-龙芯 3 号数据 Cache 采用虚地址索引和物理地址标志的二路组相联结构。图 4-4 给出了
-访问一次 数据 Cache 时，虚地址如何被分解。
+龙芯 GS464V 处理器核的数据 Cache 采用虚地址索引和物理地址标志的二路组相联结构。
+图\ \ref{fig:cache-data-visit} 给出了访问一次 数据 Cache 时，虚地址如何被分解。
+如图所示，地址的低 14 位用作对数据 Cache 的索引。其中 13:5 位用作索引 512
+个项，其中 每个项又包括 4 个 64 位的双字。使用 4:3 位对四个双字进行选择，2:0 位
+用作选择一个双字的八个字 节中的某一个字节。
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.5]{../images/cache-data-visit.pdf}
-\caption{数据 Cache 访问 \label{cache-data-visit}}
+\caption{数据 Cache 访问 \label{fig:cache-data-visit}}
 \end{figure}
-
-如图 4-4 所示，地址的低 14 位用作对数据 Cache 的索引。其中 13:5 位用作索引 512
-个项，其中 每个项又包括 4 个 64 位的双字。使用 4:3 位对四个双字进行选择，2:0 位
-用作选择一个双字的八个字 节中的某一个字节。
 
 数据 Cache 访问失效的指令（访存指令不命中或写指令命中 SHD 状态的 Cache 行），则
 访问二级 Cache。如果二级 Cache 命中，则将从二级 Cache 取回的 Cache 块送回一级
@@ -219,36 +218,36 @@ home 结点。根据 Cache 一 致性的要求，龙芯 3 号的二级 Cache 具
 ### 二级 Cache 的访问
 
 只有在一级 Cache 失效的情况下，才访问二级 Cache。二级 Cache 采用的是物理地址索引
-物理地 址标志。如图 4-5 所示，低位地址用来索引二级 Cache。四个组中都会返回它们各
-自相应的 Cache 行。 16:5 位被用作二级 Cache 的索引。每个被索引项都含有 4 个 64
-位的双字数据。使用 4:3 位在 4 个双 字中进行选择。2:0 位用于选择一个双字中的某 8
-个字节。
+物理地 址标志。如图\ \ref{fig:cache-l2-visit} 所示，低位地址用来索引二级 Cache。
+四个组中都会返回它们各自相应的 Cache 行。 16:5 位被用作二级 Cache 的索引。每个被
+索引项都含有 4 个 64 位的双字数据。使用 4:3 位在 4 个双 字中进行选择。2:0 位用于
+选择一个双字中的某 8 个字节。
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.5]{../images/cache-l2-visit.pdf}
-\caption{二级 Cache 访问 \label{cache-l2-visit}}
+\caption{二级 Cache 访问 \label{fig:cache-l2-visit}}
 \end{figure}
 
-Cache 算法和 Cache 一致性属性
------------------------------
+Cache 一致性属性 \label{sec:cache-coherency}
+----------------
 
-龙芯 3 号实现表 4-2 所示的 Cache 算法和 Cache 一致性属性。
+龙芯 3 号实现表 \ref{tab:cache-coherent} 所示的 Cache 算法和 Cache 一致性属性。
 
-Table: 龙芯 3 号 Cache 的一致性属性
+Table: 龙芯 3 号 Cache 的一致性属性 \label{tab:cache-coherent}
 
 | 属性分类                                 |  一致性代码  |
 | ---------------------------------------- | ------------ |
 | 保留                                     |      0       |
 | 保留                                     |      1       |
-| 非高速缓存（Uncached）                   |      2       |
+| 非高速缓存（UnCached）                   |      2       |
 | 一致性高速缓存（Cacheable coherent）     |      3       |
 | 保留                                     |      4       |
 | 保留                                     |      5       |
 | 保留                                     |      6       |
-| 非高速缓存加速（Uncached Accelerated）   |      7       |
+| 非高速缓存加速（UnCached Accelerated）   |      7       |
 
-### 非高速缓存(Uncached，一致性代码 2)
+### 非高速缓存(UnCached，一致性代码 2)
 
 如果某个页采用非高速缓存算法时，那么对于在该页中任何位置的 Load 或 Store 操作，
 处理器都 直接发射一个双字，部分双字，字，部分字的读或写请求给主存，而不通过任何
@@ -264,14 +263,14 @@ Cache 命中，则从 二级 Cache 中填充数据。如果二级 Cache 不命�
 由于龙芯 3 号中存在多个处理器核及 IO 设备可以访问主存，因此龙芯 3 号硬件实现了
 Cache 一 致性协议，无需通过软件采用 Cache 指令来主动维护 Cache 的一致性。
 
-### 非高速缓存加速 (Uncached Accelerated，一致性代码 7)
+### 非高速缓存加速 (UnCached Accelerated，一致性代码 7)
 
 非高速缓存加速属性 用于优化在一 个连续的地址 空间中完成的一系列 顺序的同一类 型
-的 Uncached 存数操作。该优化方法是通过设置缓冲区来收集这种属性的存数操作。只要缓
+的 UnCached 存数操作。该优化方法是通过设置缓冲区来收集这种属性的存数操作。只要缓
 冲区不满， 就可以把这些存数操作的数据存入缓冲区中。缓冲区和一个 Cache 行一样大小
 。把数据存储到缓冲区 中就和存储到 Cache 中一样。当缓冲区满的时候，开始进行块写。
-在顺序存数指令的收集过程中，若 有其他类型 Uncached 存数指令插入，则收集工作中止
-，缓冲区中保存的数据按字节写方式输出。 非高速缓存加速属性可以加速顺序的 Uncached
+在顺序存数指令的收集过程中，若 有其他类型 UnCached 存数指令插入，则收集工作中止
+，缓冲区中保存的数据按字节写方式输出。 非高速缓存加速属性可以加速顺序的 UnCached
 访问，它适用于对显示设备存储的快速输出访问。
 
 
@@ -302,154 +301,145 @@ Cache 备份变为 INV 状态并通过 Repinv 应答二级 Cache 模块；二级
 块。
 
 
-![龙芯 3 号 cache 状态转换 \label{fig:cache-status-diagram}](../images/cache-status-diagram.pdf)
+![龙芯 3 号 Cache 状态转换 \label{fig:cache-status-diagram}](../images/cache-status-diagram.pdf)
 
 
 Cache 指令
 ----------
 
-GS464V 支持了 17 种 cache 指令，分别针对一级数据 cache、一级指令 cache 和二级
-cache。Cache 指令的格式为
+GS464V 支持了 17 种 Cache 指令，分别针对一级数据 Cache、一级指令 Cache 和二级
+Cache。Cache 指令的格式为
 
-    Cache fmt, offset(base)
+    CACHE fmt, offset(base)
 
 \noindent 具体的 Cache 指令列表如下：
 
 Table: GS464V 的 Cache 指令
 
-|  FMT 域   | Cache 指令涵义                      | 目标 cache     |
+|  FMT 域   | Cache 指令涵义                      | 目标 Cache     |
 |-----------|-------------------------------------|----------------|
-| 5’b 00000 | 根据索引对 cache 块进行无效         | 一级指令 cache |
-| 5’b 01000 | 根据索引存 cache 块的 tag           | 一级指令 cache |
-| 5’b 11100 | 根据索引存 cache 块的 data          | 一级指令 cache |
-| 5’b 00001 | 根据索引对 cache 块进行无效并写回   | 一级数据 cache |
-| 5’b 00101 | 根据索引取 cache 块的 tag           | 一级数据 cache |
-| 5’b 01001 | 根据索引存 cache 块的 tag           | 一级数据 cache |
-| 5’b 10001 | 根据命中来对 cache 块进行无效       | 一级数据 cache |
-| 5’b 10101 | 根据命中来对 cache 块进行无效并写回 | 一级数据 cache |
-| 5’b 11001 | 根据索引取 cache 块的 data          | 一级数据 cache |
-| 5’b 11101 | 根据索引存 cache 块的 data          | 一级数据 cache |
-| 5’b 00011 | 根据索引对 cache 块进行无效并写回   | 二级 cache     |
-| 5’b 00111 | 根据索引取 cache 块的 tag           | 二级 cache     |
-| 5’b 01011 | 根据索引存 cache 块的 tag           | 二级 cache     |
-| 5’b 10011 | 根据命中来对 cache 块进行无效       | 二级 cache     |
-| 5’b 10111 | 根据命中来对 cache 块进行无效并写回 | 二级 cache     |
-| 5’b 11011 | 根据索引取 cache 块的 data          | 二级 cache     |
-| 5’b 11111 | 根据索引存 cache 块的 data          | 二级 cache     |
+| 5’b 00000 | 根据索引对 Cache 块进行无效         | 一级指令 Cache |
+| 5’b 01000 | 根据索引存 Cache 块的 tag           | 一级指令 Cache |
+| 5’b 11100 | 根据索引存 Cache 块的 data          | 一级指令 Cache |
+| 5’b 00001 | 根据索引对 Cache 块进行无效并写回   | 一级数据 Cache |
+| 5’b 00101 | 根据索引取 Cache 块的 tag           | 一级数据 Cache |
+| 5’b 01001 | 根据索引存 Cache 块的 tag           | 一级数据 Cache |
+| 5’b 10001 | 根据命中来对 Cache 块进行无效       | 一级数据 Cache |
+| 5’b 10101 | 根据命中来对 Cache 块进行无效并写回 | 一级数据 Cache |
+| 5’b 11001 | 根据索引取 Cache 块的 data          | 一级数据 Cache |
+| 5’b 11101 | 根据索引存 Cache 块的 data          | 一级数据 Cache |
+| 5’b 00011 | 根据索引对 Cache 块进行无效并写回   | 二级 Cache     |
+| 5’b 00111 | 根据索引取 Cache 块的 tag           | 二级 Cache     |
+| 5’b 01011 | 根据索引存 Cache 块的 tag           | 二级 Cache     |
+| 5’b 10011 | 根据命中来对 Cache 块进行无效       | 二级 Cache     |
+| 5’b 10111 | 根据命中来对 Cache 块进行无效并写回 | 二级 Cache     |
+| 5’b 11011 | 根据索引取 Cache 块的 data          | 二级 Cache     |
+| 5’b 11111 | 根据索引存 Cache 块的 data          | 二级 Cache     |
 
+这些 Cache 指令和寄存器 TAGHi，TAGLo，DATAHi，DATALo 相关。关于这些寄存器的
+的内容格式见第 \ref{ch:cp0-controller} 章。
 
 ### Cache0 指令
 
-Cache0 指令的作用是根据索引来无效一级指令 cache 块。具体来说，就是把 cache index
-等于 address[13:5]，cache way 等于 address[2:0]的一级指令 cache 块无效掉。
+Cache0 指令的作用是根据索引来无效一级指令 Cache 块。具体来说，就是把 Cache index
+等于 address[13:5]，Cache way 等于 address[2:0]的一级指令 Cache 块无效掉。
 
 
 ### Cache8 指令
 
-Cache8 指令的作用是根据索引来存一级指令 cache 块的 tag。具体来说，就是把 CP0 的
-TAGHi 和 TAGLo 寄存器中的值存到 cache index 等于 address[13:5]，cache way 等于
-address[2:0]的一级指令 cache 块的 tag 中。具体 TAGHi 和 TAGLo 的内容格式见第 3
-章。
+Cache8 指令的作用是根据索引来存一级指令 Cache 块的 tag。具体来说，就是把 CP0 的
+TAGHi 和 TAGLo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way 等于
+address[2:0]的一级指令 Cache 块的 tag 中。
 
 ### Cache28 指令
 
-Cache28 指令的作用是根据索引来存一级指令 cache 块的 data。具体来说，就是把 CP0
-的 DATAHi 和 DATALo 寄存器中的值存到 cache index 等于 address[13:5]，cache way
-等于 address[2:0]的一级指令 cache 块的 data 的第 address[4:3]个 64 位中。具体
-DATAHi 和 DATALo 的内容格式见第 3 章。
+Cache28 指令的作用是根据索引来存一级指令 Cache 块的 data。具体来说，就是把 CP0
+的 DATAHi 和 DATALo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way
+等于 address[2:0]的一级指令 Cache 块的 data 的第 address[4:3]个 64 位中。
 
 ### Cache1 指令
 
-Cache1 指令的作用是根据索引来无效一级数据 cache 块。具体来说，就是把 cache index
-等于 address[13:5]，cache way 等于 address[2:0]的一级数据 cache 块无效掉，里面的
+Cache1 指令的作用是根据索引来无效一级数据 Cache 块。具体来说，就是把 Cache index
+等于 address[13:5]，Cache way 等于 address[2:0]的一级数据 Cache 块无效掉，里面的
 内容丢弃掉。
 
 
 ### Cache5 指令
 
-Cache5 指令的作用是根据索引来取一级数据 cache 块的 tag。具体来说，就是把 cache
-index 等于 address[13:5]，cache way 等于 address[2:0]的一级数据 cache 块的 tag
-的内容取到 CP0 的 TAGHi 和 TAGLo 寄存器中。具体 TAGHi 和 TAGLo 的内容格式见第 3
-章。
+Cache5 指令的作用是根据索引来取一级数据 Cache 块的 tag。具体来说，就是把 Cache
+index 等于 address[13:5]，Cache way 等于 address[2:0]的一级数据 Cache 块的 tag
+的内容取到 CP0 的 TAGHi 和 TAGLo 寄存器中。
 
 ### Cache9 指令
 
-Cache9 指令的作用是根据索引来存一级数据 cache 块的 tag。具体来说，就是把 CP0 的
-TAGHi 和 TAGLo 寄存器中的值存到 cache index 等于 address[13:5]，cache way 等于
-address[2:0]的一级数据 cache 块的 tag 中。具体 TAGHi 和 TAGLo 的内容格式见第 3
-章。
+Cache9 指令的作用是根据索引来存一级数据 Cache 块的 tag。具体来说，就是把 CP0 的
+TAGHi 和 TAGLo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way 等于
+address[2:0]的一级数据 Cache 块的 tag 中。
 
 ### Cache17 指令
 
-Cache17 指令的作用是根据地址命中来无效一级数据 cache 块。具体来说，如果 cache 指
-令针对 的地址在一级数据 cache 中命中，则对应的一级数据 cache 块被无效掉，里面的
-内容丢弃掉；如果 cache 指令针对的地址在一级数据 cache 中不命中，不做任何操作。
+Cache17 指令的作用是根据地址命中来无效一级数据 Cache 块。具体来说，如果 Cache 指
+令针对 的地址在一级数据 Cache 中命中，则对应的一级数据 Cache 块被无效掉，里面的
+内容丢弃掉；如果 Cache 指令针对的地址在一级数据 Cache 中不命中，不做任何操作。
 
 ### Cache21 指令
 
-Cache21 指令的作用是根据地址命中来无效并写回一级数据 cache 块。具体来说，如果
-cache 指 令针对的地址在一级数据 cache 中命中，则对应的一级数据 cache 块被无效掉
-，同时如果该 cache 块 为脏，里面的内容会送回二级 cache 或者内存（如果没有二级
-cache）；如果 cache 指令针对的地址在 一级数据 cache 中不命中，不做任何操作。
+Cache21 指令的作用是根据地址命中来无效并写回一级数据 Cache 块。具体来说，如果
+Cache 指 令针对的地址在一级数据 Cache 中命中，则对应的一级数据 Cache 块被无效掉
+，同时如果该 Cache 块 为脏，里面的内容会送回二级 Cache 或者内存（如果没有二级
+Cache）；如果 Cache 指令针对的地址在 一级数据 Cache 中不命中，不做任何操作。
 
 ### Cache25 指令
 
-Cache25 指令的作用是根据索引来取一级数据 cache 块的 data。具体来说，就是把 cache
-index 等 于 address[13:5]，cache way 等于 address[2:0]的一级数据 cache 块的 data
-的第 address[4:3]个 64 位取到 CP0 的 DATAHi 和 DATALo 寄存器中。具体 DATAHi 和
-DATALo 的内容格式见第 3 章。
-
+Cache25 指令的作用是根据索引来取一级数据 Cache 块的 data。具体来说，就是把 Cache
+index 等 于 address[13:5]，Cache way 等于 address[2:0]的一级数据 Cache 块的 data
+的第 address[4:3]个 64 位取到 CP0 的 DATAHi 和 DATALo 寄存器中。
 
 ### Cache29 指令
 
-Cache29 指令的作用是根据索引来存一级数据 cache 块的 data。具体来说，就是把 CP0
-的 DATAHi 和 DATALo 寄存器中的值存到 cache index 等于 address[13:5]，cache way
-等于 address[2:0]的一级数据 cache 块的 data 的第 address[4:3]个 64 位中。具体
-DATAHi 和 DATALo 的内容格式见第 3 章。
+Cache29 指令的作用是根据索引来存一级数据 Cache 块的 data。具体来说，就是把 CP0
+的 DATAHi 和 DATALo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way
+等于 address[2:0]的一级数据 Cache 块的 data 的第 address[4:3]个 64 位中。
 
 ### Cache3 指令
 
-Cache3 指令的作用是根据索引来无效二级 cache 块。具体来说，就是把 cache index 等
-于 address[13:5]，cache way 等于 address[2:0]的二级数据 cache 块无效掉，里面的内
+Cache3 指令的作用是根据索引来无效二级 Cache 块。具体来说，就是把 Cache index 等
+于 address[13:5]，Cache way 等于 address[2:0]的二级数据 Cache 块无效掉，里面的内
 容丢弃掉。
 
 ### Cache7 指令
 
-Cache7 指令的作用是根据索引来取二级 cache 块的 tag。具体来说，就是把 cache index
-等于 address[13:5]，cache way 等于 address[2:0]的二级数据 cache 块的 tag 的内容
-取到 CP0 的 TAGHi 和 TAGLo 寄存器中。具体 TAGHi 和 TAGLo 的内容格式见第 3 章。
-
+Cache7 指令的作用是根据索引来取二级 Cache 块的 tag。具体来说，就是把 Cache index
+等于 address[13:5]，Cache way 等于 address[2:0]的二级数据 Cache 块的 tag 的内容
+取到 CP0 的 TAGHi 和 TAGLo 寄存器中。
 
 ### Cache11 指令
 
-Cache11 指令的作用是根据索引来存二级 cache 块的 tag。具体来说，就是把 CP0 的
-TAGHi 和 TAGLo 寄存器中的值存到 cache index 等于 address[13:5]，cache way 等于
-address[2:0]的二级 cache 块 的 tag 中。具体 TAGHi 和 TAGLo 的内容格式见第 3 章。
-
+Cache11 指令的作用是根据索引来存二级 Cache 块的 tag。具体来说，就是把 CP0 的
+TAGHi 和 TAGLo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way 等于
+address[2:0]的二级 Cache 块 的 tag 中。
 
 ### Cache19 指令
 
-Cache19 指令的作用是根据地址命中来无效二级 cache 块。具体来说，如果 cache 指令针
-对的地 址在二级数据 cache 中命中，则对应的二级数据 cache 块被无效掉，里面的内容
-丢弃掉；如果 cache 指令针对的地址在二级 cache 中不命中，不做任何操作。
+Cache19 指令的作用是根据地址命中来无效二级 Cache 块。具体来说，如果 Cache 指令针
+对的地 址在二级数据 Cache 中命中，则对应的二级数据 Cache 块被无效掉，里面的内容
+丢弃掉；如果 Cache 指令针对的地址在二级 Cache 中不命中，不做任何操作。
 
 ### Cache23 指令
 
-Cache23 指令的作用是根据地址命中来无效并写回二级 cache 块。具体来说，如果 cache
-指令针 对的地址在二级 cache 中命中，则对应的二级 cache 块被无效掉，同时如果该
-cache 块为脏，里面的 内容会送回二级 cache 或者内存（如果没有二级 cache）；如果
-cache 指令针对的地址在二级 cache 中 不命中，不做任何操作。
+Cache23 指令的作用是根据地址命中来无效并写回二级 Cache 块。具体来说，如果 Cache
+指令针 对的地址在二级 Cache 中命中，则对应的二级 Cache 块被无效掉，同时如果该
+Cache 块为脏，里面的 内容会送回二级 Cache 或者内存（如果没有二级 Cache）；如果
+Cache 指令针对的地址在二级 Cache 中 不命中，不做任何操作。
 
 ### Cache27 指令
 
-Cache27 指令的作用是根据索引来取二级 cache 块的 data。具体来说，就是把 cache
-index 等于 address[13:5]，cache way 等于 address[2:0]的二级 cache 块的 data 的第
-address[4:3]个 64 位的 内容取到 CP0 的 DATAHi 和 DATALo 寄存器中。具体 DATAHi 和
-DATALo 的内容格式见第 3 章。
+Cache27 指令的作用是根据索引来取二级 Cache 块的 data。具体来说，就是把 Cache
+index 等于 address[13:5]，Cache way 等于 address[2:0]的二级 Cache 块的 data 的第
+address[4:3]个 64 位的 内容取到 CP0 的 DATAHi 和 DATALo 寄存器中。
 
 ### Cache31 指令
 
-Cache31 指令的作用是根据索引来存二级 cache 块的 data。具体来说，就是把 CP0 的
-DATAHi 和 DATALo 寄存器中的值存到 cache index 等于 address[13:5]，cache way 等于
-address[2:0]的二级 cache 块的 data 的第 address[4:3]个 64 位中。具体 DATAHi 和
-DATALo 的内容格式见第 3 章。
+Cache31 指令的作用是根据索引来存二级 Cache 块的 data。具体来说，就是把 CP0 的
+DATAHi 和 DATALo 寄存器中的值存到 Cache index 等于 address[13:5]，Cache way 等于
+address[2:0]的二级 Cache 块的 data 的第 address[4:3] 个 64 位中。

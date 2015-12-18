@@ -112,7 +112,6 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
     \hline \multicolumn{2}{r}{\tiny 未完待续} \endfoot
     \hline \endlastfoot
 }{
-    \tabularnewline \hline
   \end{longtable}
 }
 

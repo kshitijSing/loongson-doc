@@ -1,4 +1,4 @@
-CP0 控制寄存器
+CP0 控制寄存器 \label{ch:cp0-controller}
 ==============
 
 本章的主要内容是介绍零号协处理器各个寄存器及其位域含义。
@@ -86,6 +86,7 @@ TLB 表项。 表 \ref{tab:cp0-index} 给出了 Index 寄存器的格式， 及�
   P     & 探测失败位：最近一次 TLB 探测（TLBP）指令失败时置 1。 \\
   Index & TLB 表项索引域，用于指示 TLBR 和 TLBWI 指令操作。     \\
   0     & 保留：必须按 0 写入，读时返回 0。
+  \label{tab:cp0-index}
 \end{reglongtable}
 
 ### Random 寄存器（1）
@@ -118,7 +119,7 @@ EntryLo 寄存器的格式， 及各域的含义。
 
 \begin{reglongtable}{cp0-entrylo}{CP0: EntryLo 寄存器}
   PFN\footnotemark & 页帧号，即虚实地址转换中物理地址的高位。               \\ 
-  C   & Cache 一致性属性位（具体细节见\ref{sec:cacheAttr} 节）。            \\ 
+  C   & Cache 一致性属性位（具体细节见\ref{sec:cache-coherency} 节）。      \\ 
   D   & 脏位：该位置 1 时，对应页面脏，即可写； 亦可用作为数据写保护位。    \\ 
   V   & 有效位： TLB 表项是否有效；如未设置，TLB 访问将触发 TLBL/TLBS 例外。\\ 
   G   & 全局位： 如果为 1，TLB 查找时将忽略 ASID 域。                       \\ 
@@ -130,7 +131,7 @@ EntryLo 寄存器的格式， 及各域的含义。
 
 \noindent 由于一个 TLB 表项对应两个页面，却只有一个全局位。 所以在 TLB 写操作时，
 只有当两个页面全局位都为 1 时， TLB 的全局位才会被写入 1。关于 TLB 表项格式
-的具体信息见\ref{subsec:tlb-format} 节。
+的具体信息见 \ref{subsec:tlb-format} 节。
 
 ### Context 寄存器（4）
 
@@ -212,11 +213,11 @@ Wired 寄存器是一个 32 位可读写寄存器，该寄存器的值指定了 
   \label{tab:cp0-wired}
 \end{reglongtable}
 
-如图 \ref{fig:wired} 所示， Wired 表项是固定的不会被 TLB 随机写操作修改的 TLB
-表项。 Wired 寄存器在系统复位时置 0； 写该寄存器的同时，Random 寄存器的值也会被
-置为其上限值（参阅前面 Random 寄存器的说明）。 
+如图\ \ref{fig:wired-illustration} 所示， Wired 表项是固定的不会被 TLB 随机写操
+作修改的 TLB 表项。 Wired 寄存器在系统复位时置 0； 写该寄存器的同时，Random 寄存
+器的值也会被置为其上限值（参阅前面 Random 寄存器的说明）。 
 
-![Wired 寄存器示意图](../images/wired-illustration.pdf)
+![Wired 寄存器示意图 \label{fig:wired-illustration}](../images/wired-illustration.pdf)
 
 ### HWREna 寄存器（7）
 
@@ -328,7 +329,7 @@ Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作�
 1. 操作模式。龙芯 GS464 处理器有三种操作模式，他们分别是：用户模式，管理模式，和
    内核模式。由Status 寄存器的值决定了处理器的工作模式，这些模式的设置在表
    \ref{tab:cpu-mode}中列出。
-1. 地址空间访问（具体空间划分见 \ref{sec:virtualspace} 节）。
+1. 地址空间访问（具体空间划分见 \ref{sec:addrspace} 节）。
        * 内核地址空间：当处理器处在内核模式时， 可以访问内核地址空间；
        * 管理地址空间：当处理器处在内核或管理模式时，可以访问管理地址空间；
        * 用户地址空间：处理器在三种操作模式下都可以访问用户地址空间。
@@ -758,8 +759,9 @@ DEPC（Debug Exception Program Counter, 调试例外程序计数）是一个 64 
 每组计数器都可以独立对一种事件计数，并且在相关的事件域（Event）中对应的可数事件
 发生时自增。当性能计数器溢出，即首位（63 位）变成 1，则将触发一个中断： Cause 寄
 存器中的 PCI 位被置 1 （如果有多组计数器，则 PCI 位的值为多组计数器的溢出位取或
-）。计数器溢出后，无论中断是否被处理，计数都将继续。表 3-26 描述计数使能位的 定
-义。表计数器 0 和计数器 1 各自的事件。
+）。计数器溢出后，无论中断是否被处理，计数都将继续。表\ \ref{tab:cp0-PerfCnt} 描
+述计数使能位的定义。表\ \ref{tab:perfcnt-cnt1-event} 和
+\ref{tab:perfcnt-cnt1-event} 列出了计数器 0 和计数器 1 各自的事件。
 
 \begin{floattable}
   \caption{CP0: PerfCnt 寄存器}
@@ -921,3 +923,5 @@ Debug 异常处理时保存一个通用寄存器的值。 DESAVE 寄存器的格
   \label{tab:cp0-DESAVE}
 \end{reglongtable}
 
+40 vs 48 位物理地址 \label{sec:40vs48}
+-------------------

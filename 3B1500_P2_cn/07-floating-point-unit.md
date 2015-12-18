@@ -11,9 +11,9 @@
 概述
 ----
 
-![龙芯 GS464V 功能单元的组织构成 \label{fig:function-units}](../images/architect-functional-units.pdf)
+![龙芯 GS464V 功能单元的组织构成 \label{fig:functional-units}](../images/architect-functional-units.pdf)
 
-龙芯 GS464V 的 FPU 由 FALU1 和 FALU2 两个功能单元组成。图~\ref{fig:functional-units}
+龙芯 GS464V 的 FPU 由 FALU1 和 FALU2 两个功能单元组成。图\ \ref{fig:functional-units}
 对 GS464V 的浮点功能单元的组织构成进行了图解说明。
 
 - FALU1 单元： FALU1 模块可以执行除浮点访存以及浮点和定点数据传送之外的所有浮点
@@ -73,7 +73,7 @@ FIR 是 32 位只读寄存器，它包含了浮点单元实现的功能，如处
 ### FCSR 寄存器（CP1，31）
 
 FCSR 寄存器用于控制浮点单元的操作和表示一些状态。GS464V 中 FCSR 的初始值为
-0x0000_0F80。如图 7-4 所示是 FCSR 寄存器的格式，表 7-2 描述了 FCSR 寄存器的域。
+0x0000_0F80。表\ \ref{tab:fpu-FIR} 描述了 FCSR 寄存器的格式及各域含义。
 其中 E、V、Z、O、U、I 分别表示未实现操作、无效操作、除零、上溢、下溢、不精确。
 
 \begin{reglongtable}{fpu-FCSR}{FCSR 寄存器}
@@ -161,34 +161,35 @@ FCSR 寄存器的第 0 位和第 1 位组成了舍入模式（RM）域。所有�
 ### FCCR 寄存器（CP1，25）
 
 FCCR 寄存器是访问 FCC 字段的另一种方式，其内容与 FCSR 里的 FCC 位完全相同，不同
-的是在本寄存器中的 FCC 位是连续的。图 7-5 是 FCCR 寄存器的格式。
+的是在本寄存器中的 FCC 位是连续的。表\ \ref{tab:fpu-FCCR} 显示了 FCCR 寄存器的格
+式。
 
 \begin{floattable}
   \includegraphics{../images/fpu-FCCR} \\
   \caption{浮点 FCCR 寄存器}
-  \label{tab:fccr}
+  \label{tab:fpu-FCCR}
 \end{floattable}
 
 ### FEXR 寄存器（CP1，26）
 
 FEXR 寄存器是访问 Cause 和 Flags 字段的另一种方式，其内容与 FCSR 里的相应字段完
-全相同。图 7-6 显示了 FEXR 寄存器的格式。
+全相同。表\ \ref{tab:fpu-FEXR} 显示了 FEXR 寄存器的格式。
 
 \begin{floattable}
   \includegraphics{../images/fpu-FEXR} \\
   \caption{浮点 FEXR 寄存器}
-  \label{tab:fexr}
+  \label{tab:fpu-FEXR}
 \end{floattable}
 
 ### FENR 寄存器（CP1，28）
 
 FENR 寄存器是访问 Enable, FS 和 RM 字段的另一种方式，其内容与 FCSR 里的相应字段
-完全相同。图 7-7 显示了 FENR 寄存器的格式。
+完全相同。表\ \ref{tab:fpu-FENR} 显示了 FENR 寄存器的格式。
 
 \begin{floattable}
   \includegraphics{../images/fpu-FENR} \\
   \caption{浮点 FENR 寄存器}
-  \label{tab:fenr}
+  \label{tab:fpu-FENR}
 \end{floattable}
 
 FPU 指令集概述
@@ -291,7 +292,7 @@ FPU 指令，但是有些指令在实现上有细微的并不影响兼容性但�
 
 GS464 的浮点部件不仅可以处理符合 IEEE 标准的单精度（32 位）及双精度
 （64 位）浮点数， 同时也提供了对``单精度对''（Paired single, 简称PS）浮点
-格式的支持。 图~\ref{fig:fpt-types} 显示了这三种浮点数的详细格式。
+格式的支持。 图\ \ref{fig:fpt-types} 显示了这三种浮点数的详细格式。
 
 \begin{figure}[htbp]
   (FIXME)

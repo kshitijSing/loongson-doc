@@ -117,7 +117,7 @@ MIPS64 兼容处理器一般同时支持 32 位和 64 位地址空间：不同
 状态寄存器的 KX、SX或 UX 位的值始终为 1，软件不能将它们写为 0。
 所以无论处理器运行在何种模式下，用户空间（XUSEG、XSUSEG 和 XKUSEG 段），
 管理空间（XSSEG 和 XKSSEG 段）及内核空间（KXSEG 和
-KXPHYS 段）始终有效。内存管理一章的 \ref{sec:virtualspace} 节
+KXPHYS 段）始终有效。内存管理一章的 \ref{sec:addrspace} 节
 对这些虚拟地址段给出了详细的描述。
 
 由于龙芯 GS464 处理器只能工作在 64 位地址空间下，所以 TLB 重填例外只能使用 XTLB
