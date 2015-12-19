@@ -1,0 +1,265 @@
+\chapter{EJTAG 调试}
+
+\section{EJTAG 介绍}
+
+EJTAG(Enhanced JTAG)是 MIPS 根据 IEEE1149.1 协议的基本构造和功能扩
+展而定义的规范，是一个硬件/软件子系统，用于支持片上调试。EJTAG 规范通
+过定义一种新的调试模式，包括专用的指令、运行模式以及地址空间等，与原有 的 MIPS
+体系结构很好地融合在一起。 调试模式的基本思想是采用例外处理的机
+制，使被调试的软件无法察觉调试器的存在。此外，处理器在调试模式下对地址
+空间进行了扩展， 可以访问调试控制寄存器以及映射到内存区域的调试接口。下
+图给出了一个常见的 EJTAG 调试系统组成，包括：
+\begin{itemize}
+  \item 调试主机(Debug Host)：运行调试应用程序，控制 EJTAG 线缆
+  \item 目标板(Target Board)：包含被调试芯片的板卡，提供 EJTAG 接口
+\end{itemize}
+
+图 13-1 EJTAG 调试系统 (FIXME)
+
+调试主机可以通过 EJTAG 线使目标板上的处理器进入调试模式，转向执行
+调试服务例程。 调试服务的入口有两个， 分别是位于 BIOS 的 0xbfc00480 和位于
+EJTAG 调试内存接口的 0xff200200，由调试主机选择。
+
+EJTAG 规范在处理器的调试模式地址空间中划出两块，映射到调试控制寄
+存器(drseg)和调试内存接口(dmseg)。当处理器执行调试服务访问调试接口时，
+所发出的访存请求将阻塞在调试接口中。此时，调试主机能够检测到调试内存接
+口的访存请求，从而对其进行响应。简单的说，调试服务程序可访问位于调试主
+机的一段内存空间。
+
+利用调试主机控制的调试用内存空间，调试服务几乎可以完成任意可以想象
+的功能，因为调试服务程序的代码本身就可以由调试主机提供 (目前龙芯 3A 和 2G
+的样片中不能从 dmseg 取指，但可以执行访存指令)。 龙芯 3A/2G 中还支持 EJTAG
+规范的 PC 采样功能。
+
+\section{EJTAG 工具使用}
+
+\subsection{环境准备}
+
+\begin{itemize}
+  \item EJTAG 线，并口转 14 针 EJTAG 口
+  \item Linux 调试主机，带并口，有 root 权限
+  \item PMON 中添加调试服务程序
+\end{itemize}
+
+\subsection{PC采样}
+
+在调试主机运行 jtag\_1/4/16，将完成对处理器核的一次 PC 采样。其中程序 后缀是指
+EJTAG 接口中处理器核的数目，一个 2G 是 1，一个 3A 是 4，四个 3A 串一起是 16。PC
+采样不需要调试服务程序。 3A/2G 中 PC
+采样的值不精确，存在抖动，用户需忽略采样结果的低 2 位。 处理器核中真正的 PC
+指针可能是所采样 PC 对应指令的程序流后方 0~4 条指令，
+即如果包含转移，则有真正的 PC 可能落在转移目标附近。
+如果不是有规律的循环或者软件控制的停时钟，PC 采样不应当静止不动。
+如果出现，则意味着处理器运行不正常。
+
+\subsection{读写内存}
+
+运行 pracc\_1/4/16，在参数中指定执行调试服务的处理器核号、访问类型、
+访问地址、要写的值等。其工作原理是根据所要完成的任务，在调试用内存空间
+初始化一段参数区，与调试服务程序相配合，控制调试服务的执行。调试服务会
+首先将若干寄存器保存到调试主机，然后基于这些空出的寄存器运行，在读出相
+关的参数并执行，最后恢复先前保存过的寄存器。 需注意的是，
+这一功能要求执行调试服务的处理器核还能执行指令。如果工
+作异常，则可能存在硬件故障。
+
+\subsection{执行说明}
+
+\subsubsection*{读 bfc00480 |值的意义}
+
+\begin{verbatim}
+cpu@ubuntu:~/ejtag$ ./pracc_4 0 0xffffffffbfc00480 d r
+target = 0, addr = ffffffffbfc00480, dword read
+breaking...
+ctrl = 00049000
+stat = 00008008
+pracc write, size=3,  address = 000000000000000f, value = 0000000000000000 |t1
+pracc write, size=3,  address = 0000000000000017, value = 0000000000000000 |t2
+pracc write, size=3,  address = 000000000000001f, value = fffffffff80e1060 |t3
+pracc write, size=3,  address = 0000000000000027, value = ffffffff8000b899 |t4
+pracc write, size=3,  address = 000000000000002f, value = ffffffffffffffff |t5
+pracc write, size=3,  address = 0000000000000037, value = ffffffff80110000 |t6
+pracc write, size=3,  address = 000000000000003f, value = ffffffff800f7428 |t7
+pracc write, size=3,  address = 0000000000000047, value = 00000000340000e0 |status
+pracc write, size=3,  address = 000000000000004f, value = 0000000080034483 |config
+pracc write, size=3,  address = 0000000000000057, value = 0000000040008000 |cause
+pracc write, size=3,  address = 000000000000005f, value = 0000000000000033 |a0
+pracc write, size=3,  address = 0000000000000067, value = ffffffff80120000 |a1
+pracc write, size=3,  address = 000000000000006f, value = 0000000000000000 |a2
+pracc read, size=3,  address = 0000000000000207, value = fff3ffffbfc00480
+pracc write, size=3,  address = 0000000000000107, value = fff3ffffbfc00480
+pracc write, size=3,  address = 0000000000000107, value = 0000000000000003
+pracc write, size=3,  address = 0000000000000107, value = 00000000000001fc
+pracc write, size=3,  address = 0000000000000107, value = 0000000000000001
+pracc write, size=3,  address = 0000000000000107, value = ffffffffbfc00480
+pracc write, size=3,  address = 000000000000020f, value = 3c08ff2040a8f800
+return 3c08ff2040a8f800                                                        |读返回值
+pracc read, size=3,  address = 0000000000000217, value = 0000000000000000
+pracc read, size=3,  address = 000000000000021f, value = 0000000000000000
+pracc read, size=3,  address = 000000000000000f, value = 0000000000000000
+pracc read, size=3,  address = 0000000000000017, value = 0000000000000000
+pracc read, size=3,  address = 000000000000001f, value = fffffffff80e1060
+pracc read, size=3,  address = 0000000000000027, value = ffffffff8000b899
+pracc read, size=3,  address = 000000000000002f, value = ffffffffffffffff
+pracc read, size=3,  address = 0000000000000037, value = ffffffff80110000
+pracc read, size=3,  address = 000000000000003f, value = ffffffff800f7428
+\end{verbatim}
+
+\subsubsection*{写 bfc00480(其实写不进去)}
+
+\begin{verbatim}
+cpu@ubuntu:/home/cpu/ejtag$ ./pracc_4 0 0xffffffffbfc00480 d w 0x0
+target = 0, addr = ffffffffbfc00480, dword write with 0000000000000000
+press <enter> to confirm..
+breaking...
+ctrl = 00049000
+stat = 60008008
+pracc write, size=3,  address = 000000000000000f, value = 0000000000000000
+pracc write, size=3,  address = 0000000000000017, value = 0000000000000000
+pracc write, size=3,  address = 000000000000001f, value = fffffffff80e1060
+pracc write, size=3,  address = 0000000000000027, value = ffffffff8000b899
+pracc write, size=3,  address = 000000000000002f, value = ffffffffffffffff
+pracc write, size=3,  address = 0000000000000037, value = ffffffff80110000
+pracc write, size=3,  address = 000000000000003f, value = ffffffff800f7428
+pracc write, size=3,  address = 0000000000000047, value = 00000000340000e0
+pracc write, size=3,  address = 000000000000004f, value = 0000000080034483
+pracc write, size=3,  address = 0000000000000057, value = 0000000040008000
+pracc write, size=3,  address = 000000000000005f, value = ffffffff8ec08c00
+pracc write, size=3,  address = 0000000000000067, value = ffffffff8ec08400
+pracc write, size=3,  address = 000000000000006f, value = 0000000000000000
+pracc read, size=3,  address = 0000000000000207, value = 0000000000000000
+pracc write, size=3,  address = 0000000000000107, value = 0000000000000000
+pracc read, size=3,  address = 0000000000000217, value = fff3ffffbfc00480
+pracc read, size=3,  address = 000000000000021f, value = 0000000000000000
+pracc write, size=3,  address = 0000000000000107, value = fff3ffffbfc00480
+pracc write, size=3,  address = 0000000000000107, value = 0000000000000003
+pracc write, size=3,  address = 0000000000000107, value = 00000000000001fc
+pracc write, size=3,  address = 0000000000000107, value = 0000000000000001
+pracc write, size=3,  address = 0000000000000107, value = ffffffffbfc00480
+pracc write, size=3,  address = 000000000000021f, value = 0000000000000000
+pracc read, size=3,  address = 000000000000000f, value = 0000000000000000
+pracc read, size=3,  address = 0000000000000017, value = 0000000000000000
+pracc read, size=3,  address = 000000000000001f, value = fffffffff80e1060
+pracc read, size=3,  address = 0000000000000027, value = ffffffff8000b899
+pracc read, size=3,  address = 000000000000002f, value = ffffffffffffffff
+pracc read, size=3,  address = 0000000000000037, value = ffffffff80110000
+pracc read, size=3,  address = 000000000000003f, value = ffffffff800f7428
+\end{verbatim}
+
+\subsubsection*{调试服务代码注解}
+
+\begin{lstlisting}
+# start.S
+/* Debug exception */
+        .align  7                       /* bfc00480 */
+////////////////////////////////////////////
+#define COP_0_DESAVE $31
+    .set mips64
+    // save context
+    dmtc0   t0, COP_0_DESAVE	// 保存一个寄存器用于dmseg指针
+    lui     t0, 0xff20	// 
+    sd      t1, 0x08(t0)	// 压栈
+    sd      t2, 0x10(t0)
+    sd      t3, 0x18(t0)
+    sd      t4, 0x20(t0)
+    sd      t5, 0x28(t0)
+    sd      t6, 0x30(t0)
+    sd      t7, 0x38(t0)
+    dmfc0   t1, COP_0_STATUS_REG	// 输出若干cp0寄存器
+    sd      t1, 0x40(t0)
+    dmfc0   t1, COP_0_CONFIG
+    sd      t1, 0x48(t0)
+    dmfc0   t1, COP_0_CAUSE_REG
+    sd      t1, 0x50(t0)
+    sd      a0, 0x58(t0)	// 其它感兴趣的寄存器
+    sd      a1, 0x60(t0)
+    sd      a2, 0x68(t0)
+
+#define _t1      9
+#define _t2      10
+#define _t3      11
+#define _t4      12
+#define dextu(dest, src, msbd, dlsb) \
+    .word ((0x1f<<26)|((src&0x1f)<<21)|((dest&0x1f)<<16)|((( msbd)&0x1f)<<11)|(((dlsb)&0x1f)<<6)|(0x2))
+#define dinsu(dest, src, dmsb, dlsb) \
+    .word ((0x1f<<26)|((src&0x1f)<<21)|((dest&0x1f)<<16)|(((dmsb)&0x1f)<<11)|(((dlsb)&0x1f)<<6)|(0x6))
+
+
+    // exec_main
+    ld      t1, 0x200(t0)    	// 读参数 addr/size/count
+    beqz    t1, read_end
+    sd      t1, 0x100(t0)    	// debug...
+    dextu   (_t2, _t1, 2-1, 48-32)
+    sd      t2, 0x100(t0)    	// debug...
+    dextu   (_t3, _t1, 9-1, 50-32)
+    sd      t3, 0x100(t0)    	// debug...
+    dextu   (_t4, _t1, 1-1, 47-32)
+    sd      t4, 0x100(t0)    	// debug...
+    dsubu   t4, $0, t4      	// sign bit extend
+    dinsu   (_t1, _t4, 58-32, 48-32) // address back
+    sd      t1, 0x100(t0)    	// debug...
+    // case t2 0,1,2,3  -> lb,lh,lw,ld
+    beqzl   t2, 1f
+    lb      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    beqzl   t2, 1f
+    lh      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    beqzl   t2, 1f
+    lw      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    ld      t5, 0x0(t1)
+1:
+    sd      t5, 0x208(t0)    	// 读返回值
+read_end:
+    // write
+    ld      t1, 0x210(t0)    	// 写参数 addr/size/count
+    beqz    t1, write_end
+    ld      t5, 0x218(t0)    	//写参数
+    sd      t1, 0x100(t0)    	// debug...
+    dextu   (_t2, _t1, 2-1, 48-32)
+    sd      t2, 0x100(t0)    	// debug...
+    dextu   (_t3, _t1, 9-1, 50-32)
+    sd      t3, 0x100(t0)    	// debug...
+    dextu   (_t4, _t1, 1-1, 47-32)
+    sd      t4, 0x100(t0)    	// debug...
+    dsubu   t4, $0, t4      	// sign bit extend
+    dinsu   (_t1, _t4, 58-32, 48-32) // address back
+    sd      t1, 0x100(t0)    	// debug...
+    // case t2 0,1,2,3  -> sb,sh,sw,sd
+    beqzl   t2, 1f
+    sb      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    beqzl   t2, 1f
+    sh      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    beqzl   t2, 1f
+    sw      t5, 0x0(t1)
+    addiu   t2, t2, -1
+
+    sd      t5, 0x0(t1)
+1:
+    sd      t5, 0x218(t0)    	// 写响应
+write_end:
+
+    // restore context
+    ld      t1, 0x08(t0)	// 退栈
+    ld      t2, 0x10(t0)
+    ld      t3, 0x18(t0)
+    ld      t4, 0x20(t0)
+    ld      t5, 0x28(t0)
+    ld      t6, 0x30(t0)
+    ld      t7, 0x38(t0)
+    dmfc0   t0, COP_0_DESAVE
+    deret	// 调试例外返回
+\end{lstlisting}
+
+\subsection{在线GDB调试}
+
+由于目前样片存在的 bug，在线调试功能需要在常见的 MIPS 调试平台中作
+一定量的改动，并增加相应的调试服务程序。该功能尚未实现。
+

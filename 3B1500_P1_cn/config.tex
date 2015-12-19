@@ -1,0 +1,49 @@
+%# -*- coding: utf-8 -*-
+% $Id: config.tex $
+% config.tex: all the LaTeX settings are here.
+
+\usepackage{longtable, array}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage{makeidx}
+\usepackage{bytefield}
+\usepackage{xeCJK}
+\usepackage[margin=1in]{geometry}
+\RequirePackage[bookmarks, dvipdfmx, xetex, bookmarksnumbered=true, bookmarksopenlevel=3, 
+                hyperindex, plainpages=false, CJKbookmarks,
+                colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
+
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.eps}
+\graphicspath{{images/}}
+
+\CTEXoptions[today=big]
+%\CTEXsetup[name={第,节},number={\chinese{section}},format+={\bfseries},beforeskip={-10ex plus -.1ex minus -.1ex},afterskip={1ex plus .1ex minus .1ex}]{section}
+\CTEXsetup[name={附录},number={\chinese{chapter}}]{appendix}
+\CTEXsetup[name={第,部分},nameformat={\centering\bfseries},titleformat={\zihao{0}\bfseries}]{part}
+\setcounter{secnumdepth}{4}
+\CTEXsetup[name={(,)},number={\arabic{paragraph}}]{paragraph}
+
+\let\emph=\textit
+\setlength{\headheight}{15pt}
+\setlength{\parskip}{0.75ex plus .2ex minus .5ex}
+
+% settings for lstlisting
+\usepackage{pstricks}
+\input{lstsetting}
+
+% self-defined commands
+\newbox{\tempbox}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\newcommand{\ptabincell}[2]{\vtop{\vskip-\ht\strutbox\null\hbox{\tabincell{#1}{#2}}}}
+
+\newcommand{\hhline}{\hline\hline}
+\newcommand{\cellalign}[2]{\multicolumn{1}{#1}{#2}}
+\newcommand{\lmcol}[2]{\multicolumn{#1}{l}{#2}}
+\newcommand{\rmcol}[2]{\multicolumn{#1}{r}{#2}}
+\newcommand{\cmcol}[2]{\multicolumn{#1}{c}{#2}}
+\newcommand{\lmcolvb}[2]{\multicolumn{#1}{|l|}{#2}}
+\newcommand{\rmcolvb}[2]{\multicolumn{#1}{|r|}{#2}}
+\newcommand{\cmcolvb}[2]{\multicolumn{#1}{|c|}{#2}}
+\newcommand{\zhdash}{\kern0.5ex\rule[.2\baselineskip]{1.5em}{.4pt}\kern0.5ex}
+\newcommand{\remark}[1]{{\color{red} Remark: #1}}

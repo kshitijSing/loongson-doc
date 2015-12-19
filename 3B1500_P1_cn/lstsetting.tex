@@ -1,0 +1,44 @@
+\definecolor{bg-color}{rgb}{0.96,1,0.95}
+\definecolor{shadecolor}{rgb}{0.96,1,0.95}
+\definecolor{txt-color}{HTML}{000000}
+\definecolor{builtin}{HTML}{DA70D6}
+\definecolor{comment}{HTML}{B22222}
+\definecolor{comment-delimiter}{HTML}{B22222}
+\definecolor{constant}{HTML}{5F9EA0}
+\definecolor{function-name}{HTML}{0000FF}
+\definecolor{keyword}{HTML}{a020F0}
+\definecolor{string}{HTML}{BC8F8F}
+\definecolor{type}{HTML}{228B22}
+\definecolor{variable-name}{HTML}{B8860B}
+\definecolor{brick}{HTML}{7B0C00}
+
+\usepackage{listings}
+\usepackage{mips}
+\lstset{
+  basicstyle={\ttfamily},
+  extendedchars=false,
+  escapechar=`,
+  language={[MIPS]Assembler},
+  basewidth={.5em},
+  keywordstyle={\color{keyword}},
+  keywordstyle=[2]{\color{type}},
+  keywordstyle=[3]{\color{function-name}},
+  keywordstyle=[4]{\color{variable-name}},
+  commentstyle={\color{comment}},
+  stringstyle={\color{string}},
+  xleftmargin={2em},
+  xrightmargin={2em},
+  tabsize=6,
+  backgroundcolor={\color{shadecolor}},
+  % numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt
+}
+
+\lstdefinestyle{lesscolor}{keywordstyle={\color{keyword!50!black}},
+  keywordstyle=[2]{\color{type!50!black}},
+  keywordstyle=[3]{\color{function-name!50!black}},
+  keywordstyle=[4]{\color{variable-name!50!black}},
+  commentstyle={\color{comment!50!black}},
+  stringstyle={\color{string!50!black}}}

@@ -1,0 +1,134 @@
+\chapter{MIPS 兼容性}
+
+龙芯 GS464 处理器的设计目标是要兼容 MIPS64 R2 架构，这个目标已经基本实现。
+在设计过程，出于对性能、将来扩展的考虑以及具体实现的原因，龙芯 GS464 核与 MIPS64 R2 相比
+在细节上有一些不太重要的差异上。 同时， GS464 在 MIPS64 R2 的基础上实现了若干扩展。以下，
+我们将从指令集构架和特权资源构架两个方面对这些差异进行阐述。
+
+\section{指令集架构}
+
+在指令集架构（Instruction Set Architecture，简称 ISA）上，
+龙芯 GS464 处理器的实现了 MIPS64 R2 的所有指令， 不过在一些指令的实现上
+做了重定义，具体细节见\ref{sec:gsSpecialInstruction} 节。
+同时， 龙芯 GS464 处理器在 MIPS64 R2 的基础上实现了若干扩展。
+这些增强指令包括如下五个方面：
+\begin{itemize}
+  \item 扩展定点乘除法指令， 扩大了 MIPS64 的 定点乘除法指令，
+    以提高定点乘法运算使用广泛的应用性能。 这些指令主要 执行 64
+    位整点乘除法操作，并产生 64 位（而不是 128 位）结果。 附录~A
+    对龙芯 GS464 的扩展整数指令进行了详细介绍。
+  \item 扩展浮点指令，这些指令采用了三个操作数模式，而不是MIPS64
+    中的四操作数形式。 附录~B龙芯 GS464 扩展浮点指令进行了详细介绍。
+  \item 扩展多媒体指令，即单指令多数据（SIMD）指令，
+    对高性能媒体和通信应用提供了强大支持。这些指令类似于 x86 平台的 SSE
+    的指令。 附录~C 对龙芯 GS464 的多媒体指令进行了详细介绍。
+  \item 扩展访存指令 -- to be added.
+  \item x86 虚拟指令 -- to be added.
+\end{itemize}
+
+\subsection{CPU 特殊实现指令列表}\label{sec:gsSpecialInstruction}
+
+龙芯 GS464 处理器核对所有 MIPS64 R2 指令都作了支持。但对一些与实现
+相关的指令作了重定义，见表
+
+\begin{longtable}{|@{\hspace{.2cm}}c@{\hspace{.2cm}}|l|l|}
+  \caption{龙芯 CPU 特殊实现指令}\label{tab:special-impl-ins} \\
+  \hline 指令 OpCode & \cellalign{c|}{描述} & \cellalign{c|}{龙芯具体实现} \\ \hhline \endfirsthead
+  \caption{龙芯 CPU 特殊实现指令（续）} \\
+  \hline 指令 OpCode & \cellalign{c|}{描述} & \cellalign{c|}{龙芯具体实现} \\ \hhline \endhead
+  \hline \multicolumn{3}{r}{\tiny 未完待续} \endfoot \endlastfoot
+
+  PREF   & 预取指令     & 空操作，预取可通过 Load 到 0 号寄存器实现 \\
+  PREFX  & 预取指令     & 空操作，预取可通过 Load 到 0 号寄存器实现 \\
+  SSNOP  & 单发射空操作 & 空操作，GS464 实现了所有相关指令的硬件互锁 \\
+  EHB    & 隔离执行相关 & 空操作，GS464 实现了所有相关指令的硬件互锁 \\
+  WAIT   & 进入等待状态 & 空操作，GS464 实现了通过动态调频，让 CPU 等待或休眠 \\
+  RDPGPR & 读影子寄存器 & GS464 没有影子寄存器，读当前寄存器 \\
+  WRPGPR & 写影子寄存器 & GS464 没有影子寄存器，写当前寄存器 \\ \hline
+\end{longtable}
+
+\subsection{浮点转换指令}
+
+龙芯 GS464 浮点运算中进行数据格式转换时， 比如使用如下指令将浮点数转换为
+字整点数或双字整点数，
+\begin{verbatim}
+    cvt.w.fmt, round.w.fmt, floor.w.fmt, ceil.w.fmt, trunk.w.fmt
+    cvt.l.fmt, round.l.fmt, floor.l.fmt, ceil.l.fmt, trunk.l.fmt
+\end{verbatim}
+如果输入值为负非数，负越界，负无穷时， 而 FCSR 寄存器的
+无效例外没有使能， 将不会发出无效操作例外，
+返回值为负最大：0x8000\_0000 或 0x8000\_0000\_0000\_0000 取决于操作的转换格式。
+而在 MIPS64 浮点运算中，遇到相同情况时， 也不会发出无效操作例外，
+不过返回值规定为正最大： 0x7fffffff或0x7fffffffffffffff。 即， MIPS64 的规定不
+区分输入值的正负。
+
+\section{特权资源构架}
+
+龙芯 GS464 处理器实现了 MIPS64 特权资源架构的绝大部分， 而在一些地方则采用了
+R10000 的特权资源架构，同时也引入了 一些特殊的实现特征 --- 这些特征和 MIPS64
+的特权资源架构是不兼容的。 为了实现的灵活性， MIPS 在实践中也
+允许一个兼容设计只实现部分的特权资源架构。 作为 MIPS64
+定义的特权资源架构的重要部分， 这些差异主要体现在 CP0 上。
+系统程序员在移植或编写软件时应充分考虑到这些不兼容的特征。
+以下各节将更详细地描述这些主要的特征差异。
+
+\subsection{Diagnostic 寄存器}
+
+Diagnotic 寄存器是一个 64 位的辅助寄存器。该寄存器具有刷新 ITLB 、
+BTB （分支目标缓冲器）和启用 RAS（返回地址堆栈）的功能。当在 Diagistic 寄存器
+的 ITLB 位写入 1 时，整个 ITLB 将被刷新。
+
+\remark{BTB and RAS: any further comments?}
+
+\subsection{ITLB 刷新}\label{subsec:itlb-flushing}
+
+龙芯 GS464 包含了独立的 ITLB（即指令 TLB），以减少对
+JTLB 的竞争及降低功耗。 当翻译指令地址发生 ITLB 查找脱靶时，
+将从 JTLB 中查找命中项，并随机替换一个 ITLB 项。这里的 ITLB
+的查找和替换操作对用户是完全透明的。
+然而， GS464 处理核没有提供自动刷新 ITLB 的功能：当 JTLB 表项映射的地址
+被 TLBWI 或 TLBWR 指示改变时，ITLB 不能自动更新以保持与 JTLB 的
+一致。 因此，系统程序员必须使用指令刷新 ITLB。 基于同样的原因，
+当任何 JTLB 项的位域被改变时，比如失效一个页面或页面的掩码大小
+发生变化时，也必须用软件刷新 ITLB。
+
+刷新 ITLB 是通过设置 CP0 的 Diagistic 寄存器的 ITLB 位实现的。
+ITLB 项不能单独地被刷新： 这个操作将丢弃 ITLB 中的所有项。
+以下给出了一个刷新 ITLB 的例子。
+
+\lstinputlisting{codes/itlb-flushing.S}
+
+\subsection{异常返回（Status[ERL] = 1）}
+
+ERET 指令用于从异常，中断或错误陷阱中返回。当复位，软
+复位，NMI或缓存错误异常发生时，处理器将设置 ERL 位。对于
+MIPS64 兼容处理器，在 Status[ERL]=1 的情况下， ERET 指令将清零
+ERL位 并从 ErrorEPC 寄存器的值返回。龙芯 GS464 处理器的处理略有不同：
+ERL 位被设置时，ERET 指令将会清除该位， 并依照 EPC
+（而不是 ErrorEPC）寄存器给出的地址返回。
+
+\remark{is it still like this now?}
+
+\subsection{64 位地址空间}
+
+MIPS64 兼容处理器一般同时支持 32 位和 64 位地址空间：不同
+的操作模式可以通过 CP0 状态寄存器的 UX、SX 和 KX
+位设置。 而龙芯 GS464 处理器的 64 位地址空间总是启用的。也就是说，
+状态寄存器的 KX、SX或 UX 位的值始终为 1，软件不能将它们写为 0。
+所以无论处理器运行在何种模式下，用户空间（XUSEG、XSUSEG 和 XKUSEG 段），
+管理空间（XSSEG 和 XKSSEG 段）及内核空间（KXSEG 和
+KXPHYS 段）始终有效。内存管理一章的 \ref{sec:addrspace} 节
+对这些虚拟地址段给出了详细的描述。
+
+由于龙芯 GS464 处理器只能工作在 64 位地址空间下，所以 TLB 重填例外只能使用 XTLB
+例外向量。 XTLB 重填例外 在龙芯 GS464 处理器上有和 TLB 重填向量相同的位置，
+即偏移量为 0x00。这是龙芯 GS464 处理器与其他 MIPS64 兼容处理器的重要差别。
+
+\begin{tabular}{|c|p{6.5cm}|p{6cm}|} \hline
+  项目 & GS464 & MIPS64 \\ \hhline
+  TLB 例外 &
+  龙芯 GS464 不支持KX,UX,SX位，XTLB例外入口与TLB例外入口相同 &
+  MIPS64 中用 KX,UX,SX 位来区分 64 位地址和 32 位地址， 且 TLB 例外和 XTLB
+  例外分别使用不同的例外入口。 \\ \hline 
+\end{tabular}
+

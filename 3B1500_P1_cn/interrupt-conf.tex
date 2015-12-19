@@ -1,0 +1,100 @@
+\chapter{中断的配置及使用}
+
+material largely overlaps with that of chapter 7. Question: move below to
+there?
+
+\section{中断的流程}
+
+龙芯 3A 处理中断的流程，从外部中断请求到内核对中断的处理， 其过程都是一样的。
+下图给出的就是 3A-690e 板卡的中断处理的流程图。
+
+图 11-1 3A-690e 中断流程图 (FIXME)
+
+\section{中断路由及中断使能}
+
+龙芯 3A 芯片最多支持 32 个中断源，以统一方式进行管理， 如
+图~ref{fig:IntDispatch} (FIXME: use the one on chapter 7) 所示， 任意一个 IO
+中断源可以被配置为是否使能、 触发的方式、以及被路由的目标处理器核中断脚。
+
+\subsection{中断路由}
+
+在龙芯 3A 中集成了 4 个处理器核，上述的 32 位中断源可以通过软件配置
+选择期望中断的目标处理器核。进一步，中断源可以选择路由到处理器核中断 INT0 到
+INT3 中的任意一个， 即对应 CP0\_Status 的 IP2 到 IP5。 也就是说上图所 示
+CORE0~CORE3 的 IP0~IP3 对应的就是 CP0\_Status 的 IP2~IP5。 个 I/O 中断 32
+源中每一个都对应一个 8 位的路由控制器，表~ref(tab in ch7): just describ there
+is fine\ldots 路由寄存器采用向量的方式进行路由选择，如 0x48 标示路由到 3
+号处理器的 INT2 上。
+中断路由寄存器的说明
+
+为了便于理解，下面会给出 3A-690e 和 3A-KD60 两个板卡在中断路由上的配置情况：
+
+a) 3A-690e 硬件连接为“CPU 串口 + HT1 接南北桥”。路由设置为：
+\lstinputlisting[language=C]{codes/3a690e-ht1-route.c}
+
+b) 3A-KD60 硬件连接为“CPU 串口 + CPU 的 PCI + CPU”的 8259，路由设置为：
+\lstinputlisting[language=C]{codes/3akd60-cpupci-route.c}
+
+\subsection{中断使能}
+
+中断相关配置寄存器都是以位的形式对相应的中断线进行控制， 中断控制位
+连接及属性配置见表 11-3 (FIXME: quote the table in chapter
+2)。中断使能（Enable）的配置有三个寄存器：Intenset、 Intenclr 和
+Inten。Intenset 设置中断使能，Intenset 寄存器写 1 的位对应的中断被
+使能。Intenclr 清除中断使能，Intenclr 寄存器写 1 的位对应的中断被清除。Inten
+寄存器读取当前各中断使能的情况。脉冲形式的中断信号（如 PCI\_SERR）由 Intedge
+配置寄存器来选择，写 1 表示脉冲触发，写 0 表示电平触发。中断处理 程序可以通过
+Intenclr 的相应位来清除脉冲记录。
+
+不仅需要使能 IO 的控制器， 具体到所接的 IO， 如果它有自己的中断控制器，
+也需要单独使能，如 LPC 中断控制器，HT 中断控制器，具体的寄存器配置可查
+看寄存器手册。下面列出了一些可能需要使能的中断控制器：
+
+\begin{lstlisting}
+  /* Enable the IO interrupt controller ，LPC（10） and HT（16~31）*/
+  t = *(volatile unsigned int*)0x900000003ff01428;
+
+  *(volatile unsigned int*)0x900000003ff01428 = t | (0xffff << 16) | (0x1 << 10);
+
+  /* Enable LPC interrupt controller*/
+  *(volatile unsigned int*)(0xffffffffbfe00200 + 0x00) = 0x80000000;
+
+  /* the 18-bit interrpt enable bit */
+  *(volatile unsigned int*)(0xffffffffbfe00200 + 0x04) = 0x0;
+
+  /* Enable HT interrupt，only used 7 interrupt vectors*/
+  *(volatile unsigned int*)0x90000EFDFB0000A0 = 0xffffff7f;
+\end{lstlisting}
+
+\section{中断分发}
+
+中断发生时，硬件会设置 cause 寄存器的 Excode 域及相关的 IP 位。进而进
+入软件处理过程，软件通过查询 Excode 域来确定是哪一种类型的异常，来选择
+使用何种异常处理例程。如果是我们要讨论的硬件中断，就会进入平台相关的中
+断分发函数。中断分发函数再根据 cause 寄存器的 IP 位及 IM 位（中断屏蔽）来
+进行一级中断分发，然后再根据中断号的位域来进行二次分发，然后执行具体的 do\_IRQ
+中断操作的处理。
+
+内核在启动阶段，会将每个异常向量与每个异常处理例程对应起来。异常共有
+32 种，在这里我们只讨论 0 号异常也就是硬件中断。在
+trap\_init()函数中，异常的通用入口地址设置为 0x80000180,
+该地址保存了一个函数指针为 expect\_vec3\_generic，见内核
+arch/mips/kernel/genex.S。expect\_vec3\_generic()函数 会根据取得的 Excode
+码，进入相应的例程函数。在 trap\_init()中异常代码 0 即硬件中断与 handle\_int
+例程相关，handle\_int 见内核 arch/mips/kernel/genex.S。hanle\_int
+最终跳转到平台相关的 plat\_irq\_diapatch()中断分发函数，
+进行中断的一级级分发。
+
+以 3A-690e 为例，Cause 寄存器的 IP0 和 IP1
+对应的是软中断，IP6 对应的是核间中断，IP7 对应的是时钟中断，IP2 对应的是 Cpu
+的串口及 LPC 的中断，IP3 对应的是路由到 HT1 的中断。HT1 接北桥
+690E，北桥再接南桥 SB600，南北桥的中断都由南桥上的 8259 控制， 各个外设如
+USB、等的中断路由到 8259 sata 控制器见 arch/mips/kernel/fixup\_ev3a.c 中的
+godson3a\_smbus\_fixup 函数，其中寄 存器的定义见 AMD 南桥手册之《AMD SB600
+Register Reference Manual.pdf》。 pcibios\_map\_irq 函数是对 PCI 及 PCIE 槽
+位的扫描及中断号分配，文件 fixup\_ev3a.c 中其他函数主要是对一些固定 PCI
+设备的中断号进行分配，详细的中断分配及到 8259 路由的情况可以详见文件
+fixup\_ev3a.c 的代码及注释，寄存器使用查看 AMD 的南桥手册。
+
+中断分发完后，运行 do\_IRQ()函数，跳转到对应的具体驱动程序执行。
+

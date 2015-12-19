@@ -1,0 +1,97 @@
+\chapter{串口配置及使用}
+
+\section{可选择的串口}
+
+串口作为一种通信接口， 主要用于系统的调试。其工作的原理也就是配置好
+串口的波特率、数据位、停止位、校验位相关的寄存器，使得串口能按位的发送
+和接受字节。 目前 3A 上可用的 UART 有两类： 一类是 CPU 的 UART,有 UART0 和
+UART1， UART0 的串口寄存器的基址是 0xBFE001E0，UART1 的串口寄存器的基址是
+0xBFE001E8,波特率均为 115200； 还有一类是 LPC 的 UART， 其基址是 0xBFF003F8，
+波特率为 57600。在设置上，数据位均设置为 8 位，停止位为 1 位，无校验，无 流控。
+
+\section{PMON 的串口配置}
+
+在 pmon 中，宏 USE\_LPC\_UART 是用来区分上述两类串口的。pmon 的设
+置主要涉及的文件有 start.S 和 tgt\_machdep.c。 下面以 CPU 的 UART0 为例，
+首先在 pmon 的 start.S 中有个初始化串口的函 数(寄存器的使用查看 UART
+控制器部分)：
+
+\begin{lstlisting}
+LEAF(initserial)
+        li a0, GS3_UART_BASE
+        li t1, 128
+        sb t1, 3(a0)    // 访问分频寄存器
+        li t1, 0x12     // divider, highest possible baud rate
+        sb t1, 0(a0)    // 分频寄存器1，存放分频寄存器的低8位，计算公式为
+                        // 工作时钟 /（波特率*16），本例为33M/(115200*16)
+        li t1, 0x0      // divider, highest possible baud rate
+        sb t1, 1(a0)    // 分频寄存器2，存放分频寄存器的高8位   
+        li t1, 3
+        sb t1, 3(a0)    // 数据位为8位
+
+        li t1, 0
+        sb t1, 1(a0)    // 不使用中断
+        li t1, 71
+        sb t1, 2(a0)    // 设置FIFO控制寄存器
+        jr ra
+        nop
+END(initserial)
+\end{lstlisting}
+
+GS3\_UART\_BASE 也是在 start.S 文件中定义的，为 0xBFE001E0。 在 tgt\_machdep.c
+中，结构体 ConfigEntry 也给出了 UART 的设置，函数 ns16550 也就是 UART
+的发送和接收的处理函数。
+
+\section{Linux 内核的串口配置}
+
+在 Linux 内 核 中 对 串 口 的 配 置 主 要 有 三 个 文 件 ：
+include/asm/serial.h ，
+arch/mips/kernel/8250-platform.c，arch/mips/lemote/ev3a/dbg\_io.c。这三个配置文
+件涉及到串口基址的设定，要根据具体所使用的串口的情况而定。内核中在
+arch/mips/Kconfig 里也有一个宏定义 CONFIG\_CPU\_UART， 用来选择是选用 LPC
+串口还是 CPU 串口的。 纵然选择了 CPU UART， 但是具体是 UART0 还是 UART1
+还是需要检查一下上述三个文件对串口基址的定义是否正确。 在
+arch/mips/lemote/ev3a/dbg\_io.c 中主要是用于内核启动过程中，在中断还
+没有初始化阶段， 为了内核调试的方便而使用的一种简单的串口打印方式，其中 函数
+prom\_printf()在内核调试阶段会经常被使用到，它会调用 putDebugChar()将
+要输出的字符一个一个的打印到控制台上。include/asm/serial.h 为串口的驱动
+driver/serial/8250.c 提供了一个宏定义，如使用 CPU 的 UART0，其定义是这样 的：
+
+\begin{lstlisting}
+#define STD_SERIAL_PORT_DEFNS
+/* UART_CLK PORT_IRQ FLAGS */ \ \
+{
+  .baud_base = BASE_BAUD,
+  .irq = 58,
+  .flags = STD_COM_FLAGS,
+  .iomem_base = (u8*)(0xFFFFFFFFBFE001E0),
+  .io_type = SERIAL_IO_MEM
+}
+\end{lstlisting}
+
+所使用的驱动是标准的 8250/16x50 系列的串口驱动。 串口的中断号是 58 号，
+根据采用的是 CPU 的串口还是 LPC 的串口， 中断的分发上也略有不同,irq.c 中关
+于串口中断的部分如下：
+
+\begin{lstlisting}
+        ...
+        else if (pending & CAUSEF\_IP2)
+        { // For LPC
+#ifdef CONFIG\_CPU\_UART
+                do\_IRQ(58);
+#else
+                irq = *(volatile unsigned int*)(0xFFFFFFFFBFE00200 + 0x08);
+                if((irq & 0x2))
+                        do\_IRQ(1);
+                if((irq & 0x1000))
+                        do\_IRQ(12);
+                if((irq & 0x10))
+                        do\_IRQ(58);
+#endif
+        }
+\end{lstlisting}
+
+如果是 CPU 的串口，直接处理 58 号中断，但是如果是 LPC 串口，需要读取 LPC
+控制器的相关位域来判断该中断是键盘中断还是鼠标中断还是串口中断，
+串口中断号依然是 58 号。
+

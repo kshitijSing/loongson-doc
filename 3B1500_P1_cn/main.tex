@@ -1,0 +1,38 @@
+%# -*- coding: utf-8 -*-
+% $Id: main.tex $
+% main.tex: main entry file for 3A-user-manual-chinese
+
+\documentclass[a4paper,adobefonts]{ctexbook}
+\input{config}
+\makeindex
+
+\begin{document}
+
+\input{title}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\part{多核处理器架构}
+
+\input{intro}
+\input{system-conf}
+\input{l2-cache}
+\input{matrix-transpose}
+\input{interrupts}
+\input{sdram}
+\input{ht-controller}
+\input{lowspeed-io-devices}
+
+\part{系统软件编程指南}
+
+\input{interrupt-conf}
+\input{serial-conf}
+\input{ejtag}
+\input{addrwin-conf}
+\input{addrspace-layout-design}
+\input{x-mem}
+
+\end{document}
+
