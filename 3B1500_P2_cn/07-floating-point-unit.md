@@ -195,8 +195,8 @@ FENR 寄存器是访问 Enable, FS 和 RM 字段的另一种方式，其内容�
 FPU 指令集概述
 --------------
 
-GS464 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W，L，和可选的 PS 类型
-。表\ \ref{tab:fpu-ins} 列出了 GS464 中 MIPS64 相关的所以浮点指令。
+GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W，L，和可选的 PS 类型
+。表\ \ref{tab:fpu-ins} 列出了 GS464V 中 MIPS64 相关的所以浮点指令。
 
 \begin{inslongtable}{MIPS64 的浮点指令集}{tab:fpu-ins}
   \multicolumn{3}{|l|}{算术指令} \tabularnewline* \hline
@@ -268,12 +268,12 @@ GS464 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W�
   MTHC1             & 从 GPR 复制高字到 FPR                    & MIPS32 R2 \tabularnewline
 \end{inslongtable}
 
-GS464 与 MIPS64 Release 2 版本兼容，从功能上实现了 MIPS64 体系结构规定的所 有
+GS464V 与 MIPS64 Release 2 版本兼容，从功能上实现了 MIPS64 体系结构规定的所 有
 FPU 指令，但是有些指令在实现上有细微的并不影响兼容性但是比较重要的差别，以
 下两点值得编程人员注意
 
 1. 乘加、乘减指令。在执行 MADD.fmt，MSUB.fmt，NMADD.fmt，NMSUB.fmt 这四组指令时
-   ，GS464 的运算结果与 MIPS64 处理器略有不同，这是因为 GS464 在做乘 加运算时只
+   ，GS464V 的运算结果与 MIPS64 处理器略有不同，这是因为 GS464V 在做乘 加运算时只
    在最后结果处做精度舍入，而 MIPS64 处理器在进行乘运算后就进行了一次舍入，加运
    算后又做了一次舍入，导致了最终结果最低位相差 1。
 1. 单精度运算指令。在 Status 控制寄存器的 FR 位为 0 时，abs.s, add.s, ceil.w.d,
@@ -290,7 +290,7 @@ FPU 指令，但是有些指令在实现上有细微的并不影响兼容性但�
 
 #### 浮点格式
 
-GS464 的浮点部件不仅可以处理符合 IEEE 标准的单精度（32 位）及双精度
+GS464V 的浮点部件不仅可以处理符合 IEEE 标准的单精度（32 位）及双精度
 （64 位）浮点数， 同时也提供了对``单精度对''（Paired single, 简称PS）浮点
 格式的支持。 图\ \ref{fig:fpt-types} 显示了这三种浮点数的详细格式。
 

@@ -4,7 +4,7 @@ CP0 控制寄存器 \label{ch:cp0-controller}
 本章的主要内容是介绍零号协处理器各个寄存器及其位域含义。
 零号协处理器（Coprocessor 0， 简称 CP0），作为计算机处理器重要的组成部分，
 是获取处理器的当前运行状态的主要信息来源，并可以用于控制及改变处理器的状态。
-表 \ref{tab:cp0reg} 列出了龙芯 GS464 支持的所有 CP0 寄存器。
+表 \ref{tab:cp0reg} 列出了龙芯 GS464V 支持的所有 CP0 寄存器。
 
 \begin{longtable}{|c|c|c|c|l|}
   \caption{CP0 寄存器表}\label{tab:cp0reg} \\
@@ -58,7 +58,7 @@ CP0 控制寄存器 \label{ch:cp0-controller}
 \end{longtable}
 
 这些 CP0 寄存器的值可以通过 MFC0/DMFC0 指令来获取，或者通过 MTC0/DMTC0 指令来设
-置。 表 \ref{tab:mips64-cp0-ins} 列出了所有的龙芯 GS464 处理器核 CP0 指令。 注意
+置。 表 \ref{tab:mips64-cp0-ins} 列出了所有的龙芯 GS464V 处理器核 CP0 指令。 注意
 ， 只有当处理器运行在核心模式时或状态寄存器（Status 寄存器）中的第 28 位 （CU[0]
 ）被设置时， 才可以使用 CP0 指令，否则将产生一个"协处理器不可用例外"。
 
@@ -70,7 +70,7 @@ CP0 寄存器详解
 入非保留值的结果为**未定义**；如果一个域为只读， 则在读的时候，返回其保留值，
 而任何写入值将被忽略。
 
-龙芯 GS464 实现了对 48 位物理地址的支持（见 PageGrain 寄存器
+龙芯 GS464V 实现了对 48 位物理地址的支持（见 PageGrain 寄存器
 \ref{subsec:pagegrain} 节），并可以在 40 位和 48 位物理地址支持间切换。在以下各
 章节中， 所有的描述主要基于 48 位物理地址模式，包括所有的示意图及 CP0 寄存器的位
 域解释。在\ref{sec:40vs48} 节中，我们将简述 40 位和 48 位物理地址模式，可能影响
@@ -95,7 +95,7 @@ Random 寄存器是一个 32 位只读寄存器， 其低六位为 Random 域，
 条指令，该寄存器值减 1。 它被用作伪随机数，用于指示 TLB 随机写指令操作的 TLB 项。
 Random 域的值在一个上下界之间浮动：
 
-1. 上界为 TLB 最大表项索引值，即总项数减 1，在 GS464 上其值为 63；
+1. 上界为 TLB 最大表项索引值，即总项数减 1，在 GS464V 上其值为 63；
 1. 下界为 Wired 寄存器的值， 即保留给操作系统专用的 TLB 表项数。
 
 一般而言，无需读取 Random 寄存器值。不过该寄存器是可读的， 主要用于验证处理器的
@@ -181,15 +181,15 @@ PageMask 寄存器是一个 32 位可读写的寄存器： 它包含了一个比
 \end{floattable}
 
 进行虚实地址转换时， Mask 域的某位为 1 则表示虚地址的对应位将 不用于地址比较，即
-页面地址在更高的位上对齐， 也就是说，更大的页面。 由上表可知， GS464 核支持的最
+页面地址在更高的位上对齐， 也就是说，更大的页面。 由上表可知， GS464V 核支持的最
 小页面为 4K， 最大为 16MB， 每级之间以 4 的倍数增加。
 
 ### PageGrain 寄存器（5）
 \label{subsec:pagegrain}
 
-PageGrain 寄存器是一个 32 位可读写的寄存器，龙芯 GS464 只定义了这个寄存器的 第 29
+PageGrain 寄存器是一个 32 位可读写的寄存器，龙芯 GS464V 只定义了这个寄存器的 第 29
 位：大物理地址支持位（Enable Large Physical Adress，简称 ELPA），其余位保留。 当
-ELPA=1 时， 龙芯 GS464 支持 48 位物理地址； ELPA=0 时， GS464 只支持 40
+ELPA=1 时， 龙芯 GS464V 支持 48 位物理地址； ELPA=0 时， GS464V 只支持 40
 位物理地址。 表 \ref{tab:cp0-pagegrain} 给出了 PageGrain 寄存器的格式，
 及各域的含义。
 
@@ -221,8 +221,8 @@ Wired 寄存器是一个 32 位可读写寄存器，该寄存器的值指定了 
 
 ### HWREna 寄存器（7）
 
-HWREna 寄存器是一个 32 位可读写寄存器， GS464 只定义了该寄存器的 Mask 域，用于表
-示在用户态下， 指令 \verb+RDHWR+ 可以得到的硬件寄存器信息。 当前， GS464 提供了
+HWREna 寄存器是一个 32 位可读写寄存器， GS464V 只定义了该寄存器的 Mask 域，用于表
+示在用户态下， 指令 \verb+RDHWR+ 可以得到的硬件寄存器信息。 当前， GS464V 提供了
 四个硬件寄存器， 分别对应 Mask 域的四个位。 表 \ref{tab:cp0-hwrena} 给出了
 HWREna寄存器的格式，及 Mask 域对应的硬件寄存器。 寄存器的其他位为保留，必须按 0
 写入，读时返回 0。
@@ -263,7 +263,7 @@ Count 和 Compare 寄存器是一对 32 位可读写寄存器： Count
 寄存器中的值进行比较。 一旦这两个值相等时，便会产生一个中断请求， 同时将
 Cause 寄存器的 TI 和
 IP[7] 位置位。 当 Compare 寄存器被再次重写时， Cause 寄存器的 TI 位会被清零。
-由于 GS464 核上实现了动态调频， Count 寄存器的计数频率不是固定的，
+由于 GS464V 核上实现了动态调频， Count 寄存器的计数频率不是固定的，
 其值总为当前 CPU 频率的一半。
 
 \begin{floattable}
@@ -294,22 +294,22 @@ EntryHi 寄存器是一个 64 位可读写寄存器， 它用于在使用 TLB �
 ### Status（12） 寄存器
 
 Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作模式， 中断允许和处理器
-状态诊断等丰富的信息。 在龙芯 GS464 上，Status 寄存器复位时的初始值为 0x30C0\_00E4。
+状态诊断等丰富的信息。 在龙芯 GS464V 上，Status 寄存器复位时的初始值为 0x30C0\_00E4。
 表 \ref{tab:cp0-status} 给出了 Status 寄存器的格式， 及各域的含义。
 
 \begin{reglongtable}{cp0-status}{CP0: Status 寄存器}
   CU  & 协处理器使能域：某位为 1 则表明对应协处理器可用； 初值是 $0011_2$。   \\ 
   FR  & 附加浮点寄存器使能位 --- 0: 16 个浮点寄存器； 1： 32 个浮点寄存器。   \\ 
   PX  & 用户模式下的 64 位操作使能位。 其余模式下的64 位操作无需使能。
-        注意， 此时用户模式下 64 位操作是否可用仍需要判断 UX 位。             \\ 
+        注意， 用户模式下 64 位操作是否可用仍需要检查 UX 位。                 \\ 
   BEV & 启动向量（boot-entry vector）指示位 --- 0: 正常运行； 1： 启动运行。  \\ 
   SR  & 软复位例外指示位。                                                    \\ 
   NMI & NMI 例外指示位： 注意，软件不能把这位由 0 写为 1。                    \\ 
   IM  & 中断屏蔽域：如果某位被使能，则将允许对应中断触发。                    \\ 
-  KSU & 运行模式位 --- $11_1$:未定义；$10_2$:用户；$01_2$:管理；$00_2$:内核。 \\ 
   KX  & 64 位内核段访问使能位。                                               \\ 
   SX  & 64 位管理段访问使能位。                                               \\ 
   UX  & 64 位用户段访问使能位。                                               \\ 
+  KSU & 运行模式位 --- $11_1$:未定义；$10_2$:用户；$01_2$:管理；$00_2$:内核。 \\ 
   ERL & 错误级指示位：复位，软复位，NMI 或 Cache 错误发生时， 此位将置 1。    \\ 
   EXL & 例外级指示位：复位，软复位或 Cache 错误以外的例外发生时，此位将置 1。 \\ 
   IE  & 中断使能位 --- 0： 禁用所有中断； 1： 使能所有中断。                  \\ 
@@ -324,33 +324,36 @@ Status 寄存器是一个 32 位可读写寄存器， 它包含有关于操作�
 1. 8 位的中断屏蔽域，IM，控制着 8 个中断的使能：一个中断必须被使能才可能被触发。
    同时， 中断屏蔽域 IM 和 Cause 寄存器的中断待定域（IP）位一一对应，并合作处理
    中断发生的信息。更多细节请参考 Cause 寄存器的中断待定域。
-1. 中断的使能被多个条件控制。只有在以下条件符合时， IM 位中的设置才会生效：
-       IE == 1 && EXL == 0 && ERL ==  0。
-1. 操作模式。龙芯 GS464 处理器有三种操作模式，他们分别是：用户模式，管理模式，和
+1. 中断的使能被多个条件控制。只有在以下条件符合时， IM 位中的设置才会生效：  
+   \vspace{-.5cm}
+   \begin{verbatim}
+        IE == 1 && EXL == 0 && ERL ==  0。
+   \end{verbatim}
+   \vspace{-.5cm}
+1. 操作模式。龙芯 GS464V 处理器有三种操作模式，他们分别是：用户模式，管理模式，和
    内核模式。由Status 寄存器的值决定了处理器的工作模式，这些模式的设置在表
-   \ref{tab:cpu-mode}中列出。
+   \ref{tab:cpu-mode}中列出。\vspace{-.6cm}
+   \begin{table}[htbp]
+     \centering
+     \caption{CP0：处理器的工作模式}\vspace{.6cm}
+     \begin{tabular}{|c|c|c|>{\centering}p{5cm}|} \hline
+       KSU    & ERL & EXL & 运行模式 \tabularnewline \hhline
+       $10_2$ & 0   & 0   & 用户模式 \tabularnewline 
+       $01_2$ & 0   & 0   & 管理模式 \tabularnewline 
+       $00_2$ & 0   & 0   & 内核模式 \tabularnewline 
+              & 0   & 1   & 内核模式（例外状态） \tabularnewline 
+              & 1   &     & 内核模式（错误状态） \tabularnewline \hline
+     \end{tabular}
+     \label{tab:cpu-mode}
+   \end{table}
 1. 地址空间访问（具体空间划分见 \ref{sec:addrspace} 节）。
        * 内核地址空间：当处理器处在内核模式时， 可以访问内核地址空间；
        * 管理地址空间：当处理器处在内核或管理模式时，可以访问管理地址空间；
        * 用户地址空间：处理器在三种操作模式下都可以访问用户地址空间。
 
-\begin{table}[htbp]
-  \centering
-  \caption{CP0： 处理器的工作模式}
-  \begin{tabular}{|c|c|c|>{\centering}p{5cm}|} \hline
-    KSU    & ERL & EXL & 运行模式 \tabularnewline \hhline
-    $10_2$ & 0   & 0   & 用户模式 \tabularnewline 
-    $01_2$ & 0   & 0   & 管理模式 \tabularnewline 
-    $00_2$ & 0   & 0   & 内核模式 \tabularnewline 
-           & 0   & 1   & 内核模式（例外状态） \tabularnewline 
-           & 1   &     & 内核模式（错误状态） \tabularnewline \hline
-  \end{tabular}
-  \label{tab:cpu-mode}
-\end{table}
-
 ### IntCtl（12/1） 寄存器
 
-龙芯 GS464 实现了 MIPS64 R2 体系中扩充的向量中断（vectored interrupt）支持。
+龙芯 GS464V 实现了 MIPS64 R2 体系中扩充的向量中断（vectored interrupt）支持。
 IntCtl 是一个 32 位可读写寄存器，它的 VS 域用来指示中断向量的向量空间。表
 \ref{tab:cp0-intctl} 给出了 IntCtl 寄存器的格式， 及VS 域的编码与向量空间对应关
 系。寄存器的其他域： 1 域为只读域；0 域为保留域，必须按 0 写入，读时返回 0。
@@ -373,15 +376,15 @@ IntCtl 是一个 32 位可读写寄存器，它的 VS 域用来指示中断向�
 ### SRSCtl（12/2） 寄存器
 
 SRSCtl 寄存器是一个 32 位可读写寄存器， 用于管理处理器的影子寄存器组。
-龙芯 GS464 中的 SRSCtl 寄存器只实现两个域：PSS 和 ESS。 同时，因为龙芯
-GS464 还没有实现影子寄存器，而只有一组通用寄存器， 所以通用寄存器的影
+龙芯 GS464V 中的 SRSCtl 寄存器只实现两个域：PSS 和 ESS。 同时，因为龙芯
+GS464V 还没有实现影子寄存器，而只有一组通用寄存器， 所以通用寄存器的影
 子即为该寄存器本身。表 \ref{tab:cp0-srsctl} 给出了 SRSCtl 寄存器的格式，
 及各域的含义。
 
 \begin{reglongtable}{cp0-sysctl}{CP0: SRSCtl 寄存器}
   \label{tab:cp0-srsctl}
-  ESS  & 用于例外的影子寄存器组，在龙芯 GS464 上只能为 0。 \\
-  PSS  & 前一个影子寄存器组，在龙芯 GS464 上只能为 0。     \\
+  ESS  & 用于例外的影子寄存器组，在龙芯 GS464V 上只能为 0。 \\
+  PSS  & 前一个影子寄存器组，在龙芯 GS464V 上只能为 0。     \\
   0    & 保留：必须按 0 写入，读时返回 0。
 \end{reglongtable}
 
@@ -410,7 +413,7 @@ Cause 寄存器是一个 32 位的可读写寄存器， 所有关于最近发生
 
 \begin{longtable}{|c|c|p{3.8cm}||c|c|p{3.8cm}|}
   \caption{Cause 寄存器 ExcCode 域} \label{tab:exccode} \\ \hline
-  例外代码 & 助记符 & \cellalign{c|}{描述} &
+  例外代码 & 助记符 & \cellalign{c||}{描述} &
   例外代码 & 助记符 & \cellalign{c|}{描述} \\ \hhline \endfirsthead
   \caption{Cause 寄存器 ExcCode 域（续）}  \\ \hline
   例外代码 & 助记符 & \cellalign{c|}{描述} &
@@ -469,23 +472,24 @@ PRid (Processor Revision Identifier， 处理器修改版本标识) 寄存器是
 \end{reglongtable}
 
 版本号由 8 位信息表达，一般写作 \verb+Y.X+，其中 \verb+Y+（7:4
-位）为主版本号，而 \verb+X+（3:0 位）为次版本号。 龙芯 GS464 核的实现版本号为
-\verb+6.3+， 修订版本号为 \verb+0.3+。
+位）为主版本号，而 \verb+X+（3:0 位）为次版本号。 龙芯 GS464V 核的实现版本号为
+\verb+0x63+， 修订版本号为 \verb+0x03+。
 
-注意， 版本号码可以区分一些处理器的版本， 但处理器的任何改动不能保证都体现在
-PRid 寄存器中；另一方面， 版本号的改动也不能保证必须体现处理器的修改。
-因此，软件不能过分依赖 PRid 寄存器中的版本号信息来标识处理器。
+注意，版本号码可以区分一些处理器的版本，但处理器的任何改动不能保证都体现在 PRid
+寄存器中；另一方面，版本号的改动也不能保证必须体现处理器的修改。因此，软件不能过
+分依赖 PRid 寄存器中的版本号信息来标识处理器。
 
 ### EBase（15） 寄存器
 
-EBase 寄存器是一个 32\footnote{32 位的 EBase
-寄存器就足够决定例外向量基地址，这是因为出于兼容 32 位系统
-的需要，例外向量基地址被放在 CKSEG0/CKSEG1 兼容段。这是一种
-约定，对实际操作不构成任何实质的限制。} 位可读写寄存器：它包含有确定例外向量基地址的信息，以及
-附加的只读处理器号信息。
-当状态 (Status) 寄存器的 BEV=0，即程序在正常运行状态（而非启动运行时）， 系统将使用
-EBase 寄存器中的例外向量基址域来决定向量入口。具体细节见 \ref{sec:excVectorLocation} 节。
-表 \ref{tab:cp0-ebase} 给出了 EBase 寄存器的格式， 及各域的含义。
+EBase 寄存器是一个 32[^note-ebase] 位可读写寄存器：它包含有确定例外向量基地址的
+信息，以及附加的只读处理器号信息。当状态 (Status) 寄存器的 BEV=0，即程序在正常运
+行状态（而非启动运行时）， 系统将使用 EBase 寄存器中的例外向量基址域来决定向量入
+口。具体细节见 \ref{sec:excVectorLocation} 节。表 \ref{tab:cp0-ebase} 给出了
+EBase 寄存器的格式， 及各域的含义。
+
+[^note-ebase]: 32 位的 EBase 寄存器就足够决定例外向量基地址，这是因为出于兼容 32
+位系统的需要，例外向量基地址被放在 CKSEG0/CKSEG1 兼容段。这是一种约定，对实际操
+作不构成任何实质的限制。
 
 \begin{reglongtable}{cp0-ebase}{CP0: EBase 寄存器}
   [31:30] & MIPS64 架构定义的只读域，用于确认例外向量的地址段。 \\ 
@@ -497,32 +501,35 @@ EBase 寄存器中的例外向量基址域来决定向量入口。具体细节�
 
 ### Config 寄存器
 
-Config 寄存器是一个 64 位寄存器，它存有龙芯 GS464 处理器核中各种配置选择项信息。
+Config 寄存器是一个 64 位寄存器，它存有龙芯 GS464V 处理器核中各种配置选择项信息。
 
 1. 寄存器位 31:3 所定义的配置选项， 由硬件复位时设置，作为只读状态位供软件访问；
 1. 寄存器位 2:0 与 Cache 配置有关， 为可读写位， 由软件所控制。复位时这些位是没
    有定义的， 在 Cache 被使用之前由软件来初始化，并在任何改变后重新初始化。
 
-Config 寄存器的初值为 0x0003\_0932(\remark{有问题！})。 表 \ref{tab:cp0-Config}
+Config 寄存器的初值为 0x0003\_0932[^note-cp0-config]。 表 \ref{tab:cp0-Config}
 给出了 Config 寄存器的格式， 及各域的含义。
 
+[^note-cp0-config]: 这个初始值有问题：例如 0003 会写在0域，同时表明没有 Config1
+寄存器存在。而这是和事实不符合的。同样的问题存在于 Config1 和 Config2 的初始值。
+
 \begin{reglongtable}{cp0-config}{CP0: Config 寄存器}
-  M    & Config1 寄存器存在位 --- 置 1 表示存在。                                \\ 
-  BE   & 尾端类型位。1： 大尾端； 0： 小尾端。                                   \\ 
-  AT   & 架构类型域。0： MIPS32； 1： MIPS64(32 位地址段)； 2：MIPS64；3：保留。 \\ 
-  AR   & 架构发布版本域。0：Release 1； 1：Release 2； 其他： 保留。             \\ 
-  MT   & 内存管理类型域。 0：无映射； 1：标准 TLB； 其他：保留。                 \\ 
-  VI   & 虚拟指令 Cache 位。0： 无虚拟指令 Cache； 1： 有虚拟指令 Cache。        \\ 
-  K0   & CKSEG0/KSEG0 段一致性算法属性位。                                       \\ 
-  0    & 保留：必须按 0 写入，读时返回 0。
+  M  & Config1 寄存器存在位 --- 置 1 表示存在。                               \\ 
+  BE & 尾端类型位。1： 大尾端； 0： 小尾端。                                  \\ 
+  AT & 架构类型域。0： MIPS32； 1： MIPS64(32 位地址段)； 2：MIPS64；3：保留。\\ 
+  AR & 架构发布版本域。0：Release 1； 1：Release 2； 其他： 保留。            \\ 
+  MT & 内存管理类型域。 0：无映射； 1：标准 TLB； 其他：保留。                \\ 
+  VI & 虚拟指令 Cache 位。0： 无虚拟指令 Cache； 1： 有虚拟指令 Cache。       \\ 
+  K0 & CKSEG0/KSEG0 段一致性算法属性位。                                      \\ 
+  0  & 保留：必须按 0 写入，读时返回 0。
   \label{tab:cp0-Config}
 \end{reglongtable}
 
 ### Config1 寄存器
 
 Config1 寄存器是一个 32 位的只读寄存器。 作为 Config 寄存器的附加内容， 它含有龙
-芯 GS464 处理器核的 Cache 配置，和各种其他附加信息。 该寄存器在复位时被自动设置
-； 在 GS464 核上，该寄存器的值为 0xFEE3\_7193。 表 \ref{tab:cp0-config1} 给出了
+芯 GS464V 处理器核的 Cache 配置，和各种其他附加信息。 该寄存器在复位时被自动设置
+； 在 GS464V 核上，该寄存器的值为 0xFEE3\_7193。 表 \ref{tab:cp0-config1} 给出了
 Config1 寄存器的格式， 及各域的含义。
 
 \begin{reglongtable}{cp0-configI}{CP0: Config1 寄存器}
@@ -571,8 +578,8 @@ Config1 寄存器的格式， 及各域的含义。
 ### Config2 寄存器
 
 Config2 寄存器是一个 32 位的只读寄存器。 同样作为 Config 寄存器的附加内容，
-它含有龙芯 GS464 处理器二、三级 Cache 的配置信息。 该寄存器在复位时被自动设置； 在
-GS464 核上， 该寄存器的值为 0x8000\_1643。 表 \ref{tab:cp0-config2} 给出了
+它含有龙芯 GS464V 处理器二、三级 Cache 的配置信息。 该寄存器在复位时被自动设置； 在
+GS464V 核上， 该寄存器的值为 0x8000\_1643。 表 \ref{tab:cp0-config2} 给出了
 Config2 寄存器的格式， 及各域的含义。
 
 \begin{reglongtable}{cp0-configII}{CP0: Config2 寄存器}
@@ -615,7 +622,7 @@ Config2 寄存器的格式， 及各域的含义。
 ### Config3 寄存器
 
 Config3 寄存器是一个 32 位的只读寄存器。 作为 Config 寄存器的附加内容， 该寄存器
-标记了龙芯 GS464 处理器核一些功能是否实现。在 GS464 核上，该寄存器的值为
+标记了龙芯 GS464V 处理器核一些功能是否实现。在 GS464V 核上，该寄存器的值为
 $0x0000\_00A0$， 在硬件复位时被自动设置。表 \ref{tab:cp0-config3} 给出了 Config3
 寄存器的格式， 及各域的含义。
 
@@ -695,7 +702,7 @@ Debug 寄存器是一个 32 位的可读写寄存器。 它包含有最近发生
 统复位时， Debug 寄存器的初始值为： 0x0201\_8000。 Debug 寄存器中的各位域，只有
 在调试例外或调试模式下例外发生时才会被更新。
 
-龙芯 GS464 处理器核未实现调试例外时的省电模式。
+龙芯 GS464V 处理器核未实现调试例外时的省电模式。
 
 \begin{reglongtable}{cp0-debug}{CP0: Debug 寄存器}
   DBD      & 调试例外指令延迟槽指示位。                                      \\ 
@@ -735,13 +742,13 @@ DEPC（Debug Exception Program Counter, 调试例外程序计数）是一个 64 
 
 ### PerfCnt 寄存器(25，0/1/2/3)
 
-龙芯 GS464 处理器定义了四个（两组）性能计数器 (Performance Counter)，他们分别映
+龙芯 GS464V 处理器定义了四个（两组）性能计数器 (Performance Counter)，他们分别映
 射到 CP0 寄存器的 25 号的选择子号 0，1，2，3。表 \ref{tab:perfcnt-sel} 列出了这
 四个选择子号对应的性能计数器含义。
 
 \begin{table}[htbp]
 \centering
-\caption{CP0: PerfCnt 控制、计数寄存器选择号列表}
+\caption{CP0: PerfCnt 控制、计数寄存器选择号列表}\vspace{.4cm}
 \begin{tabular}{|c||c|c|c|c|}\hline
   \label{tab:perfcnt-sel}
   选择号 & 0            & 1            & 2            & 3            \\ \hline
@@ -750,7 +757,7 @@ DEPC（Debug Exception Program Counter, 调试例外程序计数）是一个 64 
 \end{table}
 
 这两组计数器格式相同：其中性能控制是 32 位的寄存器，而 性能计数器则为 64 位。表
-\ref{tab:cp0-PerfCnt} 给出了 PerfCnt 寄存器的格式， 及各域的含义。龙芯 GS464 在
+\ref{tab:cp0-PerfCnt} 给出了 PerfCnt 寄存器的格式， 及各域的含义。龙芯 GS464V 在
 复位时， PerfCnt 寄存器的两个控制寄存器赋的初始值分别为：
 
 - PerfCnt0 (select 0) = 0xC000\_0000
@@ -831,7 +838,7 @@ DEPC（Debug Exception Program Counter, 调试例外程序计数）是一个 64 
 
 ### ErrCtl 寄存器
 
-ErrCtl 是一个 64 位可读写寄存器。龙芯 GS464 将这个 MIPS64 标准里可选的寄存器用于
+ErrCtl 是一个 64 位可读写寄存器。龙芯 GS464V 将这个 MIPS64 标准里可选的寄存器用于
 ECC 校验。 表 \ref{tab:cp0-errctl} 给出了 ErrCtl 寄存器的格式。
 
 \begin{reglongtable}{cp0-errctl}{CP0: ErrCtl 寄存器}
@@ -925,3 +932,4 @@ Debug 异常处理时保存一个通用寄存器的值。 DESAVE 寄存器的格
 
 40 vs 48 位物理地址 \label{sec:40vs48}
 -------------------
+
