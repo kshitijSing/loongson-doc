@@ -3,6 +3,7 @@ SOURCES=$(sort $(wildcard *.md))
 TARGET=LS3B1500-user-manual-II-v${VERSION}-zh.pdf
 TEXFILE=LS3B1500-user-manual-II-v${VERSION}-zh.tex
 JSONFILE=LS3B1500-user-manual-II-v${VERSION}-zh.json
+LOTFILE=LS3B1500-user-manual-II-v${VERSION}-zh.lot
 TEMPLATE=../templates/loongson-3b1500-cn.latex
 OPTIONS=--chapters --template=$(TEMPLATE)
 
@@ -13,7 +14,9 @@ $(TARGET): $(SOURCES) $(TEMPLATE)
 	perl -0777 -i -pe 's/\\beginblock\n/{/g' $(TEXFILE)
 	perl -0777 -i -pe 's/\n\\endblock/}/g'   $(TEXFILE)
 	xelatex $(TEXFILE)
+	sed -i '/（续）/d' $(LOTFILE)
 	xelatex $(TEXFILE)
+	sed -i '/（续）/d' $(LOTFILE)
 
 tex: $(SOURCES) $(TEMPLATE)
 	pandoc $(SOURCES) -o $(TEXFILE) $(OPTIONS) -t latex
