@@ -304,7 +304,7 @@ Cache 备份变为 INV 状态并通过 Repinv 应答二级 Cache 模块；二级
 ![龙芯 3B1500 Cache 状态转换 \label{fig:cache-status-diagram}](../images/cache-status-diagram.pdf)
 
 
-Cache 指令
+Cache 指令 \label{sec:cache-instruction}
 ----------
 
 GS464V 支持了 17 种 Cache 指令，分别针对一级数据 Cache、一级指令 Cache 和二级

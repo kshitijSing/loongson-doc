@@ -24,15 +24,6 @@
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
 colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 
-%\usepackage{longtable,array}
-%\usepackage{booktabs}
-%\usepackage{enumerate}
-%\usepackage{multirow}
-%\usepackage{makeidx}
-%\usepackage{threeparttable}
-%\usepackage{fancyvrb}
-%\usepackage{changepage}
-
 \usepackage{longtable,array}
 \usepackage{booktabs}
 \usepackage{zhnumber}
@@ -71,8 +62,8 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \newcommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \newcommand{\mtabsep}[1]{\hhline\multicolumn{3}{|l|}{#1}\tabularnewline\hline}
 \newenvironment{inslongtable}[2]{
-    \begin{longtable}{|>{\centering}p{3.5cm}|>{\hspace{.5cm}}p{8cm}
-        <{\hspace{.5cm}}|>{\centering}p{2cm}|}
+    \begin{longtable}{|>{\centering}p{3cm}|>{\hspace{.2cm}}p{9cm}
+        <{\hspace{.2cm}}|>{\centering}p{2.3cm}|}
         \caption{#1}\label{#2} \tabularnewline \hline
         指令 OpCode & \multicolumn{1}{c|}{描述} & MIPS ISA \tabularnewline
         \endfirsthead
@@ -83,11 +74,16 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 }{\hline \end{longtable}}
 
 \newenvironment{implongtable}[2]{
-    \begin{longtable}{|>{\centering}p{2.3cm}|>{\hspace{.5cm}}p{3cm}
-        <{\hspace{.3cm}}|>{\centering}p{8.2cm}|}
+    \begin{longtable}{|>{\centering}p{2.3cm}|>{\hspace{.2cm}}p{2.5cm}
+        <{\hspace{.2cm}}|p{9.7cm}|}
         \caption{#1}\label{#2} \tabularnewline \hline
-        指令 OpCode & \multicolumn{1}{c|}{描述} & GS464V 实现
+        指令 OpCode & \multicolumn{1}{c|}{描述} & \multicolumn{1}{c|}{GS464V 实现}
         \tabularnewline\hhline \endfirsthead
+        \caption{#1（续）} \tabularnewline \hline
+        指令 OpCode & \multicolumn{1}{c|}{描述} & \multicolumn{1}{c|}{GS464V 实现}
+        \tabularnewline\hhline \endhead
+        \hline \multicolumn{3}{r}{\tiny 未完待续} \endfoot \endlastfoot
+
 }{\hline \end{longtable}}
 
 % Definitions for Chapter 3: overlay an image over a table
@@ -167,7 +163,7 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 }
 
 \newcommand{\fpuexceptout}[2]
-{ \vspace{-.4cm}
+{ \vspace{-.1cm}
   \begin{flushleft}
     \begin{tabular}[h]{@{}l@{\hspace{.2cm}}p{12cm}}
       {\bf 结果（陷阱被使能）}： & #1 \\[.2cm]
@@ -181,28 +177,6 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 
 \begin{document}
 \maketitle
-
-\newbox{\instformatbox}
-\catcode`\&=10
-\savebox{\instformatbox}{\parbox{14.5cm}{
-立即数型（I-Type）: \vspace{.2cm}\mbox{} \\
-\begin{bytefield}[bitwidth=.45cm]{32}
-  \bitheader[b]{31,26,25,21,20,16,15,0} \\
-  \bitbox{6}{op} & \bitbox{5}{rs} &
-  \bitbox{5}{rs} & \bitbox{16}{immediate}
-\end{bytefield} \vspace{.2cm}\mbox{} \\
-跳转型（J-Type）: \vspace{.2cm}\mbox{} \\
-\begin{bytefield}[bitwidth=.45cm]{32}
-  \bitheader[b]{31,26,25,0} \\
-  \bitbox{6}{op} & \bitbox{26}{target}
-\end{bytefield} \vspace{.2cm}\mbox{} \\
-寄存器型（R-Type）: \vspace{.2cm}\mbox{} \\
-\begin{bytefield}[bitwidth=.45cm]{32}
-  \bitheader[b]{31,26,25,21,20,16,15,11,10,6,5,0} \\
-  \bitbox{6}{op} & \bitbox{5}{rs} & \bitbox{5}{rt} & \bitbox{5}{rd} &
-  \bitbox{5}{sa} & \bitbox{6}{funct}
-\end{bytefield}}}
-\catcode`\&=4
 
 \section*{版权声明}
 
@@ -233,6 +207,8 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \hypersetup{linkcolor=black}
 \setcounter{tocdepth}{$toc-depth$}
 \tableofcontents
+\listoffigures
+\listoftables
 
 $body$
 

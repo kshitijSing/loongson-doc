@@ -3,28 +3,28 @@
 
 浮点协处理器（Floting Point Unit，简称 FPU）是一个重要的 CPU 协处理器，一般也被
 称为 CP1 （Coprocessor 1）： 它通过扩展 CPU 的指令集来完成浮点算术运算功能。 本
-章主要讲述龙芯 GS464V 处理器的 FPU 的特性， 主要内容包括编程模型、指令集、指令格式、
-指令流水线以及异常等。 在构架层面， 龙芯 GS464V 的浮点协处理器及其相关的系统软件实现
-符合 ANSI/IEEE 754--1985 的二进制浮点运算标准。 同时， 龙芯 GS464V 浮点协处理器还拥
-有自定义的 64 位 SIMD 多媒体定点 (fixed-point) 指令集。
+章主要讲述龙芯 GS464V 处理器的 FPU 的特性， 主要内容包括编程模型、指令集、指令格
+式、指令流水线以及异常等。 在构架层面， 龙芯 GS464V 的浮点协处理器及其相关的系统
+软件实现符合 ANSI/IEEE 754--1985 的二进制浮点运算标准。 同时， 龙芯 GS464V 浮点
+协处理器还拥有自定义的 64 位 SIMD 多媒体定点 (fixed-point) 指令集。
 
 概述
 ----
 
-![龙芯 GS464V 功能单元的组织构成 \label{fig:functional-units}](../images/architect-functional-units.pdf)
+![龙芯 GS464V 功能单元的组织构成\label{fig:functional-units}](../images/architect-functional-units.pdf)
 
 龙芯 GS464V 的 FPU 由 FALU1 和 FALU2 两个功能单元组成。图\ \ref{fig:functional-units}
 对 GS464V 的浮点功能单元的组织构成进行了图解说明。
 
 - FALU1 单元： FALU1 模块可以执行除浮点访存以及浮点和定点数据传送之外的所有浮点
- 操作, 包括 浮点加（减）法、浮点乘法、浮点乘加（减），浮点除法，浮点开平方根，浮
- 点求倒，浮点 开根后求倒，浮点与定点转换,浮点精度转换, 浮点比较, 转移判断和其它
- 简单逻辑等。此 外，FALU1 模块通过指令编码中 FMT 域的扩展与复用来执行 SIMD 媒体
- 操作。
+  操作, 包括 浮点加（减）法、浮点乘法、浮点乘加（减），浮点除法，浮点开平方根，
+  浮点求倒，浮点 开根后求倒，浮点与定点转换,浮点精度转换, 浮点比较, 转移判断和其
+  它简单逻辑等。此 外，FALU1 模块通过指令编码中 FMT 域的扩展与复用来执行 SIMD 媒
+  体操作。
 - FALU2 单元： FALU2 执行浮点乘加运算部件（可计算浮点乘、加和浮点乘加指令），浮
- 点与定点转换, 浮点精度转换, 浮点比较，和其它简单逻辑等以及媒体 SIMD 指令操作。
- 同时，龙芯 GS464V 的 FPU 支持执行 MIPS64 指令集中的并行单精度（Paired-Single，简称
- PS）浮点指令。
+  点与定点转换, 浮点精度转换, 浮点比较，和其它简单逻辑等以及媒体 SIMD 指令操作。
+  同时，龙芯 GS464V 的 FPU 支持执行 MIPS64 指令集中的并行单精度（Paired-Single，
+  简称 PS）浮点指令。
 
 浮点队列每个时钟周期可以分别发射 1 条指令到 FALU1 和 FALU2 单元。浮点寄存器文件
 为 FALU1 单元与 FALU2 单元各提供三个专用的读端口和一个专用的写端口。
@@ -89,7 +89,7 @@ FCSR 寄存器用于控制浮点单元的操作和表示一些状态。GS464V �
   \label{tab:fpu-FIR}
 \end{reglongtable}
 
-#### 浮点条件域（CC7-0） {.nonumber}
+#### 浮点条件域（CC7-0）{.nonumbered}
 
 当一个浮点比较操作发生时，结果被保存在 CC0 位，即条件位。如果比较结果为真，则
 CC0 位被置 1；反之则置 0。CC0 位仅能被浮点比较指令和 CTC1 指令所修改。
@@ -97,15 +97,13 @@ CC0 位被置 1；反之则置 0。CC0 位仅能被浮点比较指令和 CTC1 �
 其他条件位（CC7-1）则对应相应的浮点操作。 CC1-0 位对应单精度对的条件比较结果。更
 多的细节参照 PS 和 SIMD 指令相关章节。
 
-#### 浮点例外原因域（Cause）{.nonumber}
+#### 浮点例外原因域（Cause）{.nonumbered}
 
-控制/状态寄存器导致(Causes)域控制/状态寄存器的位 17：12 为导致（Causes）域，如表
-7-3 所示，这些位
-
-反映了最近执行指令的结果。Causes 域是协处理器 0 的 Cause 寄存器
-的一个逻辑扩充，这些位指示了由上次浮点操作所引起的例外，并且如果相应的使能位（
-Enable）被设置的话则产生一个中断或者例外。如果一条指令中产生不只一个例外，每一个
-相应的例外导致位都要被设置。
+控制状态寄存器的位 17：12 为导致（Causes）域，如表\ \ref{fig:fpu-FCSR} 所示，这
+些位反映了最近执行指令的结果。Causes 域是协处理器 0 的 Cause 寄存器的一个逻辑扩
+充，这些位指示了由上次浮点操作所引起的例外，并且如果相应的使能位（ Enable）被设
+置的话则产生一个中断或者例外。如果一条指令中产生不只一个例外，每一个相应的例外导
+致位都要被设置。
 
 Causes 域能被每条浮点操作指令所重写（不包括 Load、Store、Move 操作）。其中如果
 需要软件仿真来完成的则把该操作的未实现操作位（E）置 1，否则保持为 0。其它位则依照
@@ -113,7 +111,7 @@ IEEE754 标准看是否相应的例外产生而分别置 1 或者置 0。
 
 当一个浮点例外发生，没有结果将被存储，状态唯一受影响的就是 Causes 域。
 
-#### 浮点例外使能域（Enables） {.nonumber}
+#### 浮点例外使能域（Enables）{.nonumbered}
 
 任何时候当 Cause 位和相应的使能位（Enable）同时为 1 时，会产生一个浮点例外。如果
 浮点操作设置了一个被允许激活（相应使能位为 1）的 Cause 位，则处理器会立即产生一
@@ -128,7 +126,7 @@ IEEE754 标准看是否相应的例外产生而分别置 1 或者置 0。
 算的结果将被写回， 而且没有例外发生。 在这种情况下，前一条浮点指令所引起的例外情
 形能够通过读 Causes 域的值来确定。
 
-#### 浮点标志域（Flags）{.nonumber}
+#### 浮点标志域（Flags）{.nonumbered}
 
 标志域的各标志位指示自从上次被重置后是否发生了对应的浮点例外。 如果一个对应的
 浮点例外曾产生，那么相应的 Flag 位被置 1，否则保持不变。 任何浮点运算都不会清除
@@ -138,7 +136,7 @@ Flag 位的设置或清除。
 注意：Flags 域并不由硬件来设置；浮点例外服务程序有责任在调用用户程序之前设置这些
 位。
 
-#### 浮点舍入模式域（RM） {.nonumber}
+#### 浮点舍入模式域（RM） {.nonumbered}
 
 FCSR 寄存器的第 0 位和第 1 位组成了舍入模式（RM）域。所有的浮点运算根据这些位所
 指定的舍入方式进行相应的舍入处理。表~\ref{tab:rounding-mode} 列出了所有的舍入模
@@ -146,6 +144,7 @@ FCSR 寄存器的第 0 位和第 1 位组成了舍入模式（RM）域。所有�
 
 \begin{table}[htbp]
   \centering
+  \caption{浮点舍入模式位（RM）编码}\vspace{.3cm}
   \begin{tabular}{|c|c|p{8cm}|} \hline
      RM[1:0] & 助记符 & 描述   \\ \hhline
      $00_2$  & RN     & 把结果向最接近可表示数的方向舍入，当两个最接近可表示数
@@ -154,7 +153,6 @@ FCSR 寄存器的第 0 位和第 1 位组成了舍入模式（RM）域。所有�
      $10_2$  & RP     & 向正无穷大方向舍入:把结果向与之最接近并且不小于它的那个数舍入  \\
      $11_2$  & RM     & 向负无穷大方向舍入：把结果向与之最接近并且不大于它的那个数舍入 \\ \hline
   \end{tabular}
-  \caption{浮点舍入模式位（RM）编码}
   \label{tab:rounding-mode}
 \end{table}
 
@@ -165,8 +163,8 @@ FCCR 寄存器是访问 FCC 字段的另一种方式，其内容与 FCSR 里的 
 式。
 
 \begin{floattable}
-  \includegraphics{../images/fpu-FCCR} \\
   \caption{浮点 FCCR 寄存器}
+  \includegraphics[scale=0.87]{../images/fpu-FCCR}
   \label{tab:fpu-FCCR}
 \end{floattable}
 
@@ -176,8 +174,8 @@ FEXR 寄存器是访问 Cause 和 Flags 字段的另一种方式，其内容与 
 全相同。表\ \ref{tab:fpu-FEXR} 显示了 FEXR 寄存器的格式。
 
 \begin{floattable}
-  \includegraphics{../images/fpu-FEXR} \\
   \caption{浮点 FEXR 寄存器}
+  \includegraphics[scale=0.87]{../images/fpu-FEXR}
   \label{tab:fpu-FEXR}
 \end{floattable}
 
@@ -187,116 +185,24 @@ FENR 寄存器是访问 Enable, FS 和 RM 字段的另一种方式，其内容�
 完全相同。表\ \ref{tab:fpu-FENR} 显示了 FENR 寄存器的格式。
 
 \begin{floattable}
-  \includegraphics{../images/fpu-FENR} \\
   \caption{浮点 FENR 寄存器}
+  \includegraphics[scale=0.87]{../images/fpu-FENR}
   \label{tab:fpu-FENR}
 \end{floattable}
-
-FPU 指令集概述
---------------
-
-GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W，L，和可选的 PS 类型
-。表\ \ref{tab:fpu-ins} 列出了 GS464V 中 MIPS64 相关的所以浮点指令。
-
-\begin{inslongtable}{MIPS64 的浮点指令集}{tab:fpu-ins}
-  \multicolumn{3}{|l|}{算术指令} \tabularnewline* \hline
-  ABS.{\sl fmt}     & 绝对值                                   & MIPS32 \tabularnewline
-  ADD.{\sl fmt}     & 加法                                     & MIPS32 \tabularnewline
-  DIV.{\sl fmt}     & 除法                                     & MIPS32 \tabularnewline
-  MADD.{\sl fmt}    & 乘加                                     & MIPS64 \tabularnewline
-  MSUB.{\sl fmt}    & 乘减                                     & MIPS64 \tabularnewline
-  MUL.{\sl fmt}     & 乘法                                     & MIPS32 \tabularnewline
-  NEG.{\sl fmt}     & 求反                                     & MIPS32 \tabularnewline
-  NMADD.{\sl fmt}   & 乘加后求反                               & MIPS64 \tabularnewline
-  NMSUB.{\sl fmt}   & 乘减后求反                               & MIPS64 \tabularnewline
-  RECIP.{\sl fmt}   & 求倒数                                   & MIPS64 \tabularnewline
-  RSQRT.{\sl fmt}   & 平方根后求倒数                           & MIPS64 \tabularnewline
-  SQRT.{\sl fmt}    & 平方根                                   & MIPS32 \tabularnewline
-  SUB.{\sl fmt}     & 减法                                     & MIPS32 \tabularnewline \hhline
-  \multicolumn{3}{|l|}{分支跳转指令} \tabularnewline* \hline
-  BC1F              & 浮点假时跳转                             & MIPS32 \tabularnewline
-  BC1FL             & 浮点假时 Likely 跳转                     & MIPS32 \tabularnewline
-  BC1T              & 浮点真时跳转                             & MIPS32 \tabularnewline
-  BC1TL             & 浮点真时 Likely 跳转                     & MIPS32 \tabularnewline \hhline
-  \multicolumn{3}{|l|}{比较指令} \tabularnewline* \hline
-  C.{\sl cond.fmt}  & 比较浮点值并置标志位                     & MIPS32 \tabularnewline \hhline
-  \multicolumn{3}{|l|}{转换指令} \tabularnewline* \hline
-  ALNV.PS           & 可变浮点对齐                             & MIPS64 \tabularnewline
-  CEIL.L.{\sl fmt}  & 浮点转换到 64 位定点，向上取整           & MIPS64 \tabularnewline
-  CEIL.W.{\sl fmt}  & 浮点转换到 32 位定点，向上取整           & MIPS64 \tabularnewline
-  CVT.D.{\sl fmt}   & 浮点或定点转换到双精度浮点               & MIPS32 \tabularnewline
-  CVT.L.{\sl fmt}   & 转换浮点值到 64 位定点                   & MIPS64 \tabularnewline
-  CVT.PS.S          & 转换两个浮点值到浮点对                   & MIPS64 \tabularnewline
-  CVT.S.PL          & 转换浮点对的低位到单精度浮点             & MIPS64 \tabularnewline
-  CVT.S.PL          & 转换浮点对的高位到单精度浮点             & MIPS64 \tabularnewline
-  CVT.S.{\sl fmt}   & 浮点或定点转换到单精度浮点               & MIPS32 \tabularnewline
-  CVT.W.{\sl fmt}   & 转换浮点值到 32 位定点                   & MIPS32 \tabularnewline
-  FLOOR.L.{\sl fmt} & 浮点转换到 64 位定点，向下取整           & MIPS64 \tabularnewline
-  FLOOR.W.{\sl fmt} & 浮点转换到 32 位定点，向下取整           & MIPS64 \tabularnewline
-  PLL.PS            & 合并两个浮点对的低位为新的浮点对         & MIPS64 \tabularnewline
-  PLU.PS            & 合并两个浮点对的低位和高位为新的浮点对   & MIPS64 \tabularnewline
-  PUL.PS            & 合并两个浮点对的高位和低位为新的浮点对   & MIPS64 \tabularnewline
-  PUU.PS            & 合并两个浮点对的高位为新的浮点对         & MIPS64 \tabularnewline
-  ROUND.L.{\sl fmt} & 把浮点数四舍五入到 64 位定点             & MIPS64 \tabularnewline
-  ROUND.W.{\sl fmt} & 把浮点数四舍五入到 32 位定点             & MIPS32 \tabularnewline
-  TRUNC.L.{\sl fmt} & 把浮点数向绝对值小的方向舍入到 64 位定点 & MIPS64 \tabularnewline
-  TRUNC.W.{\sl fmt} & 把浮点数向绝对值小的方向舍入到 32 位定点 & MIPS32 \tabularnewline \hhline
-  \multicolumn{3}{|l|}{访存指令} \tabularnewline* \hline
-  LDC1              & 从内存取双字                             & MIPS32 \tabularnewline
-  LDXC1             & 按索引从内存取双字                       & MIPS64 \tabularnewline
-  LUXC1             & 按非对齐索引从内存取双字                 & MIPS64 \tabularnewline
-  LWC1              & 从内存取字                               & MIPS32 \tabularnewline
-  LWXC1             & 按索引从内存取字                         & MIPS64 \tabularnewline
-  SDC1              & 存双字到内存                             & MIPS32 \tabularnewline
-  SDXC1             & 按索引存双字到内存                       & MIPS64 \tabularnewline
-  SUXC1             & 按非对齐索引存双字到内存                 & MIPS64 \tabularnewline
-  SWC1              & 存字到内存                               & MIPS32 \tabularnewline
-  SWXC1             & 按索引存字到内存                         & MIPS64 \tabularnewline \hhline
-  \multicolumn{3}{|l|}{MOVE 指令} \tabularnewline* \hline
-  CFC1              & 读浮点控制寄存器到 GPR                   & MIPS32 \tabularnewline
-  CTC1              & 写浮点控制寄存器到 GPR                   & MIPS32 \tabularnewline
-  DMFC1             & 从 FPR 复制双字到 GPR                    & MIPS64 \tabularnewline
-  DMTC1             & 从 GPR 复制双字到 FPR                    & MIPS64 \tabularnewline
-  MFC1              & 从 FPR 复制低字到 GPR                    & MIPS32 \tabularnewline
-  MFHC1             & 从 FPR 复制高字到 GPR                    & MIPS32 R2 \tabularnewline
-  MOV.{\sl fmt}     & 复制 FPR                                 & MIPS32 \tabularnewline
-  MOVF.{\sl fmt}    & 浮点假时复制 FPR                         & MIPS32 \tabularnewline
-  MOVN.{\sl fmt}    & GPR 不为 0 时复制 FPR                    & MIPS32 \tabularnewline
-  MOVT.{\sl fmt}    & 浮点真时复制 FPR                         & MIPS32 \tabularnewline
-  MOVZ.{\sl fmt}    & GPR 为 0 时复制 FPR                      & MIPS32 \tabularnewline
-  MTC1              & 从 GPR 复制低字到 FPR                    & MIPS32 \tabularnewline
-  MTHC1             & 从 GPR 复制高字到 FPR                    & MIPS32 R2 \tabularnewline
-\end{inslongtable}
-
-GS464V 与 MIPS64 Release 2 版本兼容，从功能上实现了 MIPS64 体系结构规定的所 有
-FPU 指令，但是有些指令在实现上有细微的并不影响兼容性但是比较重要的差别，以
-下两点值得编程人员注意
-
-1. 乘加、乘减指令。在执行 MADD.fmt，MSUB.fmt，NMADD.fmt，NMSUB.fmt 这四组指令时
-   ，GS464V 的运算结果与 MIPS64 处理器略有不同，这是因为 GS464V 在做乘 加运算时只
-   在最后结果处做精度舍入，而 MIPS64 处理器在进行乘运算后就进行了一次舍入，加运
-   算后又做了一次舍入，导致了最终结果最低位相差 1。
-1. 单精度运算指令。在 Status 控制寄存器的 FR 位为 0 时，abs.s, add.s, ceil.w.d,
-   ceil.w.s, div.s, floor.w.d, floor.w.s, mul.s, neg.s, round.w.d, round.w.s,
-   sqrt.s, sub.s, trunc.w.d, trunc.w.s, mov.s, cvt.d.s, cvt.d.w, cvt.s.d,
-   cvt.s.w, cvt.w.d, cvt.w.s, movf.s, movn.s, movt.s, movz.s 等 26 条指令不能使
-   用奇数号寄存器，而 MIPS64 体系结构的处理器就可以，在这点上龙芯沿用了 MIPS
-   R4000 与 MIPSR10000 的做法，与 MIPS64 的规定略有不同。（早 期的 MIPS 处理器中
-   FR 位表示浮点寄存器是 16 个还是 32 个，MIPS64 中 FR 位表示浮 点寄存器是 32 位
-   还是 64 位）。
 
 浮点部件格式
 ------------
 
-#### 浮点格式
+### 浮点格式
 
 GS464V 的浮点部件不仅可以处理符合 IEEE 标准的单精度（32 位）及双精度
 （64 位）浮点数， 同时也提供了对``单精度对''（Paired single, 简称PS）浮点
 格式的支持。 图\ \ref{fig:fpt-types} 显示了这三种浮点数的详细格式。
 
 \begin{figure}[htbp]
-  (FIXME)
+  \centering
   \caption{浮点格式}
+  (FIXME)
   \label{fig:fpt-types}
 \end{figure}
 
@@ -313,27 +219,28 @@ GS464V 的浮点部件不仅可以处理符合 IEEE 标准的单精度（32 位�
   \item $E_{max} + 1$： 用来编码$\pm\infty$ 和 NaN （非数， Not a Number）。
 \end{itemize}
 
-对于单精度或者双精度格式来说，每一个非 0 数都只有唯一一种编码与之对
-应。 一个编码所对应的数值 $V$ 可以由表~\ref{tab:float-num-eqn} 中的公式所决定。
+对于单精度或者双精度格式来说，每一个非 0 数都只有唯一一种编码与之对应。 一个编码
+所对应的数值 $V$ 可以由表\ \ref{tab:float-num-eqn} 中的公式所决定。
 \begin{table}[htbp]
   \centering
+  \caption{单双精度浮点数：数值公式}
   \begin{tabular}{|c|>{\centering}p{4cm}|>{\centering}p{4cm}|} \hline
     $E$         & $f\neq0$                & $f=0$          \tabularnewline \hhline
     $E_{max}+1$ & NaN                     & $(-1)^s\infty$ \tabularnewline \hline
     $[E_{min}, E_{max}]$ & \multicolumn{2}{c|}{$(-1)^s2^E 1.f$} \tabularnewline \hline
     $E_{min}-1$ & $(-1)^s2^{E_{min}} 0.f$ & $(-1)^s0$      \tabularnewline \hline
   \end{tabular}
-  \caption{单双精度浮点数：数值公式}
   \label{tab:float-num-eqn}
 \end{table}
 
 对于所有的浮点格式， 如果 $V$ 是一个 NaN， 那么小数域 $f$ 的最高位决定了这个数是
 Signaling NaN （SNAN）还是 Quiet NaN（QNAN）： 如果 $f$ 的最高位被设置， 那么
 $V$ 是 QNAN， 否则为 SNAN。 表~\ref{tab:float-paramters} 给出了定义浮点格式的相
-关参数值，表~\ref{tab:float-limits} 列出了可表达的浮点的最大值和最小值。
+关参数值，表\ \ref{tab:float-limits} 列出了可表达的浮点的最大值和最小值。
 
 \begin{table}[htbp]
   \centering
+  \caption{浮点格式参数值表}
   \begin{tabular}{|c|>{\centering}p{4cm}|>{\centering}p{4cm}|} \hline
     & \multicolumn{2}{c|}{格式} \tabularnewline \cline{2-3}
     参数                 & 单精度 & 双精度 \tabularnewline \hhline
@@ -344,19 +251,18 @@ $V$ 是 QNAN， 否则为 SNAN。 表~\ref{tab:float-paramters} 给出了定义�
     小数域，$f$，宽度    & 24     & 53 \tabularnewline
     总宽度               & 32     & 64 \tabularnewline \hline
   \end{tabular}
-  \caption{浮点格式参数值表}
   \label{tab:float-paramters}
 \end{table}
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{|c*{3}{|>{\centering}p{4cm}}|} \hline
+  \caption{浮点范围值表}
+  \begin{tabular}{|c|>{\centering}p{4cm}|>{\centering}p{4cm}|>{\centering}p{4cm}|} \hline
     类型   & 最小数                       & 最小正规数                   & 最大数  \tabularnewline \hhline
     单精度 & $1.40129846e^{-45}$          & $1.17549435e^{-38}$          & $3.40282347e^{38}$ \tabularnewline
     双精度 & $4.9406564584124654e^{-324}$ & $2.2250738585072014e^{-308}$ & $1.7976931348623157e^{308}$
     \tabularnewline \hline
   \end{tabular}
-  \caption{浮点范围值表}
   \label{tab:float-limits}
 \end{table}
 
@@ -392,25 +298,25 @@ FPU 的控制和状态寄存器对于每一种例外都包含一个使能位，�
 
 FPU 支持五个 IEEE754 定义的标准例外：
 
-1. 不精确例外（Inexact，I）；
-1. 下溢例外（Underflow，U）；
-1. 上溢例外（Overflow，O）；
-1. 除零例外（Division by Zero，Z）；
-1. 非法操作例外（Invalid Operation，V）；
+  - 不精确例外（Inexact，I）；
+  - 下溢例外（Underflow，U）；
+  - 上溢例外（Overflow，O）；
+  - 除零例外（Division by Zero，Z）；
+  - 非法操作例外（Invalid Operation，V）；
 
 \noindent 以及
 
-- 未实现操作例外（Unimplemented Operation，E）。
+  - 未实现操作例外（Unimplemented Operation，E）。
 
-未实现操作例外用于 FPU 不能执行标准的 MIPS 浮点结构， 包括 FPU 不能决定正
-确的例外行为的情况。 该例外指示了软件例外处理的执行。未实现操作例外没有使能
+\noindent 未实现操作例外用于 FPU 不能执行标准的 MIPS 浮点结构， 包括 FPU 不能决
+定正确的例外行为的情况。 该例外指示了软件例外处理的执行。未实现操作例外没有使能
 信号和标志位，当这个例外发生时，一个相应的未实现例外陷阱发生。
 
-IEEE754 定义的 5 个例外（V，Z，O，U，I）都对应着一个用户控制的例外陷阱，当 5
-个使能位的某一位被设置时，相应的例外陷阱被允许发生。当例外发生时，相应的导致
-（Cause）位被设置。 如果相应的使能（Enable）位没有设置，例外标志（Flag）位被设
-置； 如果使能位被设置，那么标志位将不被设置，同时 FPU 产生一个例外给 CPU -- 随后的
-例外处理允许该例外陷阱发生。
+IEEE754 定义的 5 个例外（I，U，O，Z，V）都对应着一个用户控制的例外陷阱，当 5 个
+使能位的某一位被设置时，相应的例外陷阱被允许发生。当例外发生时，相应的导致（
+Cause）位被设置。 如果相应的使能（Enable）位没有设置，例外标志（Flag）位被设置；
+如果使能位被设置，那么标志位将不被设置，同时 FPU 产生一个例外给 CPU -- 随后的例
+外处理允许该例外陷阱发生。
 
 当没有例外陷阱信号时，浮点处理器采取缺省方式进行处理，提供一个浮点计算例
 外结果的替代值。不同的例外类型使用不同的缺省值。表~\ref{tab:fpu-except-default}
@@ -439,7 +345,7 @@ IEEE754 定义的 5 个例外（V，Z，O，U，I）都对应着一个用户控�
 下面对导致 FPU 产生每种例外的条件进行了描述， 并且详细说明了 FPU 对每个例外
 导致条件的反应。
 
-#### 不精确例外 (I)
+### 不精确例外 (I)
 
 FPU 在发生如下的情况时产生不精确例外： 舍入结果非精确 舍入结果上溢
 舍入结果下溢，并且下溢和不精确的使能位都没有被设置，而且 FS 位被设置。
@@ -447,14 +353,9 @@ FPU 在发生如下的情况时产生不精确例外： 舍入结果非精确 �
 \fpuexceptout
 {如果一个非精确例外陷阱被使能，结果寄存器不被修改，并且
 源寄存器被保留。因为这种执行模式会影响性能，所以不精确例外陷阱只有在必要的时
-候才被使能。}
-\beginblock
+候才被使能。}{舍入或者上溢结果被发送到目标寄存器。}
 
-舍入或者上溢结果被发送到目标寄存器。
-
-\endblock
-
-#### 下溢例外 (U)
+### 下溢例外 (U)
 
 两个相关的事件导致了下溢例外： 一个很小的在±2Emin
 之间的非零结果，由于该结果非常小，因此会导致其后发生 下溢例外。 用非规范化数据
@@ -473,10 +374,14 @@ FPU 在发生如下的情况时产生不精确例外： 舍入结果非精确 �
 \fpuexceptout
 {如果下溢或者不精确例外被使能，或者FS位没有设置，产生未
 实现操作例外，结果寄存器不被修改。}
-{如果下溢或者不精确例外不被使能，而且FS位被设置，最后的
-结果由舍入模式和立即结果的符号位来决定。}
+\beginblock
 
-#### 上溢例外 (O)
+如果下溢或者不精确例外不被使能，而且FS位被设置，最后的
+结果由舍入模式和立即结果的符号位来决定。
+
+\endblock
+
+### 上溢例外 (O)
 
 当舍入后的浮点结果的幅度用没有界限的指数来表示时，大于最大的目标模式所表
 示有限数据，上溢例外发出通知信号。 （这个例外同时设置不精确例外和标志位）
@@ -489,21 +394,16 @@ FPU 在发生如下的情况时产生不精确例外： 舍入结果非精确 �
 
 \endblock
 
-#### 除零例外 (Z)
+### 除零例外 (Z)
 
 除法运算中当除数是 0 被除数是一个有限的非零的数据时， 除零例外发出信号通知。
 利用软件可以对其他操作产生有符号的无穷值时模拟除零例外， ln(0)， 如：
 sin(π/2)， cos(0)， 或者 0-1。
 
-\fpuexceptout
-{结果寄存器不被修改，源寄存器保留。}
-\beginblock
+\fpuexceptout{结果寄存器不被修改，源寄存器保留。}{如果没有陷阱发生，结果是有符号
+的无穷值。}
 
-如果没有陷阱发生，结果是有符号的无穷值。
-
-\endblock
-
-#### 非法操作例外 (V)
+### 非法操作例外 (V)
 
 当一个可执行的操作的两个操作数或其中的一个操作数是非法时，非法操作例外发
 出信号通知。 如果例外没有陷入， MIPS 定义这个结果是一个 Quiet Not a Number
@@ -513,23 +413,16 @@ sin(π/2)， cos(0)， 或者 0-1。
 Unordered 对一个指示信号 NaN 进行浮点比较或者转换 任何对 SNaN（Signaling
 NaN）的数学操作。当其中一个操作数为 SNaN 或者两 个都为 SNaN
 时会导致这个例外（MOV 操作不被认为是数学操作，但 ABS 和 NEG 被认 为是数学操作）
-开方：
-
-X ，当 X 小于 0 时
+开方： X ，当 X 小于 0 时
 
 软件可以模拟其他给定源操作数的非法操作的例外。例如在 IEEE754 中利用软件来
 实现的特定函数：X REM Y，这里当 Y 是 0 或者 X 是无穷的时候；或者当浮点数转化为
 十进制时发生上溢，是无穷或者是 NaN；或者先验函数例如：ln(5)或者 cos-1(3)。
 
-\fpuexceptout
-{源操作数的值不被发送。}
-\beginblock
+\fpuexceptout{源操作数的值不被发送。}{如果没有其他例外发生，QNaN被发送到目标寄存
+器中。}
 
-如果没有其他例外发生，QNaN被发送到目标寄存器中。
-
-\endblock
-
-#### 未实现操作例外 (E)
+### 未实现操作例外 (E)
 
 当执行任何一条为以后定义所保留的操作码或者操作格式指令时，FPU 控制/状态寄
 存器中的未实现操作导致位被设置并产生陷阱。源操作数和目的寄存器保持不变，同时
@@ -541,5 +434,7 @@ X ，当 X 小于 0 时
 1. Quite Not a Number 操作数（QNaN），比较指令除外
 1. 非规范化数据或者下溢，而且当下溢或者不精确使能信号被设置同时 FS 位没有被设置
 
-注意: 非规范化和NaN操作只在转换或者计算指令中进入陷阱，在MOV指令中不进入 陷阱。
-陷阱被使能的情况：原操作数据不被发送。 该陷阱不能被屏蔽。
+\noindent 注意: 非规范化和NaN操作只在转换或者计算指令中进入陷阱，在MOV指令中不进
+入陷阱。
+
+\fpuexceptout{原操作数据不被发送。}{该陷阱不能被屏蔽。}
