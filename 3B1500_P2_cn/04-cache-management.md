@@ -71,8 +71,8 @@ Table: Cache 参数 \label{tab:cache-parameter}
 
 | 参数          | 指令 Cache         | 数据 Cache        | 二级 Cache         |
 | ------------- | ------------------ | ----------------- | ------------------ |
-| Cache 大小    | 64KB               | 32KB              | 1MB（共 4MB）      |
-| 相联度        | 4 路组相联         | 2 路组相联        | 4 路组相联         |
+| Cache 大小    | 64KB               | 64KB              | 1MB（共 4MB）      |
+| 相联度        | 4 路组相联         | 4 路组相联        | 4 路组相联         |
 | 替换策略      | 随机法             | 随机法            | 随机法（可锁定）   |
 | 行大小        | 32 字节            | 32 字节           | 32 字节            |
 | 索引位        | 虚地址 13:5 位     | 虚地址 13:5 位    | 物理地址 16:5 位   |
@@ -131,7 +131,7 @@ Cache 采用四路组相联的映射方式，其中每组包括 512 个索引项
 一级数据 Cache
 --------------
 
-数据 Cache 的容量为 32KB，采用四路组相联的结构。Cache 块大小为 32 字节，即可以存
+数据 Cache 的容量为 64KB，采用四路组相联的结构。Cache 块大小为 32 字节，即可以存
 放 8 个字。数据 Cache 的读写数据通路都是 128 位。
 
 数据 Cache 使用的是虚地址索引，物理地址标志。操作系统可以解决可能由虚地址引起的
@@ -285,24 +285,26 @@ Cache 一致性
 在宿主二 级 Cache 模块中维护。目录利用 32 位的位向量来记录拥有每个 Cache 行备份
 的一级 Cache（包括一 级指令 Cache 和一级数据 Cache）。每个一级 Cache 块有三种可
 能状态：INV（无效状态）、SHD（共 享状态，可读）和 EXC（独占状态，可读可写）。三
-个状态的转移情况如图\ \ref{fig:cache-status-diagram}。当读指令或者取指 发生一级 Cache 失效时，处理器核向二级
-Cache 模块发出 Reqread 请求，在得到二级 Cache 模块送回 的 Repread 应答后，处理器
-核的一级 Cache 获得了一个 SHD 状态的 Cache 备份；当写指令发生一级 Cache 失效时，
-处理器核向二级 Cache 模块发出 Reqwrite 请求，在得到二级 Cache 模块送回的
-Repwrite 应答后，处理器核的一级 Cache 获得了一个 EXC 状态的 Cache 备份；当处理器
-核发生一级 Cache 替 换时，通过 Reqreplace 写回二级 Cache 模块，二级 Cache 模块通
-过 Repreplace 应答告知处理器核替换 请求已被处理。二级 Cache 模块可以通过发送
-Reqinv 请求至处理器核来无效一个 SHD 状态的一级 Cache 备份，处理器核将该一级
-Cache 备份变为 INV 状态并通过 Repinv 应答二级 Cache 模块；二级 Cache 模块可以通
-过发送 Reqwtbk 请求至处理器核来写回一个 EXC 状态的一级 Cache 备份，处理器 核将该
-一级 Cache 备份变为 SHD 状态并通过 Repwtbk 应答二级 Cache 模块；二级 Cache 模块
-可以通 过发送 Reqinvwtbk 请求至处理器核来写回并无效一个 EXC 状态的一级 Cache 备
-份，处理器核将该一 级 Cache 备份变为 INV 状态并通过 Repinvwtbk 应答二级 Cache 模
-块。
-
+个状态的转移情况如图\ \ref{fig:cache-status-diagram}。
 
 ![龙芯 3B1500 Cache 状态转换 \label{fig:cache-status-diagram}](../images/cache-status-diagram.pdf)
 
+  - 当读指令或者取指 发生一级 Cache 失效时，处理器核向二级 Cache 模块发出
+    Reqread 请求，在得到二级 Cache 模块送回 的 Repread 应答后，处理器核的一级
+    Cache 获得了一个 SHD 状态的 Cache 备份；
+  - 当写指令发生一级 Cache 失效时，处理器核向二级 Cache 模块发出 Reqwrite 请求，
+    在得到二级 Cache 模块送回的 Repwrite 应答后，处理器核的一级 Cache 获得了一个
+    EXC 状态的 Cache 备份；
+  - 当处理器核发生一级 Cache 替 换时，通过 Reqreplace 写回二级 Cache 模块，二级
+    Cache 模块通过 Repreplace 应答告知处理器核替换 请求已被处理。二级 Cache 模块
+    可以通过发送 Reqinv 请求至处理器核来无效一个 SHD 状态的一级 Cache 备份，处理
+    器核将该一级 Cache 备份变为 INV 状态并通过 Repinv 应答二级 Cache 模块；
+  - 二级 Cache 模块可以通过发送 Reqwtbk 请求至处理器核来写回一个 EXC 状态的一级
+    Cache 备份，处理器 核将该一级 Cache 备份变为 SHD 状态并通过 Repwtbk 应答二级
+    Cache 模块；
+  - 二级 Cache 模块可以通 过发送 Reqinvwtbk 请求至处理器核来写回并无效一个 EXC
+    状态的一级 Cache 备份，处理器核将该一 级 Cache 备份变为 INV 状态并通过
+    Repinvwtbk 应答二级 Cache 模块。
 
 Cache 指令 \label{sec:cache-instruction}
 ----------
@@ -310,40 +312,39 @@ Cache 指令 \label{sec:cache-instruction}
 GS464V 支持了 17 种 Cache 指令，分别针对一级数据 Cache、一级指令 Cache 和二级
 Cache。Cache 指令的格式为
 
-    CACHE fmt, offset(base)
+          CACHE op, offset(base)
 
 \noindent 具体的 Cache 指令列表如下：
 
 Table: GS464V 的 Cache 指令
 
-|  FMT 域   | Cache 指令涵义                      | 目标 Cache     |
-|-----------|-------------------------------------|----------------|
-| 5’b 00000 | 根据索引对 Cache 块进行无效         | 一级指令 Cache |
-| 5’b 01000 | 根据索引存 Cache 块的 tag           | 一级指令 Cache |
-| 5’b 11100 | 根据索引存 Cache 块的 data          | 一级指令 Cache |
-| 5’b 00001 | 根据索引对 Cache 块进行无效并写回   | 一级数据 Cache |
-| 5’b 00101 | 根据索引取 Cache 块的 tag           | 一级数据 Cache |
-| 5’b 01001 | 根据索引存 Cache 块的 tag           | 一级数据 Cache |
-| 5’b 10001 | 根据命中来对 Cache 块进行无效       | 一级数据 Cache |
-| 5’b 10101 | 根据命中来对 Cache 块进行无效并写回 | 一级数据 Cache |
-| 5’b 11001 | 根据索引取 Cache 块的 data          | 一级数据 Cache |
-| 5’b 11101 | 根据索引存 Cache 块的 data          | 一级数据 Cache |
-| 5’b 00011 | 根据索引对 Cache 块进行无效并写回   | 二级 Cache     |
-| 5’b 00111 | 根据索引取 Cache 块的 tag           | 二级 Cache     |
-| 5’b 01011 | 根据索引存 Cache 块的 tag           | 二级 Cache     |
-| 5’b 10011 | 根据命中来对 Cache 块进行无效       | 二级 Cache     |
-| 5’b 10111 | 根据命中来对 Cache 块进行无效并写回 | 二级 Cache     |
-| 5’b 11011 | 根据索引取 Cache 块的 data          | 二级 Cache     |
-| 5’b 11111 | 根据索引存 Cache 块的 data          | 二级 Cache     |
+| OP 域      | Cache 指令涵义                        | 目标 Cache       |
+| :--------: | ------------------------------------- | ---------------- |
+| $00000_2$  | 根据索引对 Cache 块进行无效           | 一级指令 Cache   |
+| $01000_2$  | 根据索引存 Cache 块的 tag             | 一级指令 Cache   |
+| $11100_2$  | 根据索引存 Cache 块的 data            | 一级指令 Cache   |
+| $00001_2$  | 根据索引对 Cache 块进行无效并写回     | 一级数据 Cache   |
+| $00101_2$  | 根据索引取 Cache 块的 tag             | 一级数据 Cache   |
+| $01001_2$  | 根据索引存 Cache 块的 tag             | 一级数据 Cache   |
+| $10001_2$  | 根据命中来对 Cache 块进行无效         | 一级数据 Cache   |
+| $10101_2$  | 根据命中来对 Cache 块进行无效并写回   | 一级数据 Cache   |
+| $11001_2$  | 根据索引取 Cache 块的 data            | 一级数据 Cache   |
+| $11101_2$  | 根据索引存 Cache 块的 data            | 一级数据 Cache   |
+| $00011_2$  | 根据索引对 Cache 块进行无效并写回     | 二级 Cache       |
+| $00111_2$  | 根据索引取 Cache 块的 tag             | 二级 Cache       |
+| $01011_2$  | 根据索引存 Cache 块的 tag             | 二级 Cache       |
+| $10011_2$  | 根据命中来对 Cache 块进行无效         | 二级 Cache       |
+| $10111_2$  | 根据命中来对 Cache 块进行无效并写回   | 二级 Cache       |
+| $11011_2$  | 根据索引取 Cache 块的 data            | 二级 Cache       |
+| $11111_2$  | 根据索引存 Cache 块的 data            | 二级 Cache       |
 
 这些 Cache 指令和寄存器 TAGHi，TAGLo，DATAHi，DATALo 相关。关于这些寄存器的
-的内容格式见第 \ref{ch:cp0-controller} 章。
+的内容格式见第\ref{ch:cp0-controller}章。
 
 ### Cache0 指令
 
 Cache0 指令的作用是根据索引来无效一级指令 Cache 块。具体来说，就是把 Cache index
 等于 address[13:5]，Cache way 等于 address[2:0]的一级指令 Cache 块无效掉。
-
 
 ### Cache8 指令
 

@@ -1,30 +1,25 @@
 龙芯 GS464V 处理器核指令集概述
 ==============================
 
-龙芯 GS464V 处理器核兼容 MIPS64 R2 体系结构，提供了其所定义的全套必需指令。如需
-了解这些相关指令的详细定义，请查阅MIPS 体系结构规范 2.50 版本的卷 I 和卷 II。在
-MIPS64 R2 的基础上，GS464V 核还提供了扩展整点、浮点、SIMD 媒体、 X86 翻译加速、
-及 256 位向量指令。龙芯 GS464V 处理器核所实现的扩展指令列举在
-\ref{sec:extended-instructions}节中。囿于篇幅，这部分指令的详细定义不在本文档中
-给出。读者确需了解相关指令的详细定义，建议查阅《龙芯指令系统手册》。《龙芯指令系
-统手册》目前只提供给授权客户。
+龙芯 GS464V 处理器核兼容 MIPS64 R2 体系结构，提供了其所定义的全套必需指令。关于
+MIPS64 R2 指令的详细定义，请查阅MIPS 体系结构规范 2.50 版本的卷 I 和卷 II。在
+MIPS64 R2 的基础上，GS464V 核提供了扩展访存、定点、浮点、多媒体、 x86 翻译加速、
+及 向量指令。龙芯 GS464V 处理器核所实现的这些扩展指令列举在
+\ref{sec:extended-instructions} 节中。囿于篇幅，本文档中仅给出了部分扩展指令的详
+细定义。授权客户如需了解相关指令的详细定义，请查阅《龙芯指令系统手册》。
 
 龙芯 GS464 处理器核对所有 MIPS64 R2 指令都作了支持，但对一些实现相关的指令作了重
-新的定义。\ref{sec:ins-implementation} 节列举了重要的实现细节。
-
-GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W，L，和可选的 PS 类型
-。表\ \ref{tab:fpu-ins} 列出了 GS464V 中 MIPS64 相关的所以浮点指令。这些浮点相关
-指令（包括龙芯扩展浮点指令）要求协处理器 1 可用。
+新的定义。\ref{sec:ins-implementation} 节列举了这些重要的实现细节。
 
 指令编码
 --------
 
-龙芯处理器指令编码为 32 位。如图 \ref{fig:instruction-format} 所示，主要有三种指
-令格式：立即数指令（I-型），跳转指令（J-型）和寄存器指令（R-型）。
+龙芯处理器指令编码为 32 位。主要有三种指令格式：立即数指令（I-型）、跳转指令（J-
+型）和寄存器指令（R-型），如图 \ref{fig:instruction-format} 所示。
 
 ![龙芯指令格式\label{fig:instruction-format}](../images/ins-format-cn.pdf)
 
-\noindent 其中各位域解释为：
+\noindent\vspace{-.3cm} 其中各位域解释为：
 \begin{center}
   \begin{tabular}{ll@{\hspace{1cm}}ll@{\hspace{1cm}}}
     op：        & 6 位操作码;         & target：& 26 位跳转目标地址；    \\ 
@@ -37,16 +32,16 @@ GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S，D，W�
 MIPS64 兼容指令列表
 -------------------
 
-根据指令功能，MIPS64 指令可分为如下几组：
+\noindent 根据指令功能，MIPS64 指令可分为如下几组：
 
   - 访存指令
-  - 整点指令
+  - 运算指令
   - 跳转和分支指令
   - 协处理器指令
   - 浮点指令
   - 其它指令
 
-下面分组列出龙芯 GS464V 处理器兼容的所有 MIPS64 指令
+下面小节分别列出了龙芯 GS464V 处理器兼容的所有 MIPS64 指令。
 
 ### 访存指令
 
@@ -80,13 +75,13 @@ MIPS 体系结构采用 load/store 架构。所有运算都在寄存器上进行
   SCD & 满足条件下存双字 & MIPS64 \tabularnewline
 \end{inslongtable}
 
-### 整点指令
+### 运算指令
 
-运算型指令完成寄存器值的算术、逻辑、移位、乘法和除法等操作。运算型指令包含了寄存
+运算指令完成寄存器值的算术、逻辑、移位、乘法和除法等操作。运算型指令包含了寄存
 器指令格式（R-型，操作数和运算结果均保存在寄存器中）和立即数指令格式（I-型，其中
-一个操作数为一个 16 位的立即数）
+一个操作数为一个 16 位的立即数）。
 
-\begin{inslongtable}{整点运算指令}{tab:mips64-calculate}
+\begin{inslongtable}{运算指令}{tab:mips64-calculate}
   \mtabsep{算术指令（ALU 立即数）}
   ADDI    & 加立即数                     & MIPS32 \tabularnewline
   DADDI   & 加双字立即数                 & MIPS64 \tabularnewline
@@ -211,13 +206,18 @@ MIPS 定义中，所有转移指令后都紧跟一条延迟槽指令。Likely �
 
 ### 协处理器指令
 
-协处理器指令完成协处理器内部的操作。龙芯 GS464V 处理器核有两个协处理器：0 号协处
-理器（系统处理器）和 1 号协处理器（浮点协处理器）。
+协处理器指令完成协处理器内部的操作。龙芯 GS464V 处理器核有三个协处理器：0 号协处
+理器（系统处理器）、1 号协处理器（浮点协处理器）和 2 号协处理器（向量协处理器）
+。
 
-* 0 号协处理器（CP0 ）通过 CP0 的寄存器来管理内存和处理异常。这些指令列在
-  \ref{tab:mips64-cp0-ins} 中。
-* 1 号协处理器（CP1）指令包括浮点指令，多媒体指令，和龙芯扩展的定点计算指令。
-  这些指令都是在浮点寄存器上操作。第 7 章将会对这些协处理器 1 指令进行总结。
+* 0 号协处理器（CP0）指令通过 CP0 的寄存器来管理内存和处理异常。
+* 1 号协处理器（CP1）指令包括浮点指令，龙芯扩展浮点指令和扩展定点计算指令。这些
+  指令都是在浮点寄存器上操作的。
+* 2 号协处理器（CP2）指令包括 GS464V 扩展多媒体指令和向量指令，这些指令都是在向
+  量协处理器上操作的。使用这些指令需要 2 号协处理器被使能。
+
+\noindent 表 \ref{tab:mips64-cp0-ins} 列出了通过 CP0 的寄存器来管理内存和处理异
+常的相关指令。操作 CP1 寄存器的指令被列在[浮点指令][]节。
 
 \begin{inslongtable}{CP0 指令}{tab:mips64-cp0-ins}\hhline
   DMFC0  & 从 CP0 寄存器取双字 & MIPS32 \tabularnewline
@@ -230,8 +230,6 @@ MIPS 定义中，所有转移指令后都紧跟一条延迟槽指令。Likely �
   TLBP   & 在 TLB 中搜索匹配项 & MIPS32 \tabularnewline
   CACHE  & Cache 操作          & MIPS32 \tabularnewline
   ERET   & 异常返回            & MIPS32 \tabularnewline
-  DI     & 禁止中断            & MIPS32 R2 \tabularnewline
-  EI     & 允许中断            & MIPS32 R2 \tabularnewline
   DERET  & Debug 返回          & EJTAG \tabularnewline
   RDHWR  & 读取硬件寄存器      & MIPS32 R2 \tabularnewline
   RDPGPR & 从影子寄存器中读取  & MIPS32 R2 \tabularnewline
@@ -239,7 +237,11 @@ MIPS 定义中，所有转移指令后都紧跟一条延迟槽指令。Likely �
   SDBBP  & 软件断点            & EJTAG \tabularnewline
 \end{inslongtable}
 
-### 浮点指令
+### 浮点指令 {#float-instruction}
+
+GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S (single)，D (double)，W
+(word)，L (long)，以及可选的 PS (paired single) 类型。这些类型对应表
+\ref{fpu-ins} 中的 *fmt*。关于这些类型的具体描述，见[浮点格式][]节。
 
 \begin{inslongtable}{MIPS64 的浮点指令集}{tab:fpu-ins}
   \mtabsep{浮点算术指令}
@@ -410,10 +412,9 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
   gsSQ    & 双源寄存器存定点四字     & LoongsonISA   \tabularnewline
 \end{inslongtable}
 
-### 扩展整点指令
+### 扩展定点指令
 
-\begin{inslongtable}{扩展定点乘除指令}{tab:extended-ins-multdiv}
-  \mtabsep{扩展定点乘除指令}
+\begin{inslongtable}{扩展定点指令}{tab:extended-ins-multdiv} \hhline
   gsMULT   & 有符号字乘，结果写通用寄存器   & LoongsonISA \tabularnewline
   gsDMULT  & 有符号双字乘，结果写通用寄存器 & LoongsonISA \tabularnewline
   gsMULTU  & 无符号字乘，结果写通用寄存器   & LoongsonISA \tabularnewline
@@ -430,30 +431,33 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展浮点指令
 
+表 \ref{tab:fpu-ins} 列出了 GS464V 龙芯扩展浮点指令。这些指令的使用要求协处理器
+1 被使能。
+
 \begin{inslongtable}{扩展浮点指令}{tab:extended-ins-float}
   \mtabsep{扩展浮点访存指令}
-  GSSQC1   & 双源寄存器存定点四字             & LoongsonISA \tabularnewline 
-  GSSWLEC1 & 带上越界检查的从浮点寄存器存字   & LoongsonISA \tabularnewline 
-  GSLWXC1  & 带偏移的取浮点字                 & LoongsonISA \tabularnewline 
-  GSLQC1   & 双目标寄存器取浮点四字           & LoongsonISA \tabularnewline 
-  GSLWLEC1 & 带上越界检查的取字到浮点寄存器   & LoongsonISA \tabularnewline 
-  GSLWLC1  & 取字左部到浮点寄存器             & LoongsonISA \tabularnewline 
-  GSLWRC1  & 取字右部到浮点寄存器             & LoongsonISA \tabularnewline 
-  GSLDLC1  & 取双字左部到浮点寄存器           & LoongsonISA \tabularnewline 
-  GSLDRC1  & 取双字右部到浮点寄存器           & LoongsonISA \tabularnewline 
-  GSLWGTC1 & 带下越界检查的取字到浮点寄存器   & LoongsonISA \tabularnewline 
-  GSLDLEC1 & 带上越界检查的取双字到浮点寄存器 & LoongsonISA \tabularnewline 
-  GSLDGTC1 & 带下越界检查的取双字到浮点寄存器 & LoongsonISA \tabularnewline 
-  GSLDXC1  & 带偏移的取浮点双字               & LoongsonISA \tabularnewline 
-  GSSWLC1  & 从浮点寄存器存字左部             & LoongsonISA \tabularnewline 
-  GSSWRC1  & 从浮点寄存器存字右部             & LoongsonISA \tabularnewline 
-  GSSDLC1  & 从浮点寄存器存双字左部           & LoongsonISA \tabularnewline 
-  GSSDRC1  & 从浮点寄存器存双字右部           & LoongsonISA \tabularnewline 
-  GSSWGTC1 & 带下越界检查的从浮点寄存器存字   & LoongsonISA \tabularnewline 
-  GSSDLEC1 & 带上越界检查的从浮点寄存器存双字 & LoongsonISA \tabularnewline 
-  GSSDGTC1 & 带下越界检查的从浮点寄存器存双字 & LoongsonISA \tabularnewline 
-  GSSWXC1  & 带偏移的存浮点字                 & LoongsonISA \tabularnewline 
-  GSSDXC1  & 带偏移的存浮点双字               & LoongsonISA \tabularnewline 
+  gsSQC1   & 双源寄存器存定点四字             & LoongsonISA \tabularnewline 
+  gsSWLEC1 & 带上越界检查的从浮点寄存器存字   & LoongsonISA \tabularnewline 
+  gsLWXC1  & 带偏移的取浮点字                 & LoongsonISA \tabularnewline 
+  gsLQC1   & 双目标寄存器取浮点四字           & LoongsonISA \tabularnewline 
+  gsLWLEC1 & 带上越界检查的取字到浮点寄存器   & LoongsonISA \tabularnewline 
+  gsLWLC1  & 取字左部到浮点寄存器             & LoongsonISA \tabularnewline 
+  gsLWRC1  & 取字右部到浮点寄存器             & LoongsonISA \tabularnewline 
+  gsLDLC1  & 取双字左部到浮点寄存器           & LoongsonISA \tabularnewline 
+  gsLDRC1  & 取双字右部到浮点寄存器           & LoongsonISA \tabularnewline 
+  gsLWGTC1 & 带下越界检查的取字到浮点寄存器   & LoongsonISA \tabularnewline 
+  gsLDLEC1 & 带上越界检查的取双字到浮点寄存器 & LoongsonISA \tabularnewline 
+  gsLDGTC1 & 带下越界检查的取双字到浮点寄存器 & LoongsonISA \tabularnewline 
+  gsLDXC1  & 带偏移的取浮点双字               & LoongsonISA \tabularnewline 
+  gsSWLC1  & 从浮点寄存器存字左部             & LoongsonISA \tabularnewline 
+  gsSWRC1  & 从浮点寄存器存字右部             & LoongsonISA \tabularnewline 
+  gsSDLC1  & 从浮点寄存器存双字左部           & LoongsonISA \tabularnewline 
+  gsSDRC1  & 从浮点寄存器存双字右部           & LoongsonISA \tabularnewline 
+  gsSWGTC1 & 带下越界检查的从浮点寄存器存字   & LoongsonISA \tabularnewline 
+  gsSDLEC1 & 带上越界检查的从浮点寄存器存双字 & LoongsonISA \tabularnewline 
+  gsSDGTC1 & 带下越界检查的从浮点寄存器存双字 & LoongsonISA \tabularnewline 
+  gsSWXC1  & 带偏移的存浮点字                 & LoongsonISA \tabularnewline 
+  gsSDXC1  & 带偏移的存浮点双字               & LoongsonISA \tabularnewline 
   \mtabsep{扩展浮点格式转换指令}
   CVT.D.LD & 扩展双精度转化为双精度           & LoongsonISA \tabularnewline 
   CVT.LD.D & 双精度转化为扩展双精度低位       & LoongsonISA \tabularnewline 
@@ -462,8 +466,8 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展多媒体指令
 
-龙芯 GS464V 处理器核对 MIPS 指令集中协处理器 2 指令进行了自定义。执行这些多媒体
-指令时要求协处理器 2 可用。
+龙芯 GS464V 处理器核对 MIPS 指令集中协处理器 2 指令进行了自定义。其中，多媒体指
+令在协处理器 2 上运行。执行这些指令时要求协处理器 2 可用。
 
 \begin{inslongtable}{扩展 64 位多媒体指令}{tab:extended-ins-simd}
   \mtabsep{扩展 X86 方式逻辑、移位、跳转指令}
@@ -549,10 +553,10 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
   gsSLE     & fs 与 ft 定点定点数小于等于比较            & LoongsonISA \tabularnewline
 \end{inslongtable}
 
-### 扩展 x86 加速指令
+### 扩展 x86 翻译加速指令
 
-\begin{inslongtable}{扩展 X86 翻译加速指令}{tab:extended-ins-x86}
-  \mtabsep{扩展 X86 方式逻辑、移位、跳转指令}
+\begin{inslongtable}{扩展 x86 翻译加速指令}{tab:extended-ins-x86}
+  \mtabsep{x86 方式逻辑、移位、跳转指令}
   x86AND     & 设置 EFLAG 的逻辑位与                       & LoongsonISA \tabularnewline
   x86OR      & 设置 EFLAG 的逻辑位或                       & LoongsonISA \tabularnewline
   x86XOR     & 设置 EFLAG 的逻辑位异或                     & LoongsonISA \tabularnewline
@@ -590,7 +594,7 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
   x86MTFLAG  & 修改 EFLAG 标志位的值                       & LoongsonISA \tabularnewline
   x86J       & 根据 EFLAG 值跳转                           & LoongsonISA \tabularnewline
   x86LOOP    & 根据 EFLAG 值循环                           & LoongsonISA \tabularnewline
-  \mtabsep{扩展 X86 浮点栈指令}
+  \mtabsep{x86 浮点栈指令}
   SETTM      & x86 浮点栈模式置位                          & LoongsonISA \tabularnewline
   CLRTM      & x86 浮点栈模式清除                          & LoongsonISA \tabularnewline
   INCTOP     & x86 浮点栈顶指针加 1                        & LoongsonISA \tabularnewline
@@ -602,8 +606,8 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展向量指令
 
-龙芯 GS464V 处理器核实现了自定义扩展的 256 位向量指令，这部分指令的描述请见《龙
-芯指令系统手册 --- 向量指令》。《龙芯指令系统手册》目前只提供给授权客户。
+龙芯 GS464V 处理器核实现了自定义扩展的 256 位向量指令。授权客户如需了解相关指令
+的详细定义，请查阅《龙芯指令系统手册》向量指令一章。
 
 ### 扩展杂项指令
 
@@ -644,20 +648,21 @@ GS464V 处理器核没有实现 WAIT 指令的对应功能，导致处理器空�
 ， Cache 命中率高，流水线运行紧凑，使得功耗升高。为解决这个问题，一方面，内核中
 增加了处理器 IDLE 补丁，使得处理器空闲时，以 Uncache 方式运行 IDLE 程序，大幅减
 小空闲功耗。另一方面，也可以采用动态变频及动态开关核的方法来降低在处理器低负载情
-况下的功耗。这些方法都已有成熟的解决方案。
+况下的功耗。
 
-同时，也要避免在涉及低功耗管理的代码处使用 WAIT 指令，不仅无法实现软件设计预期，
-甚至可能引起功耗增加。
+同时，也要注意避免在涉及低功耗管理的代码处使用 WAIT 指令，WAIT 不仅无法实现软件
+设计预期，甚至可能引起功耗增加。
 
 #### SYNC，SYNCI 指令 {-}
 
 龙芯 3B1500 处理器由硬件维护一级指令缓存和一级数据缓存之间的数据一致性，因此对
 SYNC 和 SYNCI 指令的实现功能进行调整。
 
- - SYNC 指令只有 stype=0 的情形被实现。该指令起到存储栅障(memory barrier)作用，
-   用于保证 SYNC 之前的访存操作已经确定完成（例如，存储指令的数据被写入了 DCache
-   、 Uncached 的读写已完成、 取指令已经将值取回至寄存器），同时保证 SYNC 指令后
-   面的访存操作尚未开始执行。注意，SYNC 指令只能在内核态下可以使用。
+ - SYNC 指令只有 stype=0 被实现。任何 stype 非零的情形会引起一个"未实现指令例外"
+   。该指令起到存储栅障(memory barrier)作用，用于保证 SYNC 之前的访存操作已经确
+   定完成（例如，存储指令的数据被写入了 DCache 、 Uncached 的读写已完成、 取指令
+   已经将值取回至寄存器），同时保证 SYNC 指令后面的访存操作尚未开始执行。注意，
+   SYNC 指令只能在内核态下可以使用。
  - GS464V 的实现中，SYNCI 指令携带的地址信息被忽略，因此不再触发 TIB 相关例外、
    地址错例外和 Cache 错误例外。 SYNCI 指令产生的执行效果与 SYNC 指令等同， 由于
    SYNCI 指令可以在用户态下执行，软件可以利用这一特性，在用户态下获得与 SYNC 指
