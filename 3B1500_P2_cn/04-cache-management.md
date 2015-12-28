@@ -232,9 +232,9 @@ home 结点。根据 Cache 一 致性的要求，龙芯 3B1500 的二级 Cache �
 Cache 一致性属性 \label{sec:cache-coherency}
 ----------------
 
-龙芯 3B1500 实现表 \ref{tab:cache-coherent} 所示的 Cache 算法和 Cache 一致性属性。
+龙芯 3B1500 实现表 \ref{tab:cache-coherency} 所示的 Cache 算法和 Cache 一致性属性。
 
-Table: 龙芯 3B1500  Cache 的一致性属性 \label{tab:cache-coherent}
+Table: 龙芯 3B1500  Cache 的一致性属性 \label{tab:cache-coherency}
 
 | 属性分类              | 一致性代码       |
 | :-------------------: | :--------------: |
@@ -255,7 +255,7 @@ Store 操作，处理器都 直接发射一个双字，部分双字，字，部�
 
 ### 一致性高速缓存(一致性代码 3)
 
-一致性高速缓存（Cacheable coherent）表示一个具有该属性的行可以驻留在 Cache 中，
+一致性高速缓存（Cacheable Coherent）表示一个具有该属性的行可以驻留在 Cache 中，
 相应的存数和取数操作都只访问一级 Cache。当一级 Cache 失效时，处理器会检查二级
 Cache，看是否有包含所请求的地址。如果二级 Cache 命中，则从 二级 Cache 中填充数据
 ；否则从主存中取出数据，并将其写入二级 Cache 和一级 Cache 。

@@ -178,8 +178,47 @@ XTLB 重填向量。龙芯 GS464V 处理器核的 XTLB 重填向量与 32 位模
 虚实地址转换
 ------------
 
-通过使用 48 位地址时，处理器的物理地址空间大小为 256T字节。本节将详述经过 TLB 进
-行虚实地址转换的方法。
+本节将详述进行虚实地址转换的具体细节。 龙芯 GS464V 处理器核有一个 64 项的 TLB。
+简单说来，虚实地址的转换是通过 TLB 和系统控制协处理器（CP0）的协同完成的。所有的
+CPU 所提供的用于和 TLB 操作有关的指令见协处理器指令表 \ref{tab:mips64-cp0-ins}。
+同时，表 \ref{tab:cp0reg-mmu} 列出了与内存管理相关的 CP0 寄存器。关于这些 CP0 寄
+存器的详细描述，参见第\ref{ch:cp0-controller}章相应部分。
+
+Table: 内存管理相关的 CP0 寄存器 \label{tab:cp0reg-mmu}
+
+| 寄存器号   | 寄存器名   |   |   | 寄存器号   | 寄存器名   |
+| :--------: | ---------- | - | - | :--------: | ---------- |
+| 0          | Index      |   |   | 10         | EntryHi    |
+| 1          | Random     |   |   | 15         | PRID       |
+| 2          | EntryLo0   |   |   | 16         | Config     |
+| 3          | EntryLo1   |   |   | 17         | LLAddr     |
+| 5          | PageMask   |   |   | 28         | TagLo      |
+| 6          | Wired      |   |   | 29         | TagHi      |
+
+### TLB 表项格式 \label{subsec:tlb-format}
+
+表 \ref{tab:tlbfig} 表示了 TLB 表项的格式。TLB 表项的每个域与 EntryHi，EntryLo0
+， EntryLo1，PageMask 寄存器中的相应域一一对应。 唯一的不同是 TLB 项有一个
+Global 域（G 位）； EntryHi 寄存器中没有，而是作为保留域出现。 TLB 页 Cache 一致
+性属性位（C）指定访问该页时是否需要通过 Cache，如果通过 Cache ，则需要选择 Cache
+的一致性属性。关于 C 位所对应的 Cache 一致性属性的细节，见
+\ref{sec:cache-coherency} 节。
+
+\begin{reglongtable}{tlbfig}{TLB 表项的格式}
+  PageMask & 比较掩码域， 用于设置了当前 TLB 表项对应的页面大小                  \\ 
+  R        & 区域位: $00_2$, 用户； $01_2$, 管理； $11_2$, 核心                  \\ 
+  VPN2     & 虚页号抹去地址的最低位，即虚拟地址的最高有效 35 位。                \\ 
+  ASID     & 地址空间标识域：用于区分不同进程， 及多进程数据共享。               \\ 
+  PFN      & 页帧号，即虚实地址转换中物理地址的高位。                            \\ 
+  C        & Cache 一致性属性位（具体细节见 \ref{sec:cache-coherency} 节）。      \\ 
+  D        & 脏位：该位置 1 时，对应页面脏，即可写； 亦可用作为数据写保护位。    \\ 
+  V        & 有效位：TLB 表项是否有效；如未设置，TLB 访问将触发 TLBL/TLBS 例外。 \\ 
+  G        & 全局位：为 1 时，TLB 查找时将忽略 ASID 域。                         \\ 
+  0        & 保留：必须按 0 写入，读时返回 0。
+  \label{tab:tlbfig}
+\end{reglongtable}
+
+### 虚实地址转换概览
 
 进行虚实地址转换时，首先比较处理器给出的虚拟地址和 TLB 中存放的虚拟地址。当虚页
 号 （VPN）等于某个 TLB 表项的 VPN 域，并且如果下面两种情况中的任何一种成立：
@@ -187,10 +226,10 @@ XTLB 重填向量。龙芯 GS464V 处理器核的 XTLB 重填向量与 32 位模
 * TLB 表项的 Global 位为 1
 * 两个虚拟地址的 ASID 域一样。
 
-TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效异常，以使软件能够根据
-内存中存放的页表重新填写 TLB。如果 TLB 命中了，则物理页号将从 TLB 中取出，并与页
-内偏移量 Offset 合并，形成物理地址。页内偏移量 Offset 在虚实地址转换的过程中不经
-过 TLB。
+\noindent TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效异常，以使软
+件能够根据内存中存放的页表重新填写 TLB。如果 TLB 命中了，则物理页号将从 TLB 中取
+出，并与页内偏移量 Offset 合并，形成物理地址。页内偏移量 Offset 在虚实地址转换的
+过程中不经过 TLB。
 
 图 \ref{fig:v2p} 所示为虚实地址转换，虚拟地址被一个 8 位的地址空间标识符（ASID）
 扩展了，该措施降低了上下文切换时进行 TLB 刷新的频率。ASID 存放在 CP0 EntryHi 寄
@@ -217,109 +256,47 @@ TLB 就命中了。如果不满足以上条件，那么 CPU 会产生 TLB 失效
 \caption{64 位模式虚拟地址转换 \label{fig:addrtrans-64bit}}
 \end{figure}
 
-系统控制协处理器
-----------------
+### 虚实地址转换过程
 
-系统控制协处理器(CP0)负责支持存储管理，虚实地址转换，例外处理，以及一些特权操作
-。龙芯 GS464V 处理器核有 26 个 CP0 寄存器和一个 64 项的 TLB，每个寄存器都有唯一
-的寄存器号。下面的章节将给出与内存管理相关的寄存器的概述。
+虚地址到物理地址转换的第一步是地址有效性的检测，如图 \ref{fig:addr-check} 所示。
+如果地址无效，则将引发一个地址错例外。注意，在内核模式下，有不经过任何映射转换
+的特别地址段，而所有的管理和用户地址都将通过 TLB 映射访问。
 
-### TLB 表项的格式 \label{subsec:tlb-format}
-
-表 \ref{fig:tlbfig} 表示 TLB 表项的格式，及表项中的每个域在 EntryHi，EntryLo0，
-EntryLo1，PageMask 寄存器中的相应域。
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \centering
-\caption{TLB 表项的格式 \label{fig:tlbfig}}
-\includegraphics[scale=0.85]{../images/tlbfig.pdf}
-\end{table}
+\includegraphics[scale=0.8]{../images/tlb-transaddr1-cn.pdf}
+\caption{地址有效性检测 \label{fig:addr-check}}
+\end{figure}
 
-EntryHi，EntryLo0，EntryLo1，以及 PageMask 寄存器和 TLB 项的格式类似。唯一的不同
-就是 TLB 项有一个 Global 域（G 位）， EntryHi 寄存器中没有，而是作为保留域出现。
-表\ \ref{tab:cp0-entrylo}, \ref{tab:cp0-entryhi}, \ref{tab:cp0-pagemask}, 分别表
-示了在图\ \ref{fig:tlbfig} TLB 项的各个对应域。
-
-TLB 页一致性属性位（C）指定访问该页时是否需要通过 Cache，如果通过 Cache，则需要
-选择 Cache 的一致性属性。表\ \ref{tab:tlb-cvalues} 表示 C 位对应的 Cache 一致性
-属性。
-
-Table: TLB 页的 C 位的值 \label{tab:tlb-cvalues}
-
-| C(5:3) 值   | Cache一致性属性                        |
-| :---------: | :-----------------------------------:  |
-| 0           | 保留                                   |
-| 1           | 保留                                   |
-| 2           | 非高速缓存（Uncached）                 |
-| 3           | 一致性高速缓存（Cacheable Coherent）   |
-| 4           | 保留                                   |
-| 5           | 保留                                   |
-| 6           | 保留                                   |
-| 7           | 非高速缓存加速（Uncached Accelerated） |
-
-### CP0 寄存器
-
-表 \ref{tab:registers-memory} 列出了与内存管理相关的 CP0 寄存器，第 3 章对 CP0
-寄存器进行了完备的描述。
-
-Table: 内存管理相关的 CP0 寄存器 \label{tab:registers-memory}
-
-| 寄存器号   | 寄存器名   |   |   | 寄存器号   | 寄存器名   |
-| :--------: | ---------- | - | - | :--------: | ---------- |
-| 0          | Index      |   |   | 10         | EntryHi    |
-| 1          | Random     |   |   | 15         | PRID       |
-| 2          | EntryLo0   |   |   | 16         | Config     |
-| 3          | EntryLo1   |   |   | 17         | LLAddr     |
-| 5          | PageMask   |   |   | 28         | TagLo      |
-| 6          | Wired      |   |   | 29         | TagHi      |
-
-
-### 虚拟地址到物理地址的转换过程
-
-在虚地址到物理地址转换时，CPU 将虚地址的 8 位 ASID（如果全局位 G 没有设置）和
+在映射访问的虚地址到物理地址转换时，CPU 将虚地址的 8 位 ASID（如果全局位 G 没有设置）和
 TLB 项的 ASID 进行比较，看是否匹配。在比较 ASID 的同时还需要根据页掩码（PageMask
-）的值将虚地址的高 15~27 位和 TLB 项的虚页号进行匹配比较。如果有 TLB 项匹配，从
+）的值将虚地址的 15:27 位和 TLB 项的虚页号进行匹配比较。如果有 TLB 项匹配，从
 匹配的 TLB 项中取出物理地址和访问控制位（C，D 和 V）。对一个有效的地址转换来说，
 匹配的 TLB 项的 V 位必须设置，但是在匹配比较时不考虑 V 位的值。
-图\ \ref{fig:tlb-transaddr} 表示了 TLB 地址转换过程。
+图 \ref{fig:tlb-transaddr} 表示了 TLB 实现映射地址转换的过程。
 
-![TLB 地址转换 \label{fig:tlb-transaddr}](../images/tlb-transaddr2-cn.pdf)
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.85]{../images/tlb-transaddr2-cn.pdf}
+\caption{TLB 映射地址转换 \label{fig:tlb-transaddr}}
+\end{figure}
 
-### TLB 失效
+如果没有任何一 TLB 项匹配虚地址，将引发一个 TLB 重填例外。如果访问控制位(D 和 V)
+指示访问不是合法的，引发一个 TLB 修改或者 TLB 无效例外。如果 C 位等于 $011_2$，
+被检索到的物理地址通过 Cache 访问内存，否则不通过 Cache。
 
-如果没有任何一 TLB 项匹配虚地址，引发一个 TLB 不命中例外。如果访问控制位(D 和 V)
-指示 访问不是合法的，引发一个 TLB 修改或者 TLB 无效例外。如果 C 位等于 0112，被
-检索到的物理地址 通过 Cache 访问内存，否则不通过 Cache。
+代码实例
+--------
 
-### TLB 指令
-
-表 \ref{tab:mips64-tlb-ins} 列出了所有的 CPU 所提供的用于和 TLB 操作有关的指令。
-
-\begin{inslongtable}{CP0 指令}{tab:mips64-tlb-ins}\hhline
-  TLBR   & 读索引的 TLB 项     & MIPS32 \tabularnewline
-  TLBWI  & 写索引的 TLB 项     & MIPS32 \tabularnewline
-  TLBWR  & 写随机的 TLB 项     & MIPS32 \tabularnewline
-  TLBP   & 在 TLB 中搜索匹配项 & MIPS32 \tabularnewline
-\end{inslongtable}
-
-### 代码例子
+### 页面映射
 
 第一个例子是如何配置 TLB 表项来映射一对 4KB 的页面。实时系统的内核大多都这么做，
 这种简单的内核 MMU 只用于进行内存保护，所以静态映射就足够了，在所有静态映射的系
 统中所有 TLB 例外都被作为是错误条件（不可访问）。
 
-   1.  mtc0 r0,C0_WIRED         -- make all entries available to random replacement
-   2.  li r2, (vpn2<<13)|(asid & 0xff);
-   3.  mtc0 r2, C0_ENHI         -- set the virtual address
-   4.  li r2, (epfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
-   5.  mtc0 r2, C0_ENLO0        -- set the physical address for the even page
-   6.  li r2, (opfn<<6)|(coherency<<3)|(Dirty<<2)|Valid<<1|Global)
-   7.  mtc0 r2, C0_ENLO1        -- set the physical address for the odd page
-   8.  li r2, 0                 -- set the page size to 4KB
-   9.  mtc0 r2,C0_PAGEMASK
-   10. li r2, index_of_some_entry -- needed for tlbwi only
-   11. mtc0 r2, C0_INDEX          -- needed for tlbwi only
-       tlbwr                      -- or tlbwi
+\lstinputlisting{codes/tlb-pagemap.S}
+
+### TLB 重填例外控制
 
 一个完备的虚拟存储操作系统（如 UNIX），用 MMU 进行内存保护，并进行主存和大容量存
 储 设备的换页。这个机制使程序可以访问更大的存储设备而不仅仅局限于系统物理分配的
@@ -327,34 +304,20 @@ TLB 项的 ASID 进行比较，看是否匹配。在比较 ASID 的同时还需�
 MMU 例外实施，TLB 重填 是这种系统中最常见的例外。下面是一个可能的 TLB 重填例外控
 制。
 
-    12. refill_exception:
-    13. mfc0 k0,C0_CONTEXT
-    14. sra k0,k0,1           -- index into the page table
-    15. lw k1,0(k0)           -- read page table
-    16. lw k0,4(k0)
-    17. sll k1,k1,6
-    18. srl k1,k1,6
-    19. mtc0 k1,C0_TLBLO0
-    20. sll k0,k0,6
-    21. srl k0,k0,6
-    22. mtc0 k0,C0_TLBLO1
-    23. tlbwr                 -- write a random entry
-        eret
+\lstinputlisting{codes/tlb-refill-exception.S}
 
 这个例外控制处理非常简单，因为它的经常执行会影响系统性能，这就是 TLB 重填例外分
 配独 立的例外向量的原因。这段代码假设需要的映射在主存储器的页表中已经建立起来了
 。如果没有建立 起来，那么在 ERET 指令后将发生 TLB 失效例外。TLB 失效例外很少发生
-，这是有益的，因为它必 须计算期望的映射，并可能需要从后援存储器中读取部分页表。
-TLB 修改例外用于实现只读页面和标 记进程清除代码需要修改的页。为了保护不同的进程
-和用户不受相互的干扰，虚拟存储操作系统通常 在用户模式执行用户程序。下面的例子表
-示如何从内核模式进入用户模式。
+，这是有益的，因为它必须计算期望的映射，并可能需要从后援存储器中读取部分页表。
+TLB 修改例外用于实现只读页面和标 记进程清除代码需要修改的页。
 
-    24. mtc0 r10, C0_EPC                     -- assume r10 holds desired usermode address
-    25. mfc0 r1, C0_SR                       -- get current value of Status register
-    26. and r1,r1, ~(SR_KSU || SR_ERL)       -- clear KSU and ERL field
-    27. or r1, r1, (KSU_USERMODE || SR_EXL)  -- set usermode and EXL bit
-    28. mtc0 r1, C0_SR
-        eret                                 -- jump to user mode
+### 内核模式进入用户模式
+
+为了保护不同的进程和用户不受相互的干扰，虚拟存储操作系统通常在用户模式执行用户程
+序。下面的例子表示如何从内核模式进入用户模式。
+
+\lstinputlisting{codes/enter-user-mode_zh.S}
 
 物理地址空间分布 \label{sec:40vs48}
 ----------------

@@ -868,7 +868,6 @@ CacheErr1 寄存器中，然后触发 Cache 错例外由软件来纠正错误。
   \end{regtabular}
   \label{tab:cp0-CacheErr}
 \end{floattable}
-\newpage
 
 ### TagLo、TagHi 寄存器
 

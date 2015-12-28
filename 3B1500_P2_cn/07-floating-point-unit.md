@@ -164,7 +164,7 @@ FCCR 寄存器是访问 FCC 字段的另一种方式，其内容与 FCSR 里的 
 
 \begin{floattable}
   \caption{浮点 FCCR 寄存器}
-  \includegraphics[scale=0.87]{../images/fpu-FCCR}
+  \includegraphics[scale=0.86]{../images/fpu-FCCR}
   \label{tab:fpu-FCCR}
 \end{floattable}
 
@@ -175,7 +175,7 @@ FEXR 寄存器是访问 Cause 和 Flags 字段的另一种方式，其内容与 
 
 \begin{floattable}
   \caption{浮点 FEXR 寄存器}
-  \includegraphics[scale=0.87]{../images/fpu-FEXR}
+  \includegraphics[scale=0.86]{../images/fpu-FEXR}
   \label{tab:fpu-FEXR}
 \end{floattable}
 
@@ -186,7 +186,7 @@ FENR 寄存器是访问 Enable, FS 和 RM 字段的另一种方式，其内容�
 
 \begin{floattable}
   \caption{浮点 FENR 寄存器}
-  \includegraphics[scale=0.87]{../images/fpu-FENR}
+  \includegraphics[scale=0.86]{../images/fpu-FENR}
   \label{tab:fpu-FENR}
 \end{floattable}
 

@@ -1,14 +1,8 @@
-\documentclass[nofonts,a4paper]{ctexbook}
+\documentclass[adobefonts,a4paper]{ctexbook}
 
 \usepackage[margin=1in]{geometry}
 \usepackage{fontspec}                             % font configuration
 \usepackage{xeCJK}                                % allow chinese font
-\setCJKmainfont{文泉驿微米黑}                     % default CJK font
-\setCJKsansfont{文泉驿点阵正黑}                   % default CJK sans font
-\setCJKmonofont{文泉驿等宽微米黑}                 % default CJK mono font
-\setmainfont{Droid Serif}                         % default main font
-\setromanfont{Droid Serif}                        % default romain font
-\setmonofont{Droid Sans Mono}                     % default mono font
 \CTEXoptions[today=big]
 \CTEXsetup[name={附录},number={\Alph{chapter}}]{appendix}
 \CTEXsetup[name={第,篇},nameformat={\centering},titleformat={\zihao{0}}]{part}
@@ -21,13 +15,18 @@
 \parindent 0em                                    % paragraph indent
 \setlength{\parskip}{0.75ex plus .2ex minus .5ex} % paragraph distance
 
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\floatpagefraction}{0.7}
+
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
 colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
-\usepackage{longtable,array}
+\usepackage{mlongtable,array}
 \usepackage{booktabs}
+\usepackage{listings}
 \usepackage{zhnumber}
 \usepackage{bytefield}
-\usepackage{listings}
 \usepackage{mips}
 \newlength{\bitwidth}
 \newlength{\byteheight}
@@ -37,17 +36,6 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \DeclareGraphicsExtensions{.pdf,.eps}
 \graphicspath{{../images/}}
 
-%\let\emph=\textit
-%\setlength{\headheight}{15pt}
-%
-%\usepackage{pstricks}
-%\input{lstsetting}
-
-% self-defined commands
-%\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
-%\newcommand{\ptabincell}[2]{\vtop{\vskip-\ht\strutbox\null\hbox{\tabincell{#1}{#2}}}}
-%\newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
-%
 \newcommand{\hhline}{\hline\hline}
 \newcommand{\cellalign}[2]{\multicolumn{1}{#1}{#2}}
 \newcommand{\lmcol}[2]{\multicolumn{#1}{l}{#2}}
@@ -174,9 +162,49 @@ colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \newcommand{\fldnewline}{\vspace{.2cm}\mbox{}\newline}
 \newcommand{\narrownewline}{\vspace{-.1cm}\newline}
 
+\definecolor{bg-color}{rgb}{0.96,1,0.95}
+\definecolor{shadecolor}{rgb}{0.96,1,0.95}
+\definecolor{txt-color}{HTML}{000000}
+\definecolor{builtin}{HTML}{DA70D6}
+\definecolor{comment}{HTML}{B22222}
+\definecolor{comment-delimiter}{HTML}{B22222}
+\definecolor{constant}{HTML}{5F9EA0}
+\definecolor{function-name}{HTML}{0000FF}
+\definecolor{keyword}{HTML}{a020F0}
+\definecolor{string}{HTML}{BC8F8F}
+\definecolor{type}{HTML}{228B22}
+\definecolor{variable-name}{HTML}{B8860B}
+\lstset{
+  basicstyle={\ttfamily},
+  extendedchars=false,
+  escapechar=`,
+  language={[MIPS]Assembler},
+  basewidth={.5em},
+  keywordstyle={\color{keyword}},
+  keywordstyle=[2]{\color{type}},
+  keywordstyle=[3]{\color{function-name}},
+  keywordstyle=[4]{\color{variable-name}},
+  commentstyle={\color{comment}},
+  stringstyle={\color{string}},
+  xleftmargin={2em},
+  xrightmargin={2em},
+  tabsize=6,
+  backgroundcolor={\color{shadecolor}},
+  % numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt
+}
+
+\lstdefinestyle{lesscolor}{keywordstyle={\color{keyword!50!black}},
+  keywordstyle=[2]{\color{type!50!black}},
+  keywordstyle=[3]{\color{function-name!50!black}},
+  keywordstyle=[4]{\color{variable-name!50!black}},
+  commentstyle={\color{comment!50!black}},
+  stringstyle={\color{string!50!black}}}
+
 \begin{document}
 \maketitle
-
 \section*{版权声明}
 
 本文档版权归龙芯中科技术有限公司所有，并保留一切权利。未经书面许可，任何公司和个

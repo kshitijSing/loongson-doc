@@ -1,6 +1,7 @@
 龙芯 GS464V 处理器核指令集概述
 ==============================
 
+在指令集架构（Instruction Set Architecture，简称 ISA）上，
 龙芯 GS464V 处理器核兼容 MIPS64 R2 体系结构，提供了其所定义的全套必需指令。关于
 MIPS64 R2 指令的详细定义，请查阅MIPS 体系结构规范 2.50 版本的卷 I 和卷 II。在
 MIPS64 R2 的基础上，GS464V 核提供了扩展访存、定点、浮点、多媒体、 x86 翻译加速、
@@ -314,21 +315,32 @@ GS464V 实现了 MIPS64 中浮点部分的所有数据类型，包括 S (single)
 \end{inslongtable}
 
 GS464V 与 MIPS64 Release 2 版本兼容，从功能上实现了 MIPS64 体系结构规定的所有浮
-点指令，但是有些指令在实现上有并不影响兼容性但是比较重要的差别，以下两点值得编程
+点指令，但是有些指令在实现上有并不影响兼容性但是比较重要的差别，以下三点值得编程
 人员注意：
 
-1. 乘加、乘减指令。在执行 MADD.fmt，MSUB.fmt，NMADD.fmt，NMSUB.fmt 这四组指令时
-   ，GS464V 的运算结果与 MIPS64 处理器略有不同，这是因为 GS464V 在做乘 加运算时
-   只在最后结果处做精度舍入，而 MIPS64 处理器在进行乘运算后就进行了一次舍入，加
-   运算后又做了一次舍入，导致了最终结果最低位相差 1。
-1. 单精度运算指令。龙芯沿用了 MIPS R4000 与 MIPSR10000 的做法，与 MIPS64 的规定
-   略有不同： GS464V 处理器中 FR 位表示浮点寄存器是 16 个还是 32 个（MIPS64 中
-   FR 位表示浮点寄存器是 32 位还是 64 位）。因此，当 Status 控制寄存器的 FR 位为
-   0 时，26 条单精度指令（ABS.S, ADD.S, CEIL.W.D, CEIL.W.S, DIV.S, FLOOR.W.D,
-   FLOOR.W.S, MUL.S, NEG.S, ROUND.W.D, ROUND.W.S, SQRT.S, SUB.S, TRUNC.W.D,
-   TRUNC.W.S, MOV.S, CVT.D.S, CVT.D.W, CVT.S.D, CVT.S.W, CVT.W.D, CVT.W.S,
-   MOVF.S, MOVN.S, MOVT.S, MOVZ.S 等）不能使用奇数号寄存器。
-    
+1. 乘加、乘减指令。在执行 MADD.*fmt*，MSUB.*fmt*，NMADD.*fmt*，NMSUB.*fmt* 这四
+   组指令时，GS464V 的运算结果与 MIPS64 处理器略有不同，这是因为 GS464V 在做乘
+   加运算时只在最后结果处做精度舍入，而 MIPS64 处理器在进行乘运算后就进行了一次
+   舍入，加运算后又做了一次舍入，导致了最终结果最低位相差 1。
+1. 单精度运算指令。龙芯沿用了 MIPSR10000 的做法，Status 寄存器的 FR 位表示 16 个
+   还是 32 个 64 位浮点寄存器（而 MIPS64 中 FR 位表示浮点寄存器是 32 个 32 位还
+   是 64 个 16 位浮点寄存器）。因此，当 Status 寄存器的 FR 位为 0 时，26 条单精
+   度指令（ABS.S, ADD.S, CEIL.W.D, CEIL.W.S, DIV.S, FLOOR.W.D, FLOOR.W.S, MUL.S,
+   NEG.S, ROUND.W.D, ROUND.W.S, SQRT.S, SUB.S, TRUNC.W.D, TRUNC.W.S, MOV.S,
+   CVT.D.S, CVT.D.W, CVT.S.D, CVT.S.W, CVT.W.D, CVT.W.S, MOVF.S, MOVN.S, MOVT.S,
+   MOVZ.S 等）不能使用奇数号寄存器。
+1. 浮点转换指令。 龙芯 GS464 浮点运算中进行数据格式转换时， 比如使用如下指令将浮
+   点数转换为字整点数或双字整点数，
+   \begin{verbatim}
+       CVT.W.FMT, ROUND.W.FMT, FLOOR.W.FMT, CEIL.W.FMT, TRUNK.W.FMT
+       CVT.L.FMT, ROUND.L.FMT, FLOOR.L.FMT, CEIL.L.FMT, TRUNK.L.FMT
+   \end{verbatim}
+   如果输入值为负非数，负越界，负无穷时， 而 FCSR 寄存器的无效例外没有使能， 将
+   不会发出无效操作例外，返回值为负最大：0x8000_0000 或
+   0x8000_0000_0000_0000 取决于操作的转换格式。而在 MIPS64 浮点运算中，遇到相
+   同情况时， 也不会发出无效操作例外，不过返回值规定为正最大： 0x7FFF_FFFF 或
+   0x7FFF_FFFF_FFFF_FFFF。即，MIPS64 的规定不区分输入值的正负。
+
 ### 其它指令
 
 MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
@@ -368,15 +380,15 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 扩展指令 \label{sec:extended-instructions}
 --------
 
-龙芯 GS464V 处理器在 MIPS64 基础上对指令集有如下主要扩展：
+龙芯 GS464 处理器在 MIPS64 R2 的基础上实现了若干扩展：
 
-  - 扩展访存指令
-  - 扩展整点指令
-  - 扩展浮点指令
-  - 扩展 x86 加速指令
-  - 扩展多媒体指令
-  - 扩展向量指令
-  - 扩展杂项指令
+- 扩展访存指令
+- 扩展定点指令
+- 扩展浮点指令
+- 扩展多媒体指令
+- 扩展 x86 加速指令
+- 扩展向量指令
+- 扩展杂项指令
 
 ### 扩展访存指令
 
@@ -414,6 +426,10 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展定点指令
 
+这些指令扩大了 MIPS64 的 定点乘除法指令，以提高定点乘法运算使用广泛的应用性能。
+主要 执行 64 位整点乘除法操作，并产生 64 位（而不是 128 位）结果。 附录 A 对龙芯
+GS464V 的扩展整数指令进行了详细介绍。
+
 \begin{inslongtable}{扩展定点指令}{tab:extended-ins-multdiv} \hhline
   gsMULT   & 有符号字乘，结果写通用寄存器   & LoongsonISA \tabularnewline
   gsDMULT  & 有符号双字乘，结果写通用寄存器 & LoongsonISA \tabularnewline
@@ -431,8 +447,9 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展浮点指令
 
-表 \ref{tab:fpu-ins} 列出了 GS464V 龙芯扩展浮点指令。这些指令的使用要求协处理器
-1 被使能。
+龙芯扩展浮点指令采用了三个操作数模式，而不是MIPS64中的四操作数形式。 附录 B龙芯
+GS464 扩展浮点指令进行了详细介绍。表 \ref{tab:fpu-ins} 列出了 GS464V 龙芯扩展浮
+点指令。使用这些指令要求协处理器 1 被使能。
 
 \begin{inslongtable}{扩展浮点指令}{tab:extended-ins-float}
   \mtabsep{扩展浮点访存指令}
@@ -466,8 +483,10 @@ MIPS64 中，除了前面列出上述指令外还有其它一些指令，详见
 
 ### 扩展多媒体指令
 
-龙芯 GS464V 处理器核对 MIPS 指令集中协处理器 2 指令进行了自定义。其中，多媒体指
-令在协处理器 2 上运行。执行这些指令时要求协处理器 2 可用。
+龙芯 GS464V 处理器核对 MIPS 指令集中协处理器 2 指令进行了自定义。扩展多媒体指令
+，即单指令多数据（SIMD）指令，在协处理器 2 上运行。这些指令类似于 x86 平台的 SSE
+的指令。对高性能媒体和通信应用提供了强大支持。附录 C 对龙芯 GS464 的多媒体指令进
+行了详细介绍。执行这些指令时要求协处理器 2 可用。
 
 \begin{inslongtable}{扩展 64 位多媒体指令}{tab:extended-ins-simd}
   \mtabsep{扩展 X86 方式逻辑、移位、跳转指令}

@@ -15,10 +15,10 @@
 \begin{itemize}
   \item 扩展定点乘除法指令， 扩大了 MIPS64 的 定点乘除法指令，
     以提高定点乘法运算使用广泛的应用性能。 这些指令主要 执行 64
-    位整点乘除法操作，并产生 64 位（而不是 128 位）结果。 附录~A
+    位整点乘除法操作，并产生 64 位（而不是 128 位）结果。 附录 A
     对龙芯 GS464 的扩展整数指令进行了详细介绍。
   \item 扩展浮点指令，这些指令采用了三个操作数模式，而不是MIPS64
-    中的四操作数形式。 附录~B龙芯 GS464 扩展浮点指令进行了详细介绍。
+    中的四操作数形式。 附录 B龙芯 GS464 扩展浮点指令进行了详细介绍。
   \item 扩展多媒体指令，即单指令多数据（SIMD）指令，
     对高性能媒体和通信应用提供了强大支持。这些指令类似于 x86 平台的 SSE
     的指令。 附录~C 对龙芯 GS464 的多媒体指令进行了详细介绍。
@@ -78,8 +78,6 @@ Diagnotic 寄存器是一个 64 位的辅助寄存器。该寄存器具有刷新
 BTB （分支目标缓冲器）和启用 RAS（返回地址堆栈）的功能。当在 Diagistic 寄存器
 的 ITLB 位写入 1 时，整个 ITLB 将被刷新。
 
-\remark{BTB and RAS: any further comments?}
-
 \subsection{ITLB 刷新}\label{subsec:itlb-flushing}
 
 龙芯 GS464 包含了独立的 ITLB（即指令 TLB），以减少对
@@ -106,8 +104,6 @@ MIPS64 兼容处理器，在 Status[ERL]=1 的情况下， ERET 指令将清零
 ERL位 并从 ErrorEPC 寄存器的值返回。龙芯 GS464 处理器的处理略有不同：
 ERL 位被设置时，ERET 指令将会清除该位， 并依照 EPC
 （而不是 ErrorEPC）寄存器给出的地址返回。
-
-\remark{is it still like this now?}
 
 \subsection{64 位地址空间}
 
