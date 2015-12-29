@@ -23,18 +23,19 @@
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
 colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{mlongtable,array}
+\usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{zhnumber}
-\usepackage{bytefield}
 \usepackage{mips}
 \newlength{\bitwidth}
 \newlength{\byteheight}
+\usepackage{bytefield}
 
 \usepackage{xcolor}
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.eps}
-\graphicspath{{../images/}}
+\graphicspath{{../images/}{images/}}
 
 \newcommand{\hhline}{\hline\hline}
 \newcommand{\cellalign}[2]{\multicolumn{1}{#1}{#2}}

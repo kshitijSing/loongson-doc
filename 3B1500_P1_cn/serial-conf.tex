@@ -44,18 +44,21 @@ GS3\_UART\_BASE 也是在 start.S 文件中定义的，为 0xBFE001E0。 在 tgt
 
 \section{Linux 内核的串口配置}
 
-在 Linux 内 核 中 对 串 口 的 配 置 主 要 有 三 个 文 件 ：
-include/asm/serial.h ，
-arch/mips/kernel/8250-platform.c，arch/mips/lemote/ev3a/dbg\_io.c。这三个配置文
-件涉及到串口基址的设定，要根据具体所使用的串口的情况而定。内核中在
-arch/mips/Kconfig 里也有一个宏定义 CONFIG\_CPU\_UART， 用来选择是选用 LPC
-串口还是 CPU 串口的。 纵然选择了 CPU UART， 但是具体是 UART0 还是 UART1
-还是需要检查一下上述三个文件对串口基址的定义是否正确。 在
-arch/mips/lemote/ev3a/dbg\_io.c 中主要是用于内核启动过程中，在中断还
-没有初始化阶段， 为了内核调试的方便而使用的一种简单的串口打印方式，其中 函数
-prom\_printf()在内核调试阶段会经常被使用到，它会调用 putDebugChar()将
-要输出的字符一个一个的打印到控制台上。include/asm/serial.h 为串口的驱动
-driver/serial/8250.c 提供了一个宏定义，如使用 CPU 的 UART0，其定义是这样 的：
+在 Linux 内核中对串口的配置主要有三个文件 ：
+
+        include/asm/serial.h ，
+        arch/mips/kernel/8250-platform.c
+        arch/mips/lemote/ev3a/dbg_io.c
+
+这三个配置文件涉及到串口基址的设定，要根据具体所使用的串口的情况而定。内核中在
+arch/mips/Kconfig 里也有一个宏定义 CONFIG\_CPU\_UART， 用来选择是选用 LPC 串口还
+是 CPU 串口的。 纵然选择了 CPU UART， 但是具体是 UART0 还是 UART1 还是需要检查一
+下上述三个文件对串口基址的定义是否正确。 在 arch/mips/lemote/ev3a/dbg\_io.c 中主
+要是用于内核启动过程中，在中断还没有初始化阶段， 为了内核调试的方便而使用的一种
+简单的串口打印方式，其中 函数 prom\_printf()在内核调试阶段会经常被使用到，它会调
+用 putDebugChar()将要输出的字符一个一个的打印到控制台上。include/asm/serial.h 为
+串口的驱动 driver/serial/8250.c 提供了一个宏定义，如使用 CPU 的 UART0，其定义是
+这样的：
 
 \begin{lstlisting}
 #define STD_SERIAL_PORT_DEFNS

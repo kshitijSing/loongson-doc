@@ -1,6 +1,8 @@
-\chapter{系统配置与控制}
+系统配置与控制
+==============
 
-\section{控制引脚说明}
+控制引脚说明
+------------
 
 龙芯 3A 的控制引脚总共包括 DO\_TEST、 ICCC\_EN、 NODE\_ID[1:0]、
 CLKSEL[15:0]、PCI\_CONFIG： 它们的设置及位域含义见表~\ref{tab:sysPinControl}。
@@ -84,7 +86,8 @@ CLKSEL[15:0]、PCI\_CONFIG： 它们的设置及位域含义见表~\ref{tab:sysP
     \end{tabular} \\[.1cm] \hline
 \end{longtable}
 
-\section{芯片配置及采样寄存器}
+芯片配置及采样寄存器
+--------------------
 
 龙芯 3A 中的芯片配置寄存器(Chip\_config)及芯片采样寄存器(chip\_sample)
 提供了对芯片的配置进行读写的机制。\remark{What's the width of these registers?
@@ -131,7 +134,8 @@ BTW, more explanations are needed.}
     15:0    & Pad2v5\_ctrl             & RW & 16'h780  & 2v5pad 控制                                                 \\ \hline
 \end{longtable}
 
-\section{系统物理地址空间分布}
+系统物理地址空间分布
+----------
 
 龙芯 3 号系列处理器的系统物理地址分布采用全局可访问的层次化寻址设
 计，以保证系统开发的扩展兼容。系统支持的物理地址宽度为 48 位，并按照地址的高 4
@@ -185,7 +189,8 @@ BTW, more explanations are needed.}
   \caption{节点内物理地址分布}
   \label{tab:nodeAddr}
 \end{table}
-\newline 举例说明如下：
+
+举例说明如下：
 \begin{verbatim}
     节点 0 的东端口设备的基地址为： 0x0800_0000_0000；
     节点 1 的南端口设备的基地址为： 0x1A00_0000_0000。
@@ -221,7 +226,8 @@ SCID\_SEL 寄存器可以通过软件动态修改。 缺省情况下，寄存器
 位被用来散列二级 Cache 的访问， 即 [6:5] 两位决定地址对应的二级 Cache
 编号。\remark{there is a jump between 0x0 and 0x1?}
 
-\section{地址路由配置} \label{sec:htAddrRoute}
+地址路由配置 \label{sec:htAddrRoute}
+------------
 
 龙芯 3A 的路由主要通过两级交叉开关（X1 和 X2）实现。 每一级交叉开关
 有若干主端口，每个主端口都对应着 8 个地址窗口。
@@ -247,7 +253,7 @@ SCID\_SEL 寄存器可以通过软件动态修改。 缺省情况下，寄存器
 而对于二 级交叉开关， 如果不允许 Cache 访问或取指访问的从端口可以将 MMAP[4] 或
 MMAP[5] 设为 0。
 
-\subsection{一级交叉开关地址路由}
+### 一级交叉开关地址路由
 
 一级交叉开关对应 8 个主端口， 而每个主端口都拥有 8 个地址窗口。
 表~\ref{tab:X1MasterWinBases} 列出了一级交叉开关的 8
@@ -326,7 +332,7 @@ SCID\_SEL 的条件都满足的情况下，地址访问才可得以进行。
     Cache 一致性的需要。 而映射到 HyperTransport 地址的配置不受这个约束限制。
 \end{itemize}
 
-\subsection{二级交叉开关地址路由}
+### 二级交叉开关地址路由
 
 龙芯 3A 的二级交叉开关是供 CPU 和 PCI 两个具有主功能的 IP 进
 行路由选择和地址转换而设置的。 从 3A 的连接结构可以看出， 来自 CPU 的访问是从
@@ -342,7 +348,8 @@ SCID\_SEL 的条件都满足的情况下，地址访问才可得以进行。
   \caption{二级交叉开关主端口窗口寄存器基地址}
   \label{tab:X2MasterWinBases}
 \end{table}
-\newline 对每个主设备而言，二级交叉开关有和一级开关相同的寄存器偏移，
+
+对每个主设备而言，二级交叉开关有和一级开关相同的寄存器偏移，
 如表~\ref{tab:AXIWinOffset} 所示。
 
 二级交叉开关的目的包括 DDR 地址空间、 PCI

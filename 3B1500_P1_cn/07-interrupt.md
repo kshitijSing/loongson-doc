@@ -7,11 +7,10 @@
   \centering
   \setlength\fboxsep{15pt}
   \setlength\fboxrule{.5pt}
-  \fbox{\includegraphics[width=.7\linewidth,height=12cm]{gs3a-introute}}
+  %\fbox{\includegraphics[width=.7\linewidth,height=12cm]{gs3a-introute}}
   \caption{龙芯 3A 处理器中断路由示意图}
   \label{fig:interrupt}
 \end{figure}
-
 
 表~\ref{tab:intreg} 列出了这 32 个中断的配置寄存器。这些中断相关配置寄存器
 都是以位的形式对相应的中断线进行控制的：任意一个 IO
