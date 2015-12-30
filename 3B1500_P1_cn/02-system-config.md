@@ -25,73 +25,63 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
   引脚信号 & \multicolumn{1}{c|}{描述} \tabularnewline \hhline \endhead
   \hline \multicolumn{2}{r}{\tiny 未完待续} \endfoot \hline \endlastfoot
 
-  DO\_TEST         & 功能模式设置位（上拉）\newline \hspace*{.5cm}
-                     1: 功能模式; 0: 测试模式                        \\
-  ICCC\_EN         & 芯片一致性互连使能信号（下拉）\newline \hspace*{.5cm}
-                     1: 多芯片一致性互联模式; 0: 单芯片模式          \\
-  NODE\_ID[1:0]    & 多芯片一致性互连模式下处理器号 \tabularnewline
-  CLKSEL[15:0]     & 上电时钟控制 \tabularnewline
-  PCI\_CONFIG[7:0] & IO 配置控制 \tabularnewline
-  GPIO[1:0]        & \\
+  DO\_TEST      & 功能模式设置位（上拉）\newline \hspace*{.5cm}
+                   1: 功能模式; 0: 测试模式                        \\
+  ICCC\_EN      & 芯片一致性互连使能信号（下拉）\newline \hspace*{.5cm}
+                   1: 多芯片一致性互联模式; 0: 单芯片模式          \\
+  NODE\_ID[1:0] & 多芯片一致性互连模式下处理器号                  \\
+  CLKSEL[15]    & HT上电时钟控制 \newline
+                  \hspace*{.5cm} 1: HT 控制时钟有 CLKSEL[14:10] 控制 \newline
+                  \hspace*{.5cm} 0: 初始为 1 倍频，软件可进行重新配置 \\
+  CLKSEL[14:13] & 控制器时钟频率 \newline
+                  \hspace*{.5cm}
+                  $00_2$：PHY 时钟频率除以 2\newline \hspace*{.5cm}
+                  $01_2$：PHY 时钟频率除以 4\newline \hspace*{.5cm}
+                  $10_2$：PHY 时钟频率除以 8\newline
+                  $11_2$：控制器时钟取决于 PCI\_CONF[7] \\
+  CLKSEL[12:10] & PHY 时钟频率 \newline
+                  \hspace*{.5cm} 3’b000：PHY 时钟为 800M（HT 总线 200/400）\newline
+                  \hspace*{.5cm} 3’b001：PHY 时钟为 1.2G（HT 总线 200/300/600）\newline
+                  \hspace*{.5cm} 3’b010：PHY 时钟为 1.6G（HT 总线 200/400/800）\newline
+                  \hspace*{.5cm} 3’b011：PHY 时钟为 2.0G（HT 总线 200/500/1000）\newline
+                  \hspace*{.5cm} 3’b100：PHY 时钟为 2.4G HT 总线 200/300/400/600/1200）\newline
+                  \hspace*{.5cm} 3’b101：PHY 时钟为 2.8G（HT 总线 200/1400）\newline
+                  \hspace*{.5cm} 3’b110：PHY 时钟为 3.2G（HT 总线 200/400/800/1600）\newline
+                  \hspace*{.5cm} 3’b111：PHY 时钟取决于 PCICONF[7] \\
+  CLKSEL[9:6]   & 内存控制器时钟控制(MEMCLK)设置 \newline
+                  CLKSEL[9:6]      倍频系数     CLKSEL[9:6]     倍频系数\newline
+                  4’b1111         1         4’b1110         26\newline
+                  4’b1101         12        4’b1100         24\newline
+                  4’b1011         11        4’b1010         22\newline
+                  4’b1001         10        4’b1000         20\newline
+                  4’b0xxx       初始倍频为 1 倍频，可由软件进行重新配置\\
+  CLKSEL[5:0]   & 处理器核及节点的时钟频率要求 \newline
+                  6’b110xx0    36      6’b1xx100   36
+                  6’b101xx0    32      6’b1xx010   32
+                  6’b100xx0    24      6’b1xx000   24
+                  6’b110xx1    18      6’b1xx101   18
+                  6’b101xx1    16      6’b1xx011   16
+                  6’b100xx1    12      6’b1xx001   12
+                  6’b111xx0     2      6’b1xx110   2
+                  6’b111xx1     1      6’b1xx111   1
+                  6’b0xxxxx  初始倍频为 1 倍频，可由软件进行重新配置 \\
+  PCI\_CONFIG[7] & 输入时钟 \newline
+                   1’b1 普通输入时钟 100MHz（HTCLK），
+                   1’b0 差分输入时钟 200MHz（HTnCLKp/n）\\
+  PCI\_CONFIG[6:5] & PCIX 总线速度选择
+  
+  \\
+  PCI\_CONFIG[4] & PCIX 总线模式选择 \\
+  PCI\_CONFIG[3] & PCI 主设备模式 \\
+  PCI\_CONFIG[2] & 系统启动空间信号\newline
+                   1: 系统从 PCI 空间启动 \newline
+                   0: GPIO[0] 决定启动空间 \\
+  PCI\_CONFIG[1] & 使用外部 PCI 仲裁 \\
+  PCI\_CONFIG[0] & HT 控制信号引脚电压控制位 0 \\ \hline
+  GPIO[1]        & 芯片内时钟延迟控制使能（调试模式），默认下拉 \\
+  GPIO[0]        & GPIO 芯片启动设置 \newline
+                   上拉表示从 SPI Flash 取指，下拉表示从 LPC Flash 取指 \\
 \end{longtable}
-
-    \begin{tabular}{c}
-      上电时钟控制 \\
-      \begin{tabular}{|c|c|l|} \hline
-        模块 & 信号  & \multicolumn{1}{c|}{作用} \\ \hline\hline
-        HT   & \multirow{2}{*}{15} & 1: 采用内部参考电压 \\
-             &       & 0: 采用外部参考电压 \\ \cline{2-3}
-             & \multirow{2}{*}{14} & 1: HT PLL 采用差分时钟输入 \\
-             &       & 0: HT PLL 采用普通时钟输入 \\ \cline{2-3}
-             & \multirow{4}{*}{13:12} & 00: PHY 时钟为 1.6GHZ/1 \\
-             &                        & 01: PHY 时钟为 3.2GHZ/2 \\
-             &                        & 10: PHY 时钟为普通输入时钟 \\
-             &                        & 11: PHY 时钟为差分输入时钟 \\ \cline{2-3}
-             & \multirow{3}{*}{11:10} & 00: HT 控制器时钟 200MHz\\
-             &                        & 01: HT 控制器时钟 400MHz\\
-             &                        & 1x: HT 控制器时钟为普通输入时钟 \\ \hline
-        MEM  & \multirow{3}{*}{9:5}   & 11111: MEM 时钟直接采用 memclk \\
-             &                        & 其它: \\
-             &                        & memclk*(clksel[8:5]+30)/(clksel[9]+3) \\ \hline
-        CORE & \multirow{3}{*}{4:0}   & 11111: CORE 时钟直接采用 sysclk \\
-             &                        & 其它: \\
-             &                        & sysclk*(clksel[3:0]+30)/(clksel[4]+1) \\ \hline
-        \cmcol{3}{} \\[-2.9ex] % hack to obtain a little space
-      \end{tabular}
-    \end{tabular}
-
-    \begin{tabular}{c}
-      IO 配置控制 \\
-      \begin{tabular}{|c|l|} \hline
-        信号 & 说明 \\ \hhline
-        PCI\_CONFIG[7] & HT 控制信号引脚电压控制位 1 \\
-        PCI\_CONFIG[6:5] & PCIX 总线速度选择 \\
-        PCI\_CONFIG[4] & PCIX 总线模式选择 \\
-        PCI\_CONFIG[3] & PCI 主设备模式 \\
-        PCI\_CONFIG[2] & 系统从 PCI 空间启动 \\
-        PCI\_CONFIG[1] & 使用外部 PCI 仲裁 \\
-        PCI\_CONFIG[0] & HT 控制信号引脚电压控制位 0 \\ \hline
-      \end{tabular} \\
-      具体设置 \\
-      \begin{tabular}{cc}
-        \begin{tabular}{|c|c|c|l|} \hline
-          6 & 5 & 4 & PCI 模式速度 \\ \hhline
-          0 & 0 & 0 & PCI 33/66 \\
-          0 & 1 & 1 & PCI-X 66 \\
-          1 & 0 & 1 & PCI-X 100 \\
-          1 & 1 & 1 & PCI-X 133 \\ \hline
-          \cmcol{3}{} \\[-2.9ex] % hack to obtain a little space
-        \end{tabular} &
-        \begin{tabular}{|c|c|c|} \hline
-          7 & 0 & HT 信号引脚电压 \\ \hhline
-          0 & 0 & 3.3v \\
-          0 & 1 & 2.5v \\
-          1 & 0 & 1.8v \\
-          1 & 1 & 保留 \\ \hline
-          \cmcol{3}{} \\[-2.9ex] % hack to obtain a little space
-        \end{tabular}
-      \end{tabular}
-    \end{tabular}
 
 芯片配置及采样寄存器
 --------------------
