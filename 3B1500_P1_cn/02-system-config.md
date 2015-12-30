@@ -1,31 +1,40 @@
 系统配置与控制
 ==============
 
+芯片工作模式
+------------
+
+\noindent 龙芯 3B1500 有两种工作模式：
+
+ - 单芯片模式：系统集成 1 片龙芯 3B1500，构成一个两节点的非均匀访存多处理器系统
+   （CC-NUMA）。
+ - 多芯片互连模式：系统集成 2 片龙芯 3B1500，通过 HT0 端口进行连接，形成一个四节
+   点的非均匀访存多处理器系统（CC-NUMA）。
+
 控制引脚说明
 ------------
 
-龙芯 3A 的控制引脚总共包括 DO\_TEST、 ICCC\_EN、 NODE\_ID[1:0]、
-CLKSEL[15:0]、PCI\_CONFIG： 它们的设置及位域含义见表~\ref{tab:sysPinControl}。
+龙芯 3B1500 的控制引脚总共包括 DO\_TEST、 ICCC\_EN、 NODE\_ID[1:0]、
+CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
+\ref{tab:sysPinControl}。
 
-\begin{longtable}{|c|c|l|}
-  \caption{控制引脚说明}\label{tab:sysPinControl} \\
-  \hline 信号 & 上下拉 & 描述 \\ \hline\hline
-  \endfirsthead
+\begin{longtable}{|c|p{11cm}|}
+  \caption{控制引脚说明}\label{tab:sysPinControl} \tabularnewline \hline
+  引脚信号 & \multicolumn{1}{c|}{描述} \tabularnewline \hhline \endfirsthead
+  \caption{控制引脚说明（续）} \tabularnewline \hline
+  引脚信号 & \multicolumn{1}{c|}{描述} \tabularnewline \hhline \endhead
+  \hline \multicolumn{2}{r}{\tiny 未完待续} \endfoot \hline \endlastfoot
 
-  \caption{控制引脚说明（续）} \\
-  \hline 信号 & 上下拉 & 描述 \\ \hline\hline
-  \endhead
+  DO\_TEST         & 功能模式设置位（上拉）\newline \hspace*{.5cm}
+                     1: 功能模式; 0: 测试模式                        \\
+  ICCC\_EN         & 芯片一致性互连使能信号（下拉）\newline \hspace*{.5cm}
+                     1: 多芯片一致性互联模式; 0: 单芯片模式          \\
+  NODE\_ID[1:0]    & 多芯片一致性互连模式下处理器号 \tabularnewline
+  CLKSEL[15:0]     & 上电时钟控制 \tabularnewline
+  PCI\_CONFIG[7:0] & IO 配置控制 \tabularnewline
+  GPIO[1:0]        & \\
+\end{longtable}
 
-  \multicolumn{3}{r}{\tiny 未完待续} \endfoot \endlastfoot
-
-  DO\_TEST & 上拉 & 1: 功能模式; 0: 测试模式 \\ \hline
-
-  \multirow{2}{*}{ICCC\_EN} & \multirow{2}{*}{下拉} & 1: 多芯片一致性互联模式（使用HT0互联）; \\
-                            &                       & 0: 单芯片模式 \\ \hline
-
-  NODE\_ID[1:0] & & 在多芯片一致性互连模式下表示处理器号 \\ \hline
-
-  CLKSEL[15:0] & & 
     \begin{tabular}{c}
       上电时钟控制 \\
       \begin{tabular}{|c|c|l|} \hline
@@ -49,9 +58,8 @@ CLKSEL[15:0]、PCI\_CONFIG： 它们的设置及位域含义见表~\ref{tab:sysP
              &                        & sysclk*(clksel[3:0]+30)/(clksel[4]+1) \\ \hline
         \cmcol{3}{} \\[-2.9ex] % hack to obtain a little space
       \end{tabular}
-    \end{tabular} \\ \hline
+    \end{tabular}
 
-  PCI\_CONFIG[7:0] & &
     \begin{tabular}{c}
       IO 配置控制 \\
       \begin{tabular}{|c|l|} \hline
@@ -83,15 +91,13 @@ CLKSEL[15:0]、PCI\_CONFIG： 它们的设置及位域含义见表~\ref{tab:sysP
           \cmcol{3}{} \\[-2.9ex] % hack to obtain a little space
         \end{tabular}
       \end{tabular}
-    \end{tabular} \\[.1cm] \hline
-\end{longtable}
+    \end{tabular}
 
 芯片配置及采样寄存器
 --------------------
 
 龙芯 3A 中的芯片配置寄存器(Chip\_config)及芯片采样寄存器(chip\_sample)
-提供了对芯片的配置进行读写的机制。\remark{What's the width of these registers?
-BTW, more explanations are needed.}
+提供了对芯片的配置进行读写的机制。
 
 \begin{longtable}{|c|c|c|c|p{6.5cm}|}
   \caption{芯片配置寄存器}\label{tab:chipConfigSample} \\

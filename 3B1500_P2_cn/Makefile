@@ -1,4 +1,4 @@
-VERSION=1.1
+VERSION=1.3
 SOURCES=$(sort $(wildcard *.md))
 TARGET=LS3B1500-user-manual-II-v${VERSION}-zh.pdf
 TEXFILE=LS3B1500-user-manual-II-v${VERSION}-zh.tex
