@@ -1,8 +1,17 @@
 \documentclass[adobefonts,a4paper]{ctexbook}
 
+%%
+%% uncomment 4 lines below if other CJK fonts are preferred
+%%
+
+%\documentclass[nofonts,a4paper]{ctexbook}
+%\setCJKmainfont[AutoFakeBold=false,AutoFakeSlant=false]{文泉驿微米黑}
+%\setCJKsansfont{文泉驿点阵正黑}
+%\setCJKmonofont{文泉驿等宽微米黑}
+
 \usepackage[margin=1in]{geometry}
-\usepackage{fontspec}                             % font configuration
-\usepackage{xeCJK}                                % allow chinese font
+\usepackage{fontspec}
+\usepackage{xeCJK}
 \CTEXoptions[today=big]
 \CTEXsetup[name={附录},number={\Alph{chapter}}]{appendix}
 \CTEXsetup[name={第,篇},nameformat={\centering},titleformat={\zihao{0}}]{part}
@@ -21,7 +30,7 @@
 \renewcommand{\floatpagefraction}{0.7}
 
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
-colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
+            colorlinks, citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{mlongtable,array}
 \usepackage{multirow}
 \usepackage{booktabs}
