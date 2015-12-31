@@ -1,11 +1,12 @@
-VERSION=1.3
-SOURCES=$(sort $(wildcard *.md))
-TARGET=LS3B1500-user-manual-II-v${VERSION}-zh.pdf
-TEXFILE=LS3B1500-user-manual-II-v${VERSION}-zh.tex
-JSONFILE=LS3B1500-user-manual-II-v${VERSION}-zh.json
-LOTFILE=LS3B1500-user-manual-II-v${VERSION}-zh.lot
-TEMPLATE=../templates/loongson-3b1500-cn.latex
-OPTIONS=--chapters --template=$(TEMPLATE)
+VERSION  = 1.3
+SOURCES  = $(sort $(wildcard *.md))
+FILEBASE = LS3B1500-用户手册（下）
+TARGET   = $(FILEBASE)-v${VERSION}.pdf
+TEXFILE  = $(FILEBASE)-v${VERSION}.tex
+JSONFILE = $(FILEBASE)-v${VERSION}.json
+LOTFILE  = $(FILEBASE)-v${VERSION}.lot
+TEMPLATE = ../templates/loongson-3b1500-cn.latex
+OPTIONS  = --chapters --template=$(TEMPLATE)
 
 all: $(SOURCES) $(TARGET) $(TEMPLATE)
 
