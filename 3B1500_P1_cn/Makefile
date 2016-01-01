@@ -1,6 +1,6 @@
 VERSION  = 1.6
 SOURCES  = $(sort $(wildcard *.md))
-FILEBASE = LS3B1500-用户手册（下）
+FILEBASE = LS3B1500-用户手册（上）
 TARGET   = $(FILEBASE)-v${VERSION}.pdf
 TEXFILE  = $(FILEBASE)-v${VERSION}.tex
 JSONFILE = $(FILEBASE)-v${VERSION}.json
