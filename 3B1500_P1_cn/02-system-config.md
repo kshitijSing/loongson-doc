@@ -4,11 +4,12 @@
 芯片工作模式
 ------------
 
-\noindent 龙芯 3B1500 有两种工作模式：
+\noindent 龙芯 3B1500 芯片采用双节点 8 核配置，每个节点 4 个 GS464V 核。龙芯
+3B1500 有两种工作模式：
 
  - 单芯片模式：系统集成 1 片龙芯 3B1500，构成一个两节点的非均匀访存多处理器系统
    （CC-NUMA）。
- - 多芯片互连模式：系统集成 2 片龙芯 3B1500，通过 HT0 端口进行连接，形成一个四节
+ - 多芯片互连模式：系统集成 2 片龙芯 3B1500。芯片通过 HT 端口连接，形成一个四节
    点的非均匀访存多处理器系统（CC-NUMA）。
 
 控制引脚说明
@@ -141,28 +142,25 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
 
 #### 节点控制寄存器地址规则 {-}
 
-龙芯系统的每个节点拥有自己的控制寄存器块。每个节点的控制寄存器块的地址分别在上一
-个节点的基础上增加 0x1000_0000_4000：
+龙芯 3B1500 系统可能有多个节点，而每个节点拥有专门的控制寄存器，例如以下将会讲述
+的 SCID\_SEL 寄存器，以及地址路由控制寄存器等等。这些控制寄存器块的地址都是按照
+一定规则固定排列的。出发系统安排的需要，龙芯 3 号的点控制寄存器地址规则为： 一个
+节点的控制寄存器地址是分别在上一个节点的控制寄存器地址基础上增加
+0x1000_0000_4000。一般而言，寄存器地址规则可以表示为：
 
-      节点 i 控制寄存器地址 = 节点 0 控制寄存器地址 + i * 0x1000_0000_4000
+        节点 i 控制寄存器地址 = 节点 0 控制寄存器地址 + i * 0x1000_0000_4000
+
+\noindent 节点 0 的控制寄存器地址一般在 0x3FFX_XXXX，也就是在低 1G 物理空间的
+末端 1M 大小的区域。从控制寄存器的地址规则可以看出，每个节点最多拥有 16K 的控制
+寄存器空间。
 
 ### 节点内物理地址空间分布
 
-龙芯 3B1500 采用双节点 8 核配置。在节点内部， 地址空间通过 44 位地址的高 3 位（
-[43:41]）将该节点拥有的 44 位地址均匀分配到节点内可能连接的 8 个设备上。每个处
-理器芯片上集成的 DDR 内存控制器、 HT 总线、PCI 总线等将分享该节点分到的 44 位地
-址空间。
-
-<!--
-龙芯 3B1500 芯片集成的 DDR 内存控制器、 HT 总线、PCI 总线的对应地址都包含在从
-0x000_0000_0000 至 0x1FF_FFFF_FFFF 的 44 位 地址空间内，具体各设备地址分布请参
-见后续相关章节。
--->
-
-如表 \ref{tab:nodeAddr} 所示，在每个节点的内部，44 位地址空间又进一步均匀分布给
-节点内连接的可能最多 8 个设备。其中低 43 位地址由四个二级 Cache 模块所拥有，而
-高 43 位地址则进一步按地址的 [42:41] 位分布给连接在东南西北 4 个方向端口的设备
-上。如果某端口上没有连接从设备，则其对应地址空间为保留地址空间，不允许访问。
+如表 \ref{tab:nodeAddr} 所示，在每个节点的内部，该节点拥有的 44 位地址又通过地址
+的高 3 位 [43:41]，均匀分配到节点内可能连接的 8 个设备上。其中低 43 位地址由四个
+二级 Cache 模块所拥有，而高 43 位地址则按地址的 [42:41] 位分布给连接在东南西北 4
+个方向端口的设备上。如果某端口上没有连接从设备，则其对应地址空间为保留地
+址空间，不允许访问。
 
 \begin{table}[h]
   \centering
@@ -178,12 +176,16 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
   \label{tab:nodeAddr}
 \end{table}
 
-举例说明如下：节点 0 的东端口设备的基地址为： 0x0800_0000_0000；节点 1 的南端口
-设备的基地址为： 0x1A00_0000_0000。其他节点，其他方向设备的地址空间依次类推。
+\noindent 举例说明如下：节点 0 的东端口设备的基地址为： 0x0800_0000_0000；节点 1
+的南端口设备的基地址为： 0x1A00_0000_0000。其他节点，其他方向设备的地址空间依次
+类推。每个芯片节点上集成的 DDR 内存控制器、 HT 总线、 PCI 总线等
+将分享该节点分到的 44 位地址空间。各设备的具体地址分布请参见后续相关章节。
+
+#### 二级 Cache 的交叉寻址 {-}
 
 龙芯 3B1500 的四个二级 Cache 模块分享了一个 43 位的地址空间。为了平衡对每个
 Cache 模块的访问以提高性能， 在龙芯 3B1500 上，可以根据实际应用的访问特性，通过
-设置 SCID\_SEL 寄存器（地址：0x3FF00400）决定二级 Cache 的交叉寻址方式。这种交
+设置 SCID\_SEL 寄存器决定二级 Cache 的交叉寻址方式。这种交
 叉寻址方式根据地址的某"特定两位"来确定被映射的二级 Cache 模块。也就是说，地址块
 将会被轮流交错地对应到四个二级 Cache 模块中去。表 \ref{tab:scidsel} 列出了
 SCID\_SEL 寄存器值与地址选择位的对应关系。
@@ -206,19 +208,21 @@ SCID\_SEL 寄存器值与地址选择位的对应关系。
 \end{table}
 
 这种设定可以通过软件进行动态配置修改。缺省情况下，寄存器值为 0，即地址的 [6:5]
-两位决定对应的二级 Cache 编号。SCID\_SEL 寄存器，在节点 0 上的地址为：
-0x0000\_3FF0\_0400，在节点 1 上的寄存器地址为 0x1000_3FF0\_4400 。两个节点上的
-散列方式可以分别配置。
+两位决定对应的二级 Cache 编号。 交叉寻址寄存器 SCID\_SEL 的物理地址遵循
+[节点控制寄存器地址规则][]：
 
+         节点 0 的物理地址： 0x0000_3FF0_0400
+         节点 1 的物理地址： 0x1000_3FF0_4400
+
+\noindent 其他节点以此类推。每个节点上的散列方式可以分别配置。
 
 地址路由配置 \label{sec:htAddrRoute}
 ------------
 
 龙芯 3B1500 的地址路由通过两级交叉开关（X1 和 X2）实现。 每一级交叉开关有若干端
-口，每个端口都对应着 8 个地址窗口。交叉开关负责对端口接收到的请求进行路由配
-置，并完成地址窗口的目标路由选择。
-
-所有地址窗口的设置都通过三个 64 位寄存器 BASE、 MASK 和 MMAP 实现：
+口，每个端口都对应着 8 个地址窗口。交叉开关负责对端口接收到的请求进行路由配置，
+并完成地址窗口的目标路由选择。所有地址窗口的设置都通过三个 64 位寄存器 BASE、
+MASK 和 MMAP 实现：
 
  - BASE 是窗口基地址，至少以 K 字节对齐（即基地址寄存器的低 10 位为 0）；
  - MASK 是窗口掩码，采用高位为 1 的网络掩码格式；
@@ -231,129 +235,107 @@ SCID\_SEL 寄存器值与地址选择位的对应关系。
 
 ### 一级交叉开关地址路由
 
-如图 \ref{fig:gs3-node} 所示，一个龙芯节点有 8 个主端口，同时每个主端口有 8 个
-地址窗口。除了这 8 个地址窗口外， 龙芯 3B1500 还对每个主端口提供了一个"系统默认
-路由"。这些地址窗口相互独立，并从配置窗口 0 到配置窗口 7，优先级依次下降。系统
-默认路由有最低的优先级。 按优先级顺序，首先命中的窗口将对地址进行路由，所以默认
-配置路由只有在所有 8 个配置窗口都没有对命中的情况下才会生效。也就是说，在没有对
-地址窗口进行配置前，所有的读写请求都会按照系统默认路由的设定进行。
+如图 \ref{fig:gs3-node} 所示，一个龙芯节点有 8 个主端口，同时每个主端口有 8 个地
+址窗口。这些地址窗口相互独立，并从窗口 0 到窗口 7，优先级依次下降。按优先级顺序
+，首先命中的窗口将对地址进行路由。一级交叉开关窗口的命中公式如下所示。
 
-一级交叉开关窗口的命中公式如下所示。
-
-      窗口命中: IN_ADDR & MASK == BASE
+        窗口命中: IN_ADDR & MASK == BASE
 
 \noindent 注意，一级交叉开关只有路由，而没有地址转换的功能。这是因为二级 Cache
 连接在 X1 上：如果一级交叉开关对 Cache 一致性的请求了进行地址转换，将有可能造成
-二级 Cache 与一级 Cache 的地址不一致，从而导致 Cache 一致性的维护错误。
+二级 Cache 与一级 Cache 的地址冲突，从而导致 Cache 一致性的维护错误。
+
+除了这 8 个地址窗口外， 龙芯 3B1500 还对每个主端口提供了“系统默认路由”设置。系统
+默认路由有最低的优先级，所以默认配置路由只有在所有 8 个配置窗口都没有对命中的情
+况下才会生效。也就是说，在没有对地址窗口进行配置前，所有的读写请求都会按照系统默
+认路由的设定进行。
 
 #### 一级交叉开关寄存器地址
 
 表 \ref{tab:X1MasterWinBases} 列出了一级交叉开关在*节点 0*的 8 个主端口的窗口寄
-存器基地址，及其连接的设备。
+存器基地址，及其连接的设备。同时，表 \ref{tab:AXIWinOffset} 列出了每个端口的 8
+个地址窗口的配置寄存器相对基地址的偏移。 
 
 \begin{table}[htbp]
   \centering
-  \caption{节点 0：一级交叉开关主端口窗口寄存器基地址}
-  \begin{tabular}{|c|c|c|c||c|c|c|c|} \hline
-    端口 & 端口名 & 端口设备   & 基地址       & 端口 & 端口名 & 端口设备 & 基地址       \\ \hhline
+  \caption{节点 0 一级交叉开关主端口窗口寄存器基地址}\vspace{.2cm}
+  \begin{tabular}{|cccc|cccc|} \toprule
+    端口 & 端口名 & 端口设备   & 基地址       & 端口 & 端口名 & 端口设备 & 基地址       \\ \midrule
     0    & Core0  & 二级缓存 0 & 0x3FF0\_2000 & 4    & East   & 相邻节点 & 0x3FF0\_2400 \\
     1    & Core1  & 二级缓存 1 & 0x3FF0\_2100 & 5    & South  & --保留-- & 0x3FF0\_2500 \\
     2    & Core2  & 二级缓存 2 & 0x3FF0\_2200 & 6    & West   & --保留-- & 0x3FF0\_2600 \\
-    3    & Core3  & 二级缓存 3 & 0x3FF0\_2300 & 7    & North  & HT 设备  & 0x3FF0\_2700 \\ \hline
+    3    & Core3  & 二级缓存 3 & 0x3FF0\_2300 & 7    & North  & HT 设备  & 0x3FF0\_2700 \\ \bottomrule
   \end{tabular}
   \label{tab:X1MasterWinBases}
 \end{table}
 
-\noindnet 由于龙芯 3 号系统可以有多个节点，每个节点的窗口寄存器基地址分别在前一
-个节点的基础上增加 0x1000_0000_4000。根据表 \ref{tab:X1MasterWinBases}，节点
-1 对应的窗口寄存器的基地址为： 0x1000_3FF0_6000。
-
-表 \ref{tab:AXIWinOffset} 列出了每个端口的 8 个地址窗口的配置寄存器相对基地址的
-偏移。 龙芯 3B1500 一级交叉开关缺省采用固定路由， 在上电启动时，这些配置窗口都
-处于关闭状态，需要软件对其进行使能配置。
 \begin{table}[htbp]
   \centering
+  \caption{交叉开关地址窗口寄存器地址偏移表}\vspace{.2cm}
   \begin{tabular}{|c|c||c|c||c|c|} \hline
-    偏移 & 寄存器     & 偏移 & 寄存器     & 偏移 & 寄存器      \\ \hhline
-    0x00 & WIN0\_BASE & 0x40 & WIN0\_MASK & 0x80 & WIN0\_MMAP  \\
-    0x08 & WIN1\_BASE & 0x48 & WIN1\_MASK & 0x88 & WIN1\_MMAP  \\
-    0x10 & WIN2\_BASE & 0x50 & WIN2\_MASK & 0x90 & WIN2\_MMAP  \\
-    0x18 & WIN3\_BASE & 0x58 & WIN3\_MASK & 0x98 & WIN3\_MMAP  \\
-    0x20 & WIN4\_BASE & 0x60 & WIN4\_MASK & 0xA0 & WIN4\_MMAP  \\
-    0x28 & WIN5\_BASE & 0x68 & WIN5\_MASK & 0xA8 & WIN5\_MMAP  \\
-    0x30 & WIN6\_BASE & 0x70 & WIN6\_MASK & 0xB0 & WIN6\_MMAP  \\
-    0x38 & WIN7\_BASE & 0x78 & WIN7\_MASK & 0xB8 & WIN7\_MMAP  \\ \hline
+    寄存器     & 偏移 & 寄存器     & 偏移 & 寄存器     & 偏移  \\ \hhline
+    WIN0\_BASE & 0x00 & WIN0\_MASK & 0x40 & WIN0\_MMAP & 0x80  \\
+    WIN1\_BASE & 0x08 & WIN1\_MASK & 0x48 & WIN1\_MMAP & 0x88  \\
+    WIN2\_BASE & 0x10 & WIN2\_MASK & 0x50 & WIN2\_MMAP & 0x90  \\
+    WIN3\_BASE & 0x18 & WIN3\_MASK & 0x58 & WIN3\_MMAP & 0x98  \\
+    WIN4\_BASE & 0x20 & WIN4\_MASK & 0x60 & WIN4\_MMAP & 0xA0  \\
+    WIN5\_BASE & 0x28 & WIN5\_MASK & 0x68 & WIN5\_MMAP & 0xA8  \\
+    WIN6\_BASE & 0x30 & WIN6\_MASK & 0x70 & WIN6\_MMAP & 0xB0  \\
+    WIN7\_BASE & 0x38 & WIN7\_MASK & 0x78 & WIN7\_MMAP & 0xB8  \\ \hline
   \end{tabular}
-  \caption{交叉开关地址窗口寄存器地址偏移表}
   \label{tab:AXIWinOffset}
 \end{table}
 
-表 \ref{tab:X1Slave} 列出了一级交叉开关的从端口， 即接受请求的设备端。
-同时，映射二级 Cache 的地址还受到 SCID\_SEL 寄存器的影响：只有地址窗口和
-SCID\_SEL 的条件都满足的情况下，地址访问才可得以进行。
+\noindent 由于龙芯 3 号系统可以有多个节点，每个节点的窗口寄存器基地址遵从
+[节点控制寄存器地址规则][]，即分别在前一个节点的基础上增加 0x1000_0000_4000。例
+如，根据表 \ref{tab:X1MasterWinBases}，节点 1 对应的 Core1 窗口寄存器的基地址为
+： 0x1000_3FF0_6100。那么，节点 1 的 Core1_WIN1_MASK 寄存器地址为：
+
+        节点 1： Core1_WIN1_MASK 地址 = 0x1000_3FF0_6148。
+
+\noindent 任何节点的窗口寄存器地址以此类推。
 
 表 \ref{tab:X1defaultAddrWin} 列出了一级交叉开关的系统默认路由配置。简单说来，
 一级交叉开关的系统默认路由就是直接将主端口地址映射到对应的从端口，地址值不变。
-系统默认路由映射到二级 Cache 的地址也同样受到 SCID\_SEL 寄存器的影响。
+同时，系统默认路由映射到二级 Cache 的地址也同样受到 SCID\_SEL 寄存器的影响。
+
 \begin{table}[htbp]
   \centering
+  \caption{一级交叉开关：系统默认路由配置} \vspace{.2cm}
   \begin{tabular}{|c|c|c|} \hline
   起始地址 & 结束地址 & 目标 \\ \hline
   0x0000\_0000\_0000 & 0x07FF\_FFFF\_FFFF & 二级Cache \\ \hline
   0x0C00\_0000\_0000 & 0x0DFF\_FFFF\_FFFF & HyperTransport 0 \\ \hline
   0x0E00\_0000\_0000 & 0x0FFF\_FFFF\_FFFF & HyperTransport 1 \\ \hline
   \end{tabular}
-  \caption{一级交叉开关：系统默认路由配置}
   \label{tab:X1defaultAddrWin}
 \end{table}
 
-\newpage
 \noindent 注意，在进行一级交叉开关的主端口窗口设置时，
-\begin{itemize}
-  \item MMAP[4] 与 MMAP[5] 必须为 1；
-  \item 如果使用一级交叉开关对二级 Cache 地址进行映射，映射后的地址
-    （即``从端口地址''）必须与映射前地址（即``主端口地址''）保持一致： 这是维护
+
+ - MMAP[4] 与 MMAP[5] 必须为 1；
+ - 如果使用一级交叉开关对二级 Cache 地址进行映射，映射后的地址
+    （即“从端口地址”）必须与映射前地址（即“主端口地址”）保持一致： 这是维护
     Cache 一致性的需要。 而映射到 HyperTransport 地址的配置不受这个约束限制。
-\end{itemize}
 
 ### 二级交叉开关地址路由
 
-龙芯 3B1500 的二级交叉开关是供 CPU 和 PCI 两个具有主功能的 IP 进行路由选择和地
-址转换而设置的。 从 3B1500 的连接结构可以看出， 来自 CPU 的访问是从二级 Cache
-发出的。 这两个主设备都拥有 8 个地址窗口，完成目标地址空间的选择以及从源地址空
-间到目标地址空间的转换。
+龙芯 3B1500 的二级交叉开关中有 CPU 地址空间（包括 HT 空间）、DDR2 地址空间、以及
+PCI 地址空间共三个 IP 相关的地址空间，并提供 CPU 和 PCI 两个具有主功能的 IP 进行
+路由选择和地址转换的功能。 从 3B1500 的连接结构可以看出， 来自 CPU 的访问是从二
+级 Cache 发出的。 这两个主设备都拥有 8 个地址窗口，完成目标地址空间的选择以及从
+源地址空间到目标地址空间的转换。
 
-而对于二级交叉开关， 如果不允许 Cache 访问或取指访问的从端口可以将 MMAP[4] 或
-MMAP[5] 设为 0。
-
-          窗口命中: IN_ADDR & MASK == BASE
-          输出地址: OUT_ADDR = (IN_ADDR & ~MASK) | {MMAP[63:10] || 0000000000b}
-
-表 \ref{tab:X2MasterWinBases} 列出了这两个主设备的窗口寄存器基地址。
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{|c|c||c|c|} \hline
-    主端口 & 基地址       & 主端口 & 基地址       \\ \hline
-    CPU    & 0x3FF0\_0000 & PCI    & 0x3FF0\_0100 \\ \hline
-  \end{tabular}
-  \caption{二级交叉开关主端口窗口寄存器基地址}
-  \label{tab:X2MasterWinBases}
-\end{table}
-
-对每个主设备而言，二级交叉开关有和一级开关相同的寄存器偏移，
-如表 \ref{tab:AXIWinOffset} 所示。
-
-二级交叉开关的目的包括 DDR 地址空间、 PCI
-等慢速外设地址空间，和配置寄存器块（Xconf）共三个 IP 相关的地址空间。 3B1500
-的实现中使用了两个内存控制器，这些模块的标号对应关系如表 \ref{tab:X2SlaveLabel}
-所示。 二级交叉开关的系统默认路由是将所有的地址转送到系统配置寄存器模块，
-即从端口 3。
+二级交叉开关的目的包括 DDR 地址空间、 PCI 等慢速外设地址空间，和配置寄存器块（
+Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个内存控制器，这些模块
+的标号对应关系如表 \ref{tab:X2SlaveLabel} 所示。 二级交叉开关的系统默认路由是将
+所有的地址转送到系统配置寄存器模块，即从端口 3。
 \begin{table}[htbp]
   \centering
   \begin{tabular}{|c|c|} \hline
     从端口 & 端口设备                \\ \hhline
     0      & 0 号 DDR2/3 控制器      \\ 
-    1      & 1 号 DDR2/3 控制器      \\ 
+    1      & ---空---                \\ 
     2      & 低速 I/O（PCI，LPC 等） \\ 
     3      & 配置寄存器模块          \\ \hline
   \end{tabular}
@@ -361,14 +343,33 @@ MMAP[5] 设为 0。
   \label{tab:X2SlaveLabel}
 \end{table}
 
-与一级交叉开关相比，二级交叉开关的配置更加灵活。
-一级交叉开关的窗口配置必须保证不对需要 Cache 一致性维护的（即二级 Cache）
-访问进行地址转换，否则二级 Cache 的地址会与一级 Cache 的地址发生冲突，而导致
-Cache 一致性维护错误。
+二级交叉开关窗口的命中公式及地址转换公式如下所示。
 
-表 \ref{tab:X2DefAddrConfig} 列出了系统启动时， 二级交叉开关的缺省地址窗口
-配置值（其他寄存器缺省值皆为 0）。
-\begin{table}
+          窗口命中: IN_ADDR & MASK == BASE
+          输出地址: OUT_ADDR = (IN_ADDR & ~MASK) | {MMAP[63:10] || 10'b0}
+
+\noindent 二级交叉开关的配置更加灵活：与一级开关相比增加了地址转换的功能。同时，
+如果不允许 Cache 访问或取指访问的从端口可以将 MMAP[4] 或 MMAP[5] 设为 0。
+
+表 \ref{tab:X2MasterWinBases} 列出了节点 0 的二级开关窗口寄存器块基地址。其他节
+点的二级开关窗口寄存器基地址遵从 [节点控制寄存器地址规则][]，即分别在前一个节点
+的基础上增加 0x1000_0000_4000。 二级交叉开关的寄存器地址偏移和一级开关相同：具体
+偏移值参见表 \ref{tab:AXIWinOffset}。
+\begin{table}[htbp]
+  \centering
+  \caption{节点 0 二级交叉开关窗口寄存器基地址}\vspace{.2cm}
+  \begin{tabular}{|c|c||c|c|} \hline
+    主端口 & 基地址       & 主端口 & 基地址       \\ \hline
+    CPU    & 0x3FF0\_0000 & PCI    & 0x3FF0\_0100 \\ \hline
+  \end{tabular}
+  \label{tab:X2MasterWinBases}
+\end{table}
+
+#### 二级交叉开关的缺省地址窗口配置 {-}
+
+表 \ref{tab:X2DefAddrConfig} 列出了系统启动时， 二级交叉开关的缺省地址窗口配置值
+（其他寄存器缺省值皆为 0）。
+\begin{table}[htbp]
   \centering
   \begin{tabular}{|c|l|c|} \hline
     寄存器          & \cellalign{c|}{寄存器含义} & 启动缺省值                 \\ \hhline
@@ -386,19 +387,150 @@ Cache 一致性维护错误。
   \label{tab:X2DefAddrConfig}
 \end{table}
 
-\newpage\noindent
+\noindent
 根据缺省的寄存器配置，芯片启动后，
 \begin{center}
   \begin{tabular}{|c|c|c|c|} \hline
     主端口 & 主端口地址              & 目标从端口   & 从端口地址         \\ \hline
-    CPU    & \verb+0x0000_0000-0x0FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000 - 0x0FFF_FFFF+ \\ \hline
-    CPU    & \verb+0x1000_0000-0x1FFF_FFFF+ & PCI          & \verb+0x1000_0000 - 0x1FFF_FFFF+ \\ \hline
-    PCI    & \verb+0x8000_0000-0x8FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000 - 0x0FFF_FFFF+ \\ \hline
+    CPU    & \verb+0x0000_0000-0x0FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000-0x0FFF_FFFF+ \\ \hline
+    CPU    & \verb+0x1000_0000-0x1FFF_FFFF+ & PCI          & \verb+0x1000_0000-0x1FFF_FFFF+ \\ \hline
+    PCI    & \verb+0x8000_0000-0x8FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000-0x0FFF_FFFF+ \\ \hline
   \end{tabular}
 \end{center}
 
-此外，当出现由于 CPU 猜测执行引起对非法地址的读访问，所有地址窗口
-都不命中时，由访存模块将返回全 0 的数据给 CPU，以防止 CPU 无限等待。
+此外，当出现由于 CPU 猜测执行引起对非法地址的读访问，所有地址窗口都不命中时，由
+访存模块将返回全 0 的数据给 CPU，以防止 CPU 无限等待。
+
+倍频设置寄存器
+--------------
+
+龙芯 3B1500 提供了软件倍频设置寄存器用于设置在 CLKSEL 配置为软件控制模式下，各
+个时钟的工作频率。
+
+ - MEM CLOCK 配置对应内存控制器及总线时钟频率；
+ - CORE CLOCK 对应处理器核时钟频率；
+ - NODE CLOCK 对应片上互连网络及三级共享高速缓存频率；
+ - HT CLOCK 对应 HT 控制器时钟频率。
+
+\noindent 每个时钟配置一般有三个参数：DIV_REFC、DIV_LOOPC、DIV_OUT。
+
+        最终的时钟频率 =  参考时钟 * DIV_LOOPC / (DIV_REFC * DIV_OUT)。
+
+\noindent 软件控制模式下，默认对应的时钟频率为外部参考时钟的频率（对于 CORE
+CLOCK 与 NODE CLOCK，都为引脚 SYS_CLK 的对应频率；对于 MEM CLOCK，为引脚
+MEM_CLK 对应频率），需要在处理器启动过程中对时钟进行软件设置。各个时钟设置的过
+程应该按照以下方式：
+
+ 1. 设置寄存器中除了 SEL_PLL_\* 及 SOFT_SET_PLL 之外的其它寄存器，也即这两个寄
+    存器在设置的过程中写为 0；
+ 1. 其它寄存器值不变，将 SOFT_SET_PLL 设为 1；
+ 1. 等待寄存器中的锁定信号 LOCKED_ 为 1；
+ 1. 将 SEL_PLL_\* 设为 1，此时对应的时钟频率将切换为软件设置的频率
+
+对于 HT CLOCK 来说，前两个参数是由引脚配置决定的，无法更改，只有 DIV_OUT （
+HTx_DIV_HT_CORE）是可以软件配置的。其工作频率为 CLKSEL[12:10] 配置的 PHY 时钟频
+率 / DIV_OUT。
+
+\begin{longtable}{|c|c|c|c|p{7cm}|}
+  \caption{芯片配置寄存器}\label{tab:chipConfigSample} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endfirsthead
+  \caption{芯片配置寄存器（续）} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
+  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
+
+  \multicolumn{5}{|l|}{芯片结点和处理器核软件倍频设置寄存器（物理地址 0x1FE0\_01B0）} \\* \hline
+    0   & SEL\_PLL\_NODE       & RW & 0x0  & Node 时钟非软件 bypass 整个 PLL \\
+    1   & SEL\_PLL\_CORE       & RW & 0x0  & Core 时钟非软件 bypass 整个 PLL \\
+    2   & SOFT\_SET\_PLL       & RW & 0x0  & 允许软件设置 PLL \\
+    3   & BYPASS\_L1           & RW & 0x0  & 忽略 L1 PLL \\
+    4   & BYPASS\_L2\_NODE     & RW & 0x0  & 忽略 L2 Node PLL \\
+    5   & BYPASS\_L2\_CORE     & RW & 0x0  & 忽略 L2 Core PLL \\
+    6   & BYPASS\_REFIN\_L2    & RW & 0x0  & L2 的输入是否 忽略 L1 PLL \\
+    7   & LOCKEN\_L1           & RW & 0x0  & 允许锁定 L1 PLL \\
+    8   & LOCKEN\_L2\_NODE     & RW & 0x0  & 允许锁定 L2 Node PLL \\
+    9   & LOCKEN\_L2\_CORE     & RW & 0x0  & 允许锁定 L2 Core PLL \\
+  11:10 & LOCKC\_L1            & RW & 0x0  & 判定 L1 PLL 是否锁定使用的相位的精度 \\
+  13:12 & LOCKC\_L2\_NODE      & RW & 0x0  & 判定 L2 Node PLL 是否锁定相位精度 \\
+  15:14 & LOCKC\_L2\_CORE      & RW & 0x0  & 判定 L2 Core PLL 是否锁定相位精度 \\
+   16   & LOCKED\_L1           & R  & 0x0  & L1 PLL 是否锁定 \\
+   17   & LOCKED\_L2\_NODE     & R  & 0x0  & L2 Node PLL 是否锁定 \\
+   18   & LOCKED\_L2\_CORE     & R  & 0x0  & L2 Core PLL 是否锁定 \\
+  31:26 & L1\_DIV\_REFC        & RW & 0x1  & L1 PLL 输入参数 \\
+  41:32 & L1\_DIV\_LOOPC       & RW & 0x1  & L1 PLL 输入参数 \\
+  47:42 & L1\_DIV\_OUT         & RW & 0x1  & L1 PLL 输入参数 \\
+  53:48 & L2\_DIV\_REFC\_NODE  & RW & 0x1  & L2 Node PLL 输入参数 \\
+  63:54 & L2\_DIV\_LOOPC\_NODE & RW & 0x1  & L2 Node PLL 输入参数 \\
+  69:64 & L2\_DIV\_OUT\_NODE   & RW & 0x1  & L2 Node PLL 输入参数 \\
+  75:70 & L2\_DIV\_REFC\_CORE  & RW & 0x5  & L2 Core PLL 输入参数 \\
+  85:76 & L2\_DIV\_LOOPC\_CORE & RW & 0x0  & L2 Core PLL 输入参数 \\
+  91:86 & L2\_DIV\_OUT\_CORE   & RW & 0x1  & L2 Core PLL 输入参数 \\
+  其它  & ---                  & RW & 保留 & 保留 \\ \hline
+  \multicolumn{5}{|l|}{内存和 HT 时钟软件倍频设置寄存器（物理地址 0x1FE0\_01C0）} \\* \hline
+ 0    & SEL\_MEM\_PLL        & RW & 0x0  & MEM 时钟非软件 bypass 整个 PLL \\
+ 1    & SOFT\_SET\_MEM\_PLL  & RW & 0x0  & 允许软件设置 MEM PLL \\
+ 2    & BYPASS\_MEM\_PLL     & RW & 0x0  & 忽略 MEM\_PLL \\
+ 3    & LOCKEN\_MEM\_PLL     & RW & 0x0  & 允许锁定 MEM\_PLL \\
+ 5:4  & LOCKC\_ MEM\_PLL     & RW & 0x0  & 判定 MEM PLL 是否锁定相位精度 \\
+ 6    & LOCKED\_MEM\_PLL     & R  & 0x0  & MEM\_PLL 是否锁定 \\
+13:8  & MEM\_PLL\_DIV\_REFC  & RW & 0x1  & MEM PLL 输入参数 \\
+23:14 & MEM\_PLL\_DIV\_LOOPC & RW & 0x41 & MEM PLL 输入参数 \\
+29:24 & MEM\_PLL\_DIV\_OUT   & RW & 0x0  & MEM PLL 输入参数 \\
+ 32   & SEL\_HT0\_PLL        & RW & 0x0  & HT0 非软件 bypass PLL \\
+ 33   & SOFT\_SET\_HT0\_PLL  & RW & 0x0  & 允许软件设置 HT0 PLL \\
+ 34   & BYPASS\_HT0\_PLL     & RW & 0x0  & 忽略 HT0\_PLL \\
+ 35   & LOCKEN\_HT0\_PLL     & RW & 0x0  & 允许锁定 HT0 PLL \\
+37:36 & LOCKC\_HT0\_PLL      & RW & 0x0  & 判定 HT0 PLL 是否锁定相位精度 \\
+ 38   & LOCKED\_HT0\_PLL     & R  & 0x0  & HT0\_PLL 是否锁定 \\
+45:40 & HT0\_DIV\_HTCORE     & RW & 0x1  & HT0 Core PLL 输入参数 \\
+ 48   & SEL\_HT1\_PLL        & RW & 0x0  & HT1 非软件 bypass PLL \\
+ 49   & SOFT\_SET\_HT1\_PLL  & RW & 0x0  & 允许软件设置 HT1 PLL \\
+ 50   & BYPASS\_HT1\_PLL     & RW & 0x0  & 忽略 HT1\_PLL \\
+ 51   & LOCKEN\_HT1\_PLL     & RW & 0x0  & 允许锁定 HT1 PLL \\
+53:52 & LOCKC\_HT1\_PLL      & RW & 0x0  & 判定 HT1 PLL 是否锁定相位精度 \\
+ 54   & LOCKED\_HT1\_PLL     & R  & 0x0  & HT1\_PLL 是否锁定 \\
+61:56 & HT1\_DIV\_HTCORE     & RW & 0x1  & HT1 Core PLL 输入参数 \\
+其它  &                      & RW &      & 保留 \\ \hline
+  \multicolumn{5}{|l|}{芯片处理器核软件分频设置寄存器（物理地址 0x1FE0\_01D0）} \\* \hline
+ 2:0  & Core0\_freqctrl     & RW & 0x7   & 核 0 分频控制值 \\
+ 3    & Core0\_en           & RW & 0x1   & 核 0 时钟使能 \\
+ 6:4  & Core1\_freqctrl     & RW & 0x7   & 核 1 分频控制值 \\
+ 7    & Core1\_en           & RW & 0x1   & 核 1 时钟使能 \\
+10:8  & Core2\_freqctrl     & RW & 0x7   & 核 2 分频控制值 \\
+ 11   & Core2\_en           & RW & 0x1   & 核 2 时钟使能 \\
+14:12 & Core3\_freqctrl     & RW & 0x7   & 核 3 分频控制值 \\
+ 15   & Core3\_en           & RW & 0x1   & 核 3 时钟使能 \\
+18:16 & Core4\_freqctrl     & RW & 0x7   & 核 4 分频控制值 \\
+ 19   & Core4\_en           & RW & 0x1   & 核 4 时钟使能 \\
+22:20 & Core5\_freqctrl     & RW & 0x7   & 核 5 分频控制值 \\
+ 23   & Core5\_en           & RW & 0x1   & 核 5 时钟使能 \\
+26:24 & Core6\_freqctrl     & RW & 0x7   & 核 6 分频控制值 \\
+ 27   & Core6\_en           & RW & 0x1   & 核 6 时钟使能 \\
+30:28 & Core7\_freqctrl     & RW & 0x7   & 核 7 分频控制值 \\
+ 31   & Core7\_en           & RW & 0x1   & 核 7 时钟使能 \\
+63:32 & Reserved            & RW & 32b'0 & 保留 \\
+ 64   & Core0\_pre\_resetn  & RW & 0x1   & 核 0 的预复位控制 \\
+ 65   & Core0\_soft\_resetn & RW & 0x1   & 核 0 的软件复位控制 \\
+ 66   & Core1\_pre\_resetn  & RW & 0x1   & 核 1 的预复位控制 \\
+ 67   & Core1\_soft\_resetn & RW & 0x1   & 核 1 的软件复位控制 \\
+ 68   & Core2\_pre\_resetn  & RW & 0x1   & 核 2 的预复位控制 \\
+ 69   & Core2\_soft\_resetn & RW & 0x1   & 核 2 的软件复位控制 \\
+ 70   & Core3\_pre\_resetn  & RW & 0x1   & 核 3 的预复位控制 \\
+ 71   & Core3\_soft\_resetn & RW & 0x1   & 核 3 的软件复位控制 \\
+ 72   & Core4\_pre\_resetn  & RW & 0x1   & 核 4 的预复位控制 \\
+ 73   & Core4\_soft\_resetn & RW & 0x1   & 核 4 的软件复位控制 \\
+ 74   & Core5\_pre\_resetn  & RW & 0x1   & 核 5 的预复位控制 \\
+ 75   & Core5\_soft\_resetn & RW & 0x1   & 核 5 的软件复位控制 \\
+ 76   & Core6\_pre\_resetn  & RW & 0x1   & 核 6 的预复位控制 \\
+ 77   & Core6\_soft\_resetn & RW & 0x1   & 核 6 的软件复位控制 \\
+ 78   & Core7\_pre\_resetn  & RW & 0x1   & 核 7 的预复位控制 \\
+ 79   & Core7\_soft\_resetn & RW & 0x1   & 核 7 的软件复位控制 \\ \hline
+\end{longtable}
+
+注：PLL ouput = （clk_ref / div_refc * div_loopc）/ div_out。
+PLL constrain 指括号内的值：L1：450M~1.58G L2: 850M~3.23G
+内存时钟约束同 L1，HT 时钟约束同 L2。
+
+注:       软件分频后的时钟频率值等于原来的（分频控制值+1）/8
 
 芯片配置及采样寄存器
 --------------------
@@ -411,9 +543,7 @@ Cache 一致性维护错误。
   \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endfirsthead
   \caption{芯片配置寄存器（续）} \\
   \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
-
-  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot
-  \endlastfoot
+  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
 
   \multicolumn{5}{|l|}{芯片配置寄存器（地址 0x1fe00180）} \\* \hline
     其它    & ---                      & R  &       & 保留                                                        \\ \hline
@@ -446,4 +576,3 @@ Cache 一致性维护错误。
     31:16   & Pad3v3\_ctrl             & RW & 16'h780  & 3v3pad 控制                                                 \\ \hline
     15:0    & Pad2v5\_ctrl             & RW & 16'h780  & 2v5pad 控制                                                 \\ \hline
 \end{longtable}
-
