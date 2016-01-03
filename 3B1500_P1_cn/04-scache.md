@@ -1,33 +1,27 @@
-二级 Cache
-==========
+片上共享高速缓存
+================
 
-二级 Cache 模块是与 GS464 处理器 IP 配套设计的模块。该模块既可以和 GS464 对接，
-使 GS464 成为包括二级 Cache 在内的处理器 IP；也可以通过 AXI 网络连接多个 GS464
-以及多个二级 Cache 模块， 形成片内多处理器的 CMP 结构。 二级 Cache 模块的主要特
-征包括：
+片上共享高速缓存（即，二级 Cache）是与 GS464V 处理器 IP 配套设计的模块。该模块
+既可以和 GS464V 对接，使 GS464V 成为包括二级 Cache 在内的处理器 IP；也可以通过
+AXI 网络连接多个 GS464V 以及多个二级 Cache 模块， 形成片内多处理器的 CMP 结构。
+二级 Cache 模块的主要特征包括：
 
-  - 采用 128 位 AXI 接口；
-  - 8 项 Cache 访问队列；
-  - 关键字优先；
-  - 接收读失效请求到返回数据最快 8 拍；
   - 通过目录支持 Cache 一致性协议；
-  - 可用于片上多核结构，也可直接和单处理器 IP 对接；
-  - 软 IP 级可配置二级 Cache 的大小（512KB/1MB） ；
   - 采用四路组相联结构；
   - 运行时可动态关闭；
   - 支持 ECC 校验；
   - 支持 DMA 一致性读写和预取读；
   - 支持 16 种二级 Cache 散列方式；
   - 支持按窗口锁二级 Cache；
-  - 保证读数据返回原子性。(\remark{写数据保证原子性吗？})
+  - 保证读数据返回原子性。
 
 二级 Cache 模块包括二级 Cache 管理模块 (scachemanage) 及二级 Cache 访问 模块
-(scacheaccess)。二级 Cache 管理模块负责处理器来自处理器和 DMA 的访问请 求，而二级
-Cache 的 TAG、目录和数据等信息存放在二级 Cache 访问模块中。为降低功耗，二级
-Cache 的 TAG、目录和数据可以分开访问，二级 Cache 状态位、w 位与 TAG
-一起存储，TAG 存放在 TAG RAM 中，目录存放在 DIR RAM 中，数 据存放在 DATA RAM
-中。失效请求访问二级 Cache，同时读出所有路的 TAG、 目录和数据，并根据 TAG
-来选出数据和目录。替换请求、重填请求和写回请求 只操作一路的 TAG、目录和数据。
+(scacheaccess)。二级 Cache 管理模块负责处理器来自处理器和 DMA 的访问请 求，而二
+级 Cache 的 TAG、目录和数据等信息存放在二级 Cache 访问模块中。为降低功耗，二级
+Cache 的 TAG、目录和数据可以分开访问，二级 Cache 状态位、w 位与 TAG 一起存储，
+TAG 存放在 TAG RAM 中，目录存放在 DIR RAM 中，数 据存放在 DATA RAM 中。失效请求
+访问二级 Cache，同时读出所有路的 TAG、 目录和数据，并根据 TAG 来选出数据和目录
+。替换请求、重填请求和写回请求 只操作一路的 TAG、目录和数据。
 
 为提高一些特定计算任务的性能，二级 Cache 增加了锁机制。落在被锁区域 中的二级
 Cache 块会被锁住， 因而不会被替换出二级 Cache （除非四路二级 Cache 
@@ -40,19 +34,19 @@ Cache 中命中且被锁 住，那么 DMA 写将直接写入到二级 Cache 而�
 \begin{table}
   \centering
   \begin{tabular}{|l|c|l|l|} \hline
-    名称          & 地址       & 位域    & 描述             \\ \hhline
-    slock0\_valid & 0x3FF00200 & [63:63] & 0 号锁窗口有效位 \\ 
-    slock0\_addr  & 0x3FF00200 & [47:0]  & 0 号锁窗口锁地址 \\ 
-    slock0\_mask  & 0x3FF00240 & [47:0]  & 0 号锁窗口掩码   \\ \hline
-    slock1\_valid & 0x3FF00208 & [63:63] & 1 号锁窗口有效位 \\ 
-    slock1\_addr  & 0x3FF00208 & [47:0]  & 1 号锁窗口锁地址 \\ 
-    slock1\_mask  & 0x3FF00248 & [47:0]  & 1 号锁窗口掩码   \\ \hline
-    slock2\_valid & 0x3FF00210 & [63:63] & 2 号锁窗口有效位 \\ 
-    slock2\_addr  & 0x3FF00210 & [47:0]  & 2 号锁窗口锁地址 \\ 
-    slock2\_mask  & 0x3FF00250 & [47:0]  & 2 号锁窗口掩码   \\ \hline
-    slock3\_valid & 0x3FF00218 & [63:63] & 3 号锁窗口有效位 \\ 
-    slock3\_addr  & 0x3FF00218 & [47:0]  & 3 号锁窗口锁地址 \\ 
-    slock3\_mask  & 0x3FF00258 & [47:0]  & 3 号锁窗口掩码   \\ \hline
+    名称          & 地址         & 位域    & 描述             \\ \hhline
+    slock0\_valid & 0x3FF0\_0200 & [63:63] & 0 号锁窗口有效位 \\ 
+    slock0\_addr  & 0x3FF0\_0200 & [47:0]  & 0 号锁窗口锁地址 \\ 
+    slock0\_mask  & 0x3FF0\_0240 & [47:0]  & 0 号锁窗口掩码   \\ \hline
+    slock1\_valid & 0x3FF0\_0208 & [63:63] & 1 号锁窗口有效位 \\ 
+    slock1\_addr  & 0x3FF0\_0208 & [47:0]  & 1 号锁窗口锁地址 \\ 
+    slock1\_mask  & 0x3FF0\_0248 & [47:0]  & 1 号锁窗口掩码   \\ \hline
+    slock2\_valid & 0x3FF0\_0210 & [63:63] & 2 号锁窗口有效位 \\ 
+    slock2\_addr  & 0x3FF0\_0210 & [47:0]  & 2 号锁窗口锁地址 \\ 
+    slock2\_mask  & 0x3FF0\_0250 & [47:0]  & 2 号锁窗口掩码   \\ \hline
+    slock3\_valid & 0x3FF0\_0218 & [63:63] & 3 号锁窗口有效位 \\ 
+    slock3\_addr  & 0x3FF0\_0218 & [47:0]  & 3 号锁窗口锁地址 \\ 
+    slock3\_mask  & 0x3FF0\_0258 & [47:0]  & 3 号锁窗口掩码   \\ \hline
   \end{tabular}
   \caption{二级 Cache 锁窗口寄存器配置}
   \label{tab:l2cachewinconfig}
