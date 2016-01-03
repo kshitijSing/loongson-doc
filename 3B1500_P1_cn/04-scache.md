@@ -15,24 +15,23 @@ AXI 网络连接多个 GS464V 以及多个二级 Cache 模块， 形成片内多
   - 支持按窗口锁二级 Cache；
   - 保证读数据返回原子性。
 
-二级 Cache 模块包括二级 Cache 管理模块 (scachemanage) 及二级 Cache 访问 模块
-(scacheaccess)。二级 Cache 管理模块负责处理器来自处理器和 DMA 的访问请 求，而二
-级 Cache 的 TAG、目录和数据等信息存放在二级 Cache 访问模块中。为降低功耗，二级
-Cache 的 TAG、目录和数据可以分开访问，二级 Cache 状态位、w 位与 TAG 一起存储，
-TAG 存放在 TAG RAM 中，目录存放在 DIR RAM 中，数 据存放在 DATA RAM 中。失效请求
-访问二级 Cache，同时读出所有路的 TAG、 目录和数据，并根据 TAG 来选出数据和目录
-。替换请求、重填请求和写回请求 只操作一路的 TAG、目录和数据。
+为降低功耗，二级 Cache 的 TAG、目录和数据可以分开访问，二级 Cache 状态位、w 位
+与 TAG 一起存储， TAG 存放在 TAG RAM 中，目录存放在 DIR RAM 中，数 据存放在
+DATA RAM 中。失效请求访问二级 Cache，同时读出所有路的 TAG、 目录和数据，并根据
+TAG 来选出数据和目录。替换请求、重填请求和写回请求 只操作一路的 TAG、目录和数据
+。
 
 为提高一些特定计算任务的性能，二级 Cache 增加了锁机制。落在被锁区域 中的二级
-Cache 块会被锁住， 因而不会被替换出二级 Cache （除非四路二级 Cache 
-中都是被锁住的块）。通过 confbus 可以对二级 Cache
-模块内部的四组锁窗口寄存器进行动态配置， 但必须保证四路二级 Cache
-中一定有一路被锁住。每组窗口 的大小可以根据 mask 进行调整，但不能超过整个二级
-Cache 大小的 3/4。此外 当二级 Cache 收到 DMA 写请求时， 如果被写的区域在二级
-Cache 中命中且被锁 住，那么 DMA 写将直接写入到二级 Cache 而不是内存。
+Cache 块会被锁住， 因而不会被替换出二级 Cache （除非四路二级 Cache 中都是被锁住
+的块）。通过 confbus 可以对二级 Cache 模块内部的四组锁窗口寄存器进行动态配置，
+但必须保证四路二级 Cache 中一定有一路被锁住。每组窗口 的大小可以根据 mask 进行
+调整，但不能超过整个二级 Cache 大小的 3/4。此外 当二级 Cache 收到 DMA 写请求时
+， 如果被写的区域在二级 Cache 中命中且被锁 住，那么 DMA 写将直接写入到二级
+Cache 而不是内存。
 
-\begin{table}
+\begin{table}[htpb]
   \centering
+  \caption{二级 Cache 锁窗口寄存器配置}\vspace{.2cm}
   \begin{tabular}{|l|c|l|l|} \hline
     名称          & 地址         & 位域    & 描述             \\ \hhline
     slock0\_valid & 0x3FF0\_0200 & [63:63] & 0 号锁窗口有效位 \\ 
@@ -48,7 +47,6 @@ Cache 中命中且被锁 住，那么 DMA 写将直接写入到二级 Cache 而�
     slock3\_addr  & 0x3FF0\_0218 & [47:0]  & 3 号锁窗口锁地址 \\ 
     slock3\_mask  & 0x3FF0\_0258 & [47:0]  & 3 号锁窗口掩码   \\ \hline
   \end{tabular}
-  \caption{二级 Cache 锁窗口寄存器配置}
   \label{tab:l2cachewinconfig}
 \end{table}
 
