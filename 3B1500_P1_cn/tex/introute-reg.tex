@@ -1,0 +1,13 @@
+\documentclass[border={0pt 0pt 0pt 4pt}]{standalone}
+\usepackage[endianness=big]{bytefield}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{Adobe Song Std}
+
+\begin{document}
+\begin{bytefield}[bitwidth=2.24cm]{8}
+  \bitheader{7,4,3,0} \\
+  \bitbox{4}{路由的处理器核向量号} &
+  \bitbox{4}{路由的处理器核引脚号}
+\end{bytefield}
+\end{document}
