@@ -1,739 +1,1977 @@
-\chapter{DDR2/3 SDRAM 控制器配置}
+DDR2/3 SDRAM 控制器配置
+=======================
 
-    龙芯 3 号处理器内部集成的内存控制器的设计遵守 DDR2 SDRAM 的行业标
-准（JESD79-2B）  。在龙芯 3 号处理器中，所实现的所有内存读/写操作都遵守
-JESD79-2B 及 JESD79-3 的规定。
+龙芯 3B1500 处理器内部集成的内存控制器的设计遵守 DDR2/3 SDRAM 的行业标准
+（JESD79）。
 
-\section{DDR2 SDRAM 控制器功能概述}
 
-龙芯 3A 处理器支持最大 4 个 CS（由 4 个 DDR2 SDRAM 片选信号实现，
-即两个双面内存条），一共含有 18 位的地址总线（即：15 位的行列地址总线和 3
-位的逻辑 Bank 总线）。 最大支持的地址空间为 128GB（237） 。
+DDR2/3 SDRAM 参数配置格式
+-------------------------
 
-龙芯 3 号处理器在具体选择使用不同内存芯片类型时，可以调整 DDR2/3 控
-制器参数设置进行支持。          其中，支持的最大片选（CS\_n）数为
-4，行地址（RAS\_n） 数为 15，列地址（CAS\_n）数为 14，逻辑体选择（BANK\_n）数为 3。
+参数列表及说明如下表：
 
-CPU 发送的内存请求物理地址将按照如下图所示的方法进行行列地址转换：以 4GB
-地址空间为例，按照下面的配置：
-\begin{verbatim}
-  片选     = 4     Bank 数  = 8
-  行地址数 = 12    列地址数 = 12
-\end{verbatim}
+表 9-1 
 
-龙芯 3 号处理器所集成的内存控制电路只接受来自处理器或者外部设备的
-内存读/写请求， 在所有的内存读/写操作中， 内存控制电路处于从设备状态  （Slave
-State）。
+\newcommand{\twocol}[1]{\multicolumn{2}{c|}{#1}}
+\newcommand{\thrcol}[1]{\multicolumn{3}{c|}{#1}}
+\newcommand{\forcol}[1]{\multicolumn{4}{c|}{#1}}
 
-龙芯 3 号处理器中内存控制器具有如下特征：
-\begin{itemize}
-  \item 接口上命令、读写数据全流水操作
-  \item 内存命令合并、排序提高整体带宽
-  \item 配置寄存器读写端口，可以修改内存设备的基本参数
-  \item 内建动态延迟补偿电路（DCC），用于数据的可靠发送和接收
-  \item ECC 功能可以对数据通路上的 1 位和 2 位错误进行检测，并能对对 1
-    位错误进行自动纠错
-  \item 支持 133-400MHZ 工作频率
-\end{itemize}
+\begin{longtable}{|>{\tiny}c|*{8}{>{\tiny}p{1.5cm}|}}
+  \caption{DDR2/3 参数列表} \tabularnewline \hline
+  & 63:56 & 55:48 & 47:40 & 39:32 & 31:24 & 23:16 & 15:8 & 7:0
+  \tabularnewline\hhline \endfirsthead
+  \caption{DDR2/3 参数列表（续）} \tabularnewline \hline
+  & 63:56 & 55:48 & 47:40 & 39:32 & 31:24 & 23:16 & 15:8 & 7:0
+  \tabularnewline\hhline \endhead
+  \hline \multicolumn{9}{r}{\tiny 未完待续} \endfoot \endlastfoot
+  0x000 & \twocol{Dll\_value\_0(R)} & \twocol{Dll\_value\_ck(R)} & \twocol{Dll\_init\_done(R)} & \twocol{Version(R)}       \\
+  0x008 & \twocol{Dll\_value\_4(R)} & \twocol{Dll\_value\_3(R)}  & \twocol{Dll\_value\_2(R)}   & \twocol{Dll\_value\_1(R)} \\
+  0x010 & \twocol{Dll\_value\_8(R)} & \twocol{Dll\_value\_7(R)}  & \twocol{Dll\_value\_6(R)}   & \twocol{Dll\_value\_5(R)} \\
 
-\begin{longtable}{|@{}>{\centering\small}p{3.7cm}@{}|c
-                  |>{\centering}p{1cm}|>{\centering}p{1cm}|p{7.5cm}|}
-  \caption{DDR2/3 SDRAM 配置参数寄存器格式} \tabularnewline \hline
-  {\normalsize 参数名} & 位域 & 缺省 & 范围 & \cellalign{c|}{描述} \tabularnewline \hhline
-  \endfirsthead
+0x018 & Dll\_ck\_3     & Dll\_ck\_2       & Dll\_ck\_1        & Dll\_ck\_0         & Dll\_increment   & Dll\_start\_point  & Dll\_bypass        & Init\_start \\
+0x020 & Dq\_oe\_end\_0 & Dq\_oe\_begin\_0 & Dq\_stop\_edge\_0 & Dq\_start\_edge\_0 & Rddata\_delay\_0 & Rddqs\_lt\_half\_0 & Wrdqs\_lt\_half\_0 & Wrdq\_lt\_half\_0 \\
+0x028 & Rd\_oe\_end\_0 & Rd\_oe\_begin\_0 & Rd\_stop\_edge\_0 & Rd\_start\_edge\_0 & Dqs\_oe\_end\_0  & Dqs\_oe\_begin\_0  & Dqs\_stop\_edge\_0 & Dqs\_start\_edge\_0 \\
+0x030 &                &                  &                   & Wrdq\_clkdelay\_0  & Odt\_oe\_end\_0  & Odt\_oe\_begin\_0  & Odt\_stop\_edge\_0 & Odt\_start\_edge\_0 \\
+0x038 &                &                  &                   & Dll\_rddqs\_n\_0   & Dll\_rddqs\_p\_0 & Dll\_wrdqs\_0      & Dll\_wrdata\_0     & Dll\_gate\_0 \\
+0x040 & Dq\_oe\_end\_1 & Dq\_oe\_begin\_1 & Dq\_stop\_edge\_1 & Dq\_start\_edge\_1 & Rddata\_delay\_1 & Rddqs\_lt\_half\_1 & Wrdqs\_lt\_half\_1 & Wrdq\_lt\_half\_1 \\
+0x048 & Rd\_oe\_end\_1 & Rd\_oe\_begin\_1 & Rd\_stop\_edge\_1 & Rd\_start\_edge\_1 & Dqs\_oe\_end\_1  & Dqs\_oe\_begin\_1  & Dqs\_stop\_edge\_1 & Dqs\_start\_edge\_1 \\
+0x050 &                &                  &                   & Wrdq\_clkdelay\_1  & Odt\_oe\_end\_1  & Odt\_oe\_begin\_1  & Odt\_stop\_edge\_1 & Odt\_start\_edge\_1 \\
+0x058 &                &                  &                   & Dll\_rddqs\_n\_1   & Dll\_rddqs\_p\_1 & Dll\_wrdqs\_1      & Dll\_wrdata\_1     & Dll\_gate\_1 \\
+0x060 & Dq\_oe\_end\_2 & Dq\_oe\_begin\_2 & Dq\_stop\_edge\_2 & Dq\_start\_edge\_2 & Rddata\_delay\_2 & Rddqs\_lt\_half\_2 & Wrdqs\_lt\_half\_2 & Wrdq\_lt\_half\_2 \\
+0x068 & Rd\_oe\_end\_2 & Rd\_oe\_begin\_2 & Rd\_stop\_edge\_2 & Rd\_start\_edge\_2 & Dqs\_oe\_end\_2  & Dqs\_oe\_begin\_2  & Dqs\_stop\_edge\_2 & Dqs\_start\_edge\_2 \\
+0x070 &                &                  &                   & Wrdq\_clkdelay\_2  & Odt\_oe\_end\_2  & Odt\_oe\_begin\_2  & Odt\_stop\_edge\_2 & Odt\_start\_edge\_2 \\
+0x078 &                &                  &                   & Dll\_rddqs\_n\_2   & Dll\_rddqs\_p\_2 & Dll\_wrdqs\_2      & Dll\_wrdata\_2     & Dll\_gate\_2 \\
+0x080 & Dq\_oe\_end\_3 & Dq\_oe\_begin\_3 & Dq\_stop\_edge\_3 & Dq\_start\_edge\_3 & Rddata\_delay\_3 & Rddqs\_lt\_half\_3 & Wrdqs\_lt\_half\_3 & Wrdq\_lt\_half\_3 \\
+0x088 & Rd\_oe\_end\_3 & Rd\_oe\_begin\_3 & Rd\_stop\_edge\_3 & Rd\_start\_edge\_3 & Dqs\_oe\_end\_3  & Dqs\_oe\_begin\_3  & Dqs\_stop\_edge\_3 & Dqs\_start\_edge\_3 \\
+0x090 &                &                  &                   & Wrdq\_clkdelay\_3  & Odt\_oe\_end\_3  & Odt\_oe\_begin\_3  & Odt\_stop\_edge\_3 & Odt\_start\_edge\_3 \\
+0x098 &                &                  &                   & Dll\_rddqs\_n\_3   & Dll\_rddqs\_p\_3 & Dll\_wrdqs\_3      & Dll\_wrdata\_3     & Dll\_gate\_3 \\
 
-  \caption{DDR2/3 SDRAM 配置参数寄存器格式（续）} \tabularnewline \hline
-  {\normalsize 参数名} & 位域 & 缺省 & 范围 & \cellalign{c|}{描述} \tabularnewline \hhline
-  \endhead
-
-  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot
-  \hline \endlastfoot
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_00 Offset: 0x00 DDR2 667：0x0000\_0100\_0000\_0101} \tabularnewline \hline
-  ACTIVE\_AGING & 0:0   & ---  & ---  & 是否允许对命令队列中的命令进行 aging 记录，防止低优先级命令饥饿 \tabularnewline
-  ADDR\_CMP\_EN & 8:8   & ---  & ---  & 是否允许命令队列重排序逻辑对地址冲突进行检测 \tabularnewline
-  AP            & 16:16 & ---  & ---  & 是否使能内存控制器自动刷新功能， 置1表示内存访问为 CLOSE PAGE 方式。 \tabularnewline
-  AREFRESH      & 24:24 & ---  & ---  & 根据 auto\_refresh\_mode 参数的设置，向内存发起自动刷新命令（只写） \tabularnewline
-  {\scriptsize AUTO\_REFRESH\_MODE}
-                      & 32:32 & ---  & ---  & 设置 auto-refresh 是在下一个 burst 还是下一个命令边界发出 \tabularnewline
-  BANK\_SPLIT\_EN     & 40:40 & ---  & ---  & 是否允许命令队列重排序逻辑对 bank 进行拆分（split） \tabularnewline
-  CONCURRENTAP        & 48:48 & ---  & ---  & 是否允许控制器对一个 bank 进行
-                                              auto precharge 时，对另外一个 bank
-                                              发出命令。注：部分内存条不支持
-                                              \tabularnewline \hhline
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_01 Offset: 0x10  DDR2 667：0x0000010100000000} \tabularnewline \hline
-  DLLLOCKREG               & 0:0   & ---  & ---  & 指示 DLL 是否已锁定（只读）只有在 DLL 锁定之后，对内存发起的读写操作才能有 效到达内存，所以，可以用本位判断第一 次写内存的时机。 \tabularnewline
-  {\scriptsize ECC\_DISBALE\_W\_UC\_ERR}
-                           & 24:24 & ---  & ---  & 当检测到不可恢复的错误时，是否将 ECC 关闭 \tabularnewline
-  EIGHT\_BANK\_MODE       & 32:32 & ---  & ---  & 指示内存模块是否有 8 个 bank \tabularnewline
-  {\scriptsize ENABLE\_QUICK\_SREFRESH}
-                          & 40:40 & ---  & ---  & 是否使能快速自刷新。当这个参数使能 后，内存的初始化未进行完就进入自刷新 状态 \tabularnewline
-  FAST\_WRITE             & 48:48 & ---  & ---  & 是否允许控制器打开快速写功能。打开快速写功能后，控制器在未收到全部写数据后即向内存模块发出写命令。 \tabularnewline
-  FWC                     & 56:56 & ---  & ---  & 是否强制进行写检查，当这个参数设置 后，  内存控制器将用 xor\_check\_bits 参数 指定的数与数据进行异或写入内存（只写） \tabularnewline \hhline
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_02    Offset: 0x20         DDR2 667：0x0100010100000000} \tabularnewline \hline
-  INTRPTAPBURST & 0:0   & ---  & ---  & 是否允许对另一 bank 的其它命令打断当前的 auto-precharge 命令 \tabularnewline
-  INTRPTREADA   & 8:8   & ---  & ---  & 是否允许用 autoprecharge 命令加上对同一 bank 的其它读命令打断前一个读命令 \tabularnewline
-  INTRPTWRITENA & 16:16 & ---  & ---  & 是否允许用 autoprecharge 命令加上对同一 bank 的其它写命令打断前一个写命令 \tabularnewline
-  NO\_CMD\_INIT & 24:24 & ---  & ---  & 在内存初始化过程中，是否禁止在内存模块的 tDLL 时间内发出其它命令 \tabularnewline
-  {\scriptsize ODT\_ADD\_TURN\_CLK\_EN}
-                & 32:32  & ---  & ---  & 在对不同片选的快速背对背读或者写命令中间是否插入一个 turn-around 时钟。 通常情况下，插入一个这样的周期是对内存是需要的。 \tabularnewline
-  PLACEMENT\_EN & 40:40  & ---  & ---  & 是否使能命令重排序逻辑 \tabularnewline
-  POWER\_DOWN   & 48:48  & ---  & ---  & 当使能这个参数时，内存控制器将用 pre-charge 命令关闭内存模块的所有页面，使时钟使能信号为低，不发送收到的所有命令，直到这个参数重新设置为 0 \tabularnewline
-  PRIORITY\_EN  & 56:56  & ---  & ---  & 是否使能命令队列重排序逻辑使用优先级 \tabularnewline \hhline
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_03     Offset: 0x30  DDR2 667：0x0101010001010000} \tabularnewline \hline
-  PWRUP\_SREFRESH\_EXIT & 0:0   & ---  & ---  & 是用 self-refresh 命令而不是用正常的内存初始化命令来脱离下电模式 \tabularnewline
-  REDUC                 & 8:8   & ---  & ---  & 是否只使用 32 位位宽的内存数据通道， 通常情况下，不应设置该位 \tabularnewline
-  REG\_DIMM\_EN         & 16:16 & ---  & ---  & 是否使能 registered DIMM 内存模组 \tabularnewline
-  RW\_SAME\_EN          & 24:24 & ---  & ---  & 在命令队列重排序逻辑中是否考虑对同一 bank 读写命令的重组 \tabularnewline
-  SREFRESH                 & 32:32 & ---  & ---  & 内存模块是否进入自刷新工作模式 \tabularnewline
-  START                    & 40:40 & ---  & ---  & 是否开始内存的初始化工作。需要在所有的参数配置完成之后，再设置该位，让内存进入初始化配置。在没有完成其它位的配置之前就配置该位，很可能导致内存访问错误。 \tabularnewline
-  SWAP\_EN                 & 48:48 & ---  & ---  & 在使能命令队列重排序逻辑时，当高优先级命令到达时，是否将正在执行的命令与新命令交换 \tabularnewline
-  SWAP\_PORT\_RW\_SAME\_EN & 56:56 & ---  & ---  & 当 swap\_en 使能时，该参数决定是否将同一端口上的类似命令进行交换 \tabularnewline \hhline
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_04     Offset: 0x40         DDR2 667：0x0100010100010101} \tabularnewline \hline 
-  TRAS\_LOCKOUT     &  0:0   & ---  & ---  & 是 否 在 tRAS 时间到期之前发出 auto-prechareg 命令 \tabularnewline
-  TREF\_ENABLE      &  8:8   & ---  & ---  & 是否使能控制器内部的自动刷新功能，通常的情况下，应该将该位置 1 \tabularnewline
-  WRITEINTERP       & 16:16  & ---  & ---  & 定义是否能用一个读命令取打断一个写突发 \tabularnewline
-  WRITE\_MODEREG    & 24:24  & ---  & ---  & 是否写内存模块的 EMRS 寄存器（只写）， 每次写 1 时控制器就将配置参数中 emrs\_data 与 mrs\_data 发往内存。 \tabularnewline
-  AXI0\_R\_PRIORITY &33:32   & ---  & ---  & 设置 AXI0 端口读命令优先级 \tabularnewline
-  AXI0\_W\_PRIORITY &41:40   & ---  & ---  & 设置 AXI0 端口写命令优先级 \tabularnewline
-  CTRL\_RAW         & 49:48  & ---  & ---  &设置 ECC 的检错和纠错模式 2'b0 不使用 ECC 2b0 只报错，不纠错 2b10 没有使用 ECC 设备 2b1 使用 ECC 报错纠错 \tabularnewline
-  RTT\_0            & 57:56  & ---  & ---  &使能内存模块的片上终端电阻。 00 disable 其它 enable，   电阻大小由 mrs\_data 中的值决定 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_05       Offset: 0x50          DDR2 667：0x0000000404050101} \tabularnewline \hline 
-  ADDR\_PINS     &     10:8  & ---  & ---  & 间的差值 内存所用地址线数 = 15 – ADDR\_PINS \tabularnewline
-  CASLAT         &   18:16   & ---  & ---  &设置 CAS latency 值。应当根据具体的内 存颗粒在不同的运行频率下进行配置。 设置实际地址引脚数和最大地址数(15)之 \tabularnewline
-  COLUMN\_SIZE   &    26:24  & ---  & ---  & 设置实际列地址数和最大列地址数(14)之间的差值，应该根据具体的内存颗粒进行配置。 内 存 所 用 列 地 址 数 =   14 - COLUMN\_SIZE \tabularnewline
-  MAX\_CS\_REG            &34:32  & ---  & ---  & 定义控制器所用片选个数（只读） \tabularnewline
-  OUT\_OF\_RANGE\_TYPE    &42:40  & ---  & ---  & 定义发生越界访问时的错误类型（只读） \tabularnewline
-  PORT\_DATA\_ERROR\_TYPE &50:48  & ---  & ---  & 定义内存控制器端口上数据错误类型（只读） 位 0 – 突发数据个数大于 16 位 1 – 写数据交错 位 2 – ECC 2 位错 \tabularnewline
-  Q\_FULLNESS             &58:56  & ---  & ---  & 定义内存控制器命令队列中有多少命令 时认为命令队列满 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_06       Offset: 0x60     DDR2 667：0x0a04040603040003} \tabularnewline \hline 
-  TCKE           &    2:0     & ---  & ---  & 定义 CKE 信号最小脉宽 \tabularnewline
-  TRRD           &   18:16    & ---  & ---  & 需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline
-  TRTP           &   26:24    & ---  & ---  & 定义内存模组的读命令到 precharge 周期数，需要根据具体内存颗粒及运行频率进 行配置。 定义到不同 bank 的 active 命令时间间隔， \tabularnewline
-  TWR\_INT      &    34:32  & ---  & ---  & 定义内存模组的写恢复时间，需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline
-  TWTR          &    42:40  & ---  & ---  & 定义从写命令切换到读命令所需要的时钟周期数，需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline
-  WRLAT         &    50:48  & ---  & ---  & 写操作时写命令发出到接收到第一个数 据的时间（按时钟周期数），同时决定何 时使对应的 ODT 信号有效。 注：当 WRLAT = (CASLAT\_LIN /2)时， 会在不同 CS 读写之间加入一拍额外延 迟。 \tabularnewline
-  APREBIT       &    59:56  & ---  & ---  & 定义用哪位地址线向内存发出 autoprecharge 命令，一般为 bit 10。 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_07      Offset: 0x70          DDR2 667：0x0f0e0200000f0a0a} \tabularnewline \hline 
-  CASLAT\_LIN    &     3:0   & ---  & ---  & 当板上走线延迟为 DDR2 时钟周期的 0.5~1.5 倍：CASLAT\_LIN = CASLAT×2 小于 0.5 倍：CASLAT\_LIN = CASLAT× 2-1 大于 1.5 倍：CASLAT\_LIN = CASLAT× 2+1 （以半个时钟周期为单位） \tabularnewline
-  CS\_MAP        &    19:16  & ---  & ---  & 定义可用片选信号，本参数应当根据实际使用的片选个数进行正确的配置，不正确的配置将会导致错误的内存访问。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  INITAREF       &     43:40  & ---  & ---  & 定义系统初始化时所需要执行的 autorefresh 命令个数。DDR2 时设为 2， DDR3 时设为 0。 \tabularnewline
-  MAX\_COL\_REG  &     51:48  & ---  & ---  & 系统最大列地址个数（只读） \tabularnewline
-  MAX\_ROW\_REG  &     59:56  & ---  & ---  & 系统最大行地址个数（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_08      Offset: 0x80          DDR2 667：0x0102040801020408} \tabularnewline \hline 
-  ODT\_RD\_MAP\_CS0 & 3:0   & ---  & ---  & 定义 CS0 有读命令时，将指定的 CS 的 ODT 终端电阻有效，具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_RD\_MAP\_CS1 & 11:8  & ---  & ---  & ODT 终端电阻有效，        具体的配置应当参考相应的内存颗粒手册对于 ODT 配置的要求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_RD\_MAP\_CS2 & 19:16 & ---  & ---  & 定义 CS2 有读命令时，将指定的 CS 的 ODT 终端电阻有效， 具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要求。该参数的四位分别对应于 CS0- CS3 定义 CS1 有读命令时，将指定的 CS 的 \tabularnewline
-  ODT\_RD\_MAP\_CS3 & 27:24 & ---  & ---  & 定义 CS3 有读命令时，将指定的 CS 的 ODT 终端电阻有效，     具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_WR\_MAP\_CS0 & 35:32   & ---  & ---  & 定义 CS0 有写命令时，将指定的 CS 的 ODT 终端电阻有效，        具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要 求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_WR\_MAP\_CS1 & 43:40   & ---  & ---  & 定义 CS1 有写命令时，将指定的 CS 的 ODT 终端电阻有效，        具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要 求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_WR\_MAP\_CS2 & 51:48   & ---  & ---  & 定义 CS2 有写命令时，将指定的 CS 的 ODT 终端电阻有效，        具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要 求。该参数的四位分别对应于 CS0- CS3 \tabularnewline
-  ODT\_WR\_MAP\_CS3 & 59:56   & ---  & ---  & 定义 CS3 有写命令时，将指定的 CS 的 ODT 终端电阻有效，        具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要 求。该参数的四位分别对应于 CS0- CS3 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_09       Offset: 0x90        DDR2 667：0x0000050b00000000} \tabularnewline \hline 
-  PORT\_CMD\_ERROR\_TYPE & 19:16 & ---  & ---  & 端口上发生命令错误的类型（只读） 位 0 – 数据位宽过大 位 1 – 关键字优先操作地址未对齐 位 2 – 关键字优先操作字数不是 2 幂 位 3 – narrow transform 出错 \tabularnewline
-  TDAL                  & 35:32 & ---  & ---  & 当 auto-precharge 参数设置后，该参数定义了 auto-precharge 和 write recovery 时 钟周期数。 TDAL = auto-precharge + write recovery 该参数仅在设置了 AP 之后才生效。 \tabularnewline
-  TRP                   & 43:40 & ---  & ---  & 定义内存模组执行 pre-charge 所需要的时钟周期数，需要根据具体内存颗粒及运 行频率进行配置。 \tabularnewline
-  OCD\_ADJUST\_PDN\_CS0 & 52:48 & ---  & ---  & 设置内存模组片选 0 OCD 下拉调整值。内存控制器将在初始化时根据这个参数 的值向内存模组发出 OCD 调整命令 \tabularnewline
-  OCD\_ADJUST\_PUPP\_CS0& 60:56 & ---  & ---  & 设置内存模组片选 0 OCD 上拉调整值。 内存控制器将在初始化时根据这个参数的值向内存模组发出 OCD 调整命令 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_10       Offset: 0xa0 DDR2 667：0x0000003f3f140612} \tabularnewline \hline 
-  TFAW         &      4:0  & ---  & ---  & 定义内存模组 tFAW 参数，8 个逻辑 bank 时使用 \tabularnewline
-  TMRD         &      12:8 & ---  & ---  & 定义配置内存模组模式寄存器需要的时 钟周期数，通常为 2 个周期 \tabularnewline
-  TRC          &     20:16 & ---  & ---  & 定义对内存模组同一 bank 的 active 命令 之间的时钟周期数，需要根据具体内存颗 粒及运行频率进行配置。 \tabularnewline
-  AGE\_COUNT   &     29:24 & ---  & ---  & 定义命令队列重排序逻辑使用 aging 算法时每个命令的 aging 初始值 \tabularnewline
-  COMMAND\_AGE\_COUNT & 37:32   & ---  & ---  & 定义命令队列重排序逻辑使用 aging 算法时每个命令的 aging 初始值 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_12       Offset: 0xc0          DDR2 667：0x00002c0511000000} \tabularnewline \hline 
-  ECC\_C\_SYND          &  7:0   & ---  & ---  & 发生 1bit 可纠错错误时的原因（只读） \tabularnewline
-  ECC\_U\_SYND          &  15:8  & ---  & ---  & 发生 2bit 不可纠错误时的原因（只读） \tabularnewline
-  OUT\_OF\_RANGE\_LENGTH& 23:16  & ---  & ---  & 发生越界访问时的命令长度（只读） \tabularnewline
-  TRAS\_MIN             & 31:24  & ---  & ---  & 定义内存模组行地址有效命令的最小时钟周期数 \tabularnewline
-  TRCD\_INT       &  39:32    & ---  & ---  & 定义内存模组 RAS 到 CAS 之间的时钟周 期数，需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline
-  TRFC            &  47:40    & ---  & ---  & 定义内存模组刷新操作需要的时钟周期 数，需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_17       Offset: 0x110       DDR2 667：0x0000000000000c2d} \tabularnewline \hline 
-  TREF            &   13:0     & ---  & ---  & 定义内存模组两次刷新命令的时钟间隔， 需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline
-  EMRS2\_DATA\_0    &  46:32  & ---  & ---  & 定义内存模组初始化时，片选 0 对应的 EMRS2 数据 \tabularnewline
-  EMRS2\_DATA\_1    &  62:48  & ---  & ---  & 定义内存模组初始化时，片选 1 对应的EMRS2 数据 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_18       Offset: 0x120      DDR2 667：0x001c000000000000} \tabularnewline \hline 
-  EMRS2\_DATA\_2     &  14:0  & ---  & ---  & 定义内存模组初始化时，片选 2 对应的 EMRS2 数据 \tabularnewline
-  EMRS2\_DATA\_3     & 30:16  & ---  & ---  & 定义内存模组初始化时，片选 3 对应的 EMRS2 数据 \tabularnewline
-  AXI0\_EN\_LT\_WIDTH\_INSTR & 63:48 & ---  & ---  &   定义 AXI0 端口是否接收小于 64 位位宽的内存访问 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_19        Offset: 0x130      DDR2 667：0x6d56000302000000} \tabularnewline \hline 
-  TCPD          &     15:0 & ---  & ---  & 定义内存模组时钟有效到 precharge 之间 的时钟周期数，需要根据具体内存颗粒及 运行频率进行配置。 \tabularnewline
-  TDLL          &    31:16 & ---  & ---  & 定义内存模组 DLL 锁定需要的时钟周期数 \tabularnewline
-  TPDEX            & 47:32  & ---  & ---  & 定义内存模组掉电退出命令的时钟周期数 \tabularnewline
-  TRAS\_MAX        & 63:48  & ---  & ---  & 定义内存模组行有效命令的最大时钟周 期数，需要根据具体内存颗粒及运行频率进行配置。 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_20      Offset: 0x140        DDR2 667：0x0000204002000030} \tabularnewline \hline 
-  TXSNR            &  15:0 & ---  & ---  & 定义内存模组 tXSNR 参数 \tabularnewline
-  TXSR             & 31:16 & ---  & ---  & 定义内存模组自刷新退出需要的时钟周 期数 \tabularnewline
-  VERSION         & 47:32  & ---  & ---  & 定义内存控制器版本号（只读） \tabularnewline
-  XOR\_CHECK\_BITS& 63:48  & ---  & ---  & 当 fwc 参数设定时，下次写操作的 check bit 将会与该参数进行异或后写入内存 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_21 Offset: 0x150  DDR2 667：0x0000000000000004} \tabularnewline \hline 
-  TINIT        &  23:0 & ---  & ---  &  定义内存模组初始化需要的时钟周期数，需要根据具体内存颗粒及运行频率进行配置。一般为 200us \tabularnewline
-  ECC\_C\_ADDR & 60:24 & ---  & ---  & 记录发生 1bit ECC 错误时的地址信息 （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_22      Offset: 0x160         DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  ECC\_U\_ADDR & 36:0  & ---  & ---  & 记录发生 2bit ECC 错误时的地址信息（只 读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_23      Offset: 0x170         DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  OUT\_OF\_RANGE\_ADDR & 36:0 & ---  & ---  & 记录发生越界访问时的地址信息（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_24       Offset: 0x180      DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PORT\_CMD\_ERROR\_ADDR  & 36:0 & ---  & ---  & 记录端口发生命令错误时的地址信息（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_25       Offset: 0x190         DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  ECC\_C\_DATA & 63:0 & ---  & ---  & 记录发生 1bit ECC 错误时的数据信息   （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_26       Offset: 0x1a0          DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  ECC\_U\_DATA & 63:0 & ---  & ---  & 记录发生 2bit ECC 错误时的数据信息   （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_27   [31:0]       Offset: 0x1b0           DDR2 667：0x00000000} \tabularnewline \hline 
-  CKE\_DELAY        & 2:0 & ---  & ---  & CKE 有效延迟。注：用于控制内部 srefresh\_enter 命令的响应时间，对于龙芯 3 号无效。 \tabularnewline \hhline
-
-  \multicolumn{5}{|l|}{CONF\_CTL\_29       Offset: 0x1d0         DDR2 667：0x0103070400000101} \tabularnewline \hline 
-  DRIVE\_DQ\_DQS         &   0:0   & ---  & ---  & 设置当控制器空闲时是否驱动数据总线 \tabularnewline
-  ODT\_ALT\_EN           &   8:8   & ---  & ---  & 是否支持 CAS＝3 时的 ODT 信号。注：对于龙芯 3 号，无效 \tabularnewline
-  DRAM\_CLK\_DISABLE     & 19:16   & ---  & ---  &  \tabularnewline
-  TDFI\_CTRLUPD\_MIN     & 35:32   & ---  & ---  & （只读） \tabularnewline
-  TDFI\_PHY\_RDLAT       & 44:40   & ---  & ---  & 设置读命令发出到读数据返回间隔的周期数 \tabularnewline
-  TDFI\_PHY\_WRLAT       & 51:48   & ---  & ---  & 用于显示实际从写命令发出到写数据发出间隔的周期数（只读） \tabularnewline
-  TDFI\_PHY\_WRLAT\_BASE & 59:56   & ---  & ---  & 设置 DDR PHY 中写数据需加入的延迟。 对于龙芯 3 号这个值应为 2 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_30      Offset: 0x1e0       DDR2 667：0x0c2d0c2d0c2d0205} \tabularnewline \hline 
-  TDFI\_RDDATA\_EN      &  4:0   & ---  & ---  & 用于显示从读命令发出到读数据返回的 实际周期数 \tabularnewline
-  TDFI\_RDDATA\_EN\_BASE& 12:8   & ---  & ---  & DDR PHY 内部读命令发出到读返回的基本时间。对于龙芯 3 号这个值为 2 \tabularnewline
-  TDFI\_CTRLUPD\_MAX    & 29:16  & ---  & ---  & 这个值等于 TREF（只读） \tabularnewline
-  TDFI\_PHYUPD\_RESP    & 45:32  & ---  & ---  & 这个值等于 TREF（只读） \tabularnewline
-  TDFI\_PHYUPD\_TYPE0   &  61:48 & ---  & ---  & 这个值等于 TREF（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_31      Offset: 0x1f0     DDR2 667：0x00200e8000000000} \tabularnewline \hline 
-  DFT\_CTRL\_REG       &7:0   & ---  & ---  &  测试使能信号，0x0 为正常工作模式 \tabularnewline
-  DLL\_CTRL\_REG\_0\_0 &63:32 & ---  & ---  &  第 0 数据组（DQ7-DQ0）DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_32      Offset: 0x200    DDR2 667：0x00200e8000200e80} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_0\_1 &  31:0 & ---  & ---  & 第 1 数据组（DQ15-DQ8） DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_0\_2 & 63:32 & ---  & ---  & 第 2 数据组（DQ23-DQ16）DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_33      Offset: 0x210      DDR2 667：0x00200e8000200e80} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_0\_3  & 31:0& ---  & ---  & 第 3 数据组（DQ31-DQ24）DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_0\_4  &63:32& ---  & ---  & 第 4 数据组（DQ39-DQ32）DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_34      Offset: 0x220    DDR2 667：0x00200e8000200e80} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_0\_5  & 31:0 & ---  & ---  & 第 5 数据组（DQ47-DQ40）DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_0\_6  &63:32 & ---  & ---  & 第 6 数据组（DQ55-DQ48）DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_35      Offset: 0x230    DDR2 667：0x00200e8000200e80} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_0\_7 &  31:0 & ---  & ---  & 第 7 数据组（DQ63-DQ56）DLL 控制信 \tabularnewline
-  DLL\_CTRL\_REG\_0\_8 & 63:32 & ---  & ---  & 第 8 数据组（DQ71-DQ64）DLL 控制信 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_36      Offset: 0x240    DDR2 667：0x00000e0000000e00} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_1\_0 &  31:0  & ---  & ---  & 第 0 数据组 DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_1\_1 & 63:32  & ---  & ---  & 第 1 数据组 DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_37      Offset: 0x250      DDR2 667：0x00000e0000000e00} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_1\_2 &  31:0  & ---  & ---  & 第 2 数据组 DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_1\_3 & 63:32  & ---  & ---  & 第 3 数据组 DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_38      Offset: 0x260      DDR2 667：0x00000e0000000e00} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_1\_4 &  31:0  & ---  & ---  & 第 4 数据组 DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_1\_5 & 63:32  & ---  & ---  & 第 5 数据组 DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_39      Offset: 0x270    DDR2 667：0x00000e0000000e00} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_1\_6 &  31:0  & ---  & ---  & 第 6 数据组 DLL 控制信号 \tabularnewline
-  DLL\_CTRL\_REG\_1\_7 & 63:32  & ---  & ---  & 第 7 数据组 DLL 控制信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_40      Offset: 0x280      DDR2 667：0x0000000z00000e00} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_1\_8 &  31:0 & ---  & ---  & 第 8 数据组 DLL 控制信号 \tabularnewline
-  DLL\_OBS\_REG\_0\_0  & 33:32 & ---  & ---  & 测试模式下的第 0 数据组 DLL 输出     （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_41      Offset: 0x290    DDR2 667：0x0000000z0000000z} \tabularnewline \hline 
-  DLL\_OBS\_REG\_0\_1& 1:0     & ---  & ---  & 测试模式下的第 1 数据组 DLL 输出      （只读） \tabularnewline
-  DLL\_OBS\_REG\_0\_2& 33:32   & ---  & ---  & 测试模式下的第 2 数据组 DLL 输出      （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_42      Offset: 0x2a0   DDR2 667：0x0x0000000z0000000z} \tabularnewline \hline 
-  DLL\_OBS\_REG\_0\_3& 1:0    & ---  & ---  & 测试模式下的第 3 数据组 DLL 输出      （只读） \tabularnewline
-  DLL\_OBS\_REG\_0\_4& 33:32  & ---  & ---  & 测试模式下的第 4 数据组 DLL 输出      （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_43      Offset: 0x2b0   DDR2 667：0x0x0000000z0000000z} \tabularnewline \hline 
-  DLL\_OBS\_REG\_0\_5& 1:0   & ---  & ---  &测试模式下的第 5 数据组 DLL 输出      （只读） \tabularnewline
-  DLL\_OBS\_REG\_0\_6& 33:32 & ---  & ---  &测试模式下的第 6 数据组 DLL 输出      （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_44      Offset: 0x2c0   DDR2 667：0x0000000z0000000z} \tabularnewline \hline 
-  DLL\_OBS\_REG\_0\_7& 1:0    & ---  & ---  & 测试模式下的第 7 数据组 DLL 输出     （只读） \tabularnewline
-  DLL\_OBS\_REG\_0\_8& 33:32  & ---  & ---  & 测试模式下的第 8 数据组 DLL 输出      （只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_45      Offset: 0x2d0    DDR2 667：0xf30029470000019d} \tabularnewline \hline 
-  PAD\_CTRL\_REG\_0    & 25:0  & ---  & ---  & 引脚控制信号 \tabularnewline
-  PHY\_CTRL\_REG\_0\_0 & 63:32 & ---  & ---  & 第 0 数据组时延控制. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_46      Offset: 0x2e0  DDR2 667：0xf3002947f3002947} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_0\_1  & 31:0  & ---  & ---  & 第 1 数据组时延控制. \tabularnewline
-  PHY\_CTRL\_REG\_0\_2  & 63:32 & ---  & ---  & 第 2 数据组时延控制. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_47      Offset: 0x2f0  DDR2 667：0xf3002947f3002947} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_0\_3 & 31:0 & ---  & ---  & 第 3 数据组时延控制. \tabularnewline
-  PHY\_CTRL\_REG\_0\_4 & 63:32& ---  & ---  & 第 4 数据组时延控制. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_48      Offset: 0x300  DDR2 667：0xf3002947f3002947} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_0\_5 & 31:0  & ---  & ---  &第 5 数据组时延控制. \tabularnewline
-  PHY\_CTRL\_REG\_0\_6 & 63:32 & ---  & ---  &第 6 数据组时延控制. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_49      Offset: 0x310    DDR2 667：0xf3002947f3002947} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_0\_7 & 31:0 & ---  & ---  &第 7 数据组时延控制. \tabularnewline
-  PHY\_CTRL\_REG\_0\_8 & 63:32& ---  & ---  &第 8 数据组时延控制. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_50      Offset: 0x320    DDR2 667：0x07c0000007c00000} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_1\_0 &31:0 & ---  & ---  &第 0 数据组中 PAD 的终端电阻控制 \tabularnewline
-  PHY\_CTRL\_REG\_1\_1 &63:32& ---  & ---  & 第 1 数据组中 PAD 的终端电阻控制 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_51      Offset: 0x330  DDR2 667：0x07c0000007c00000} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_1\_2& 31:0 & ---  & ---  &第 2 数据组中 PAD 的终端电阻控制 \tabularnewline
-  PHY\_CTRL\_REG\_1\_3& 63:32& ---  & ---  & 第 3 数据组中 PAD 的终端电阻控制 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_52      Offset: 0x340 DDR2 667：0x07c0000007c00000} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_1\_4& 31:0  & ---  & ---  &第 4 数据组中 PAD 的终端电阻控制 \tabularnewline
-  PHY\_CTRL\_REG\_1\_5& 63:32 & ---  & ---  &第 5 数据组中 PAD 的终端电阻控制 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_53      Offset: 0x350 DDR2 667：0x07c0000007c00000} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_1\_6& 31:0  & ---  & ---  &第 6 数据组中 PAD 的终端电阻控制 \tabularnewline
-  PHY\_CTRL\_REG\_1\_7& 63:32 & ---  & ---  &第 7 数据组中 PAD 的终端电阻控制 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_54      Offset: 0x360 DDR2 667：0x0800c00507c00000} \tabularnewline \hline 
-  PHY\_CTRL\_REG\_1\_8&  31:0& ---  & ---  & 第 8 数据组中 PAD 的终端电阻控制 \tabularnewline
-  PHY\_CTRL\_REG\_2   & 63:32& ---  & ---  & 读写数据延迟控制 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_55      Offset: 0x370    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PHY\_OBS\_REG\_0\_0 &31:0  & ---  & ---  &第 0 数据组测试用观测信号（只读） \tabularnewline
-  PHY\_OBS\_REG\_0\_1 &63:32 & ---  & ---  &第 1 数据组测试用观测信号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_56      Offset: 0x380 DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PHY\_OBS\_REG\_0\_2  &31:0  & ---  & ---  &  第 2 数据组测试用观测信号（只读） \tabularnewline
-  PHY\_OBS\_REG\_0\_3  &63:32 & ---  & ---  &  第 3 数据组测试用观测信号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_57      Offset: 0x390     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PHY\_OBS\_REG\_0\_4& 31:0 & ---  & ---  &  第 4 数据组测试用观测信号（只读） \tabularnewline
-  PHY\_OBS\_REG\_0\_5& 63:32& ---  & ---  &  第 5 数据组测试用观测信号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_58      Offset: 0x3a0     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PHY\_OBS\_REG\_0\_6& 31:0 & ---  & ---  &  第 6 数据组测试用观测信号（只读） \tabularnewline
-  PHY\_OBS\_REG\_0\_7& 63:32& ---  & ---  &  第 7 数据组测试用观测信号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_59       Offset: 0x3b0     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  PHY\_OBS\_REG\_0\_8 & 31:0 & ---  & ---  &  第 8 数据组测试用观测信号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_113       Offset: 0x710    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  EN\_WR\_LEVELING & 48   & ---  & ---  & Write Leveling  功能使能信号。 一种 DDR3 的调试模式， 周期性向内在颗粒发送 DQ/DQS \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_114       Offset: 0x720      DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  SWLVL\_OP\_DONE                  &  8   & ---  & ---  & 用于指示软件 Leveling 是否完成（只读） \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_EN          &  24  & ---  & ---  & 使能 Read Leveling 寻找数据采样点功能 \tabularnewline
-  RDLVL\_EN                        &  32  & ---  & ---  & 使能 Read Leveling 功能 \tabularnewline
-  RDLVL\_GATE\_EN                  &  40  & ---  & ---  & 使能 Read Leveling 时读选通采样训练，在初始化完成后会向颗粒发送命令，进行读 DQS 采样窗口的训练 \tabularnewline
-  RDLVL\_GATE\_PREAMBLE\_CHECK\_EN &  48  & ---  & ---  & 开启读选通采样训练时的前导采样检查 \tabularnewline
-  RDLVL\_GATE\_REQ                 &  56  & ---  & ---  & 用户请求读选通采样训练功能.（只写） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_115       Offset: 0x730 DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_OFFSET\_DIR\_0 & 0    & ---  & ---  & 第 0 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_1 & 8    & ---  & ---  & 第 1 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_2 & 16   & ---  & ---  & 第 2 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_3 & 24   & ---  & ---  & 第 3 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_4 & 32   & ---  & ---  & 第 4 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_5 & 40   & ---  & ---  & 第 5 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_6 & 48   & ---  & ---  & 第 6 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline
-  RDLVL\_OFFSET\_DIR\_7 & 56   & ---  & ---  & 第 7 数据组 Read Leveling 时中点的调整方向为 0 时中点 计算为减去 rdlvl\_offset\_delay，为 1 则加 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_116     Offset: 0x740    DDR2 667：0x0100000000000000} \tabularnewline \hline 
-  RDLVL\_OFFSET\_DIR\_8                   & 0      & ---  & ---  &   第 8 数据组 Read Leveling 时中点的调整 方向？ \tabularnewline
-  NCY\_ CONTROLRDLVL\_REQ                 & 8      & ---  & ---  & 用户请求开始 Read Leveling 训练功能.  （只写） \tabularnewline
-  WEIGHTED\_ROUND\_ROBIN\_LATE            & 16     & ---  & ---  & Free-running or limited WRR latency counters. \tabularnewline
-  WEIGHTED\_ROUND\_ROBIN\_WEIGHT\_SHARING & 24     & ---  & ---  & Per-port pair shared arbitration for WRR \tabularnewline
-  WRLVL\_INTERVAL\_CT\_EN                 & 32     & ---  & ---  & 使能 Write Leveling 时间间隔功能 \tabularnewline
-  WRLVL\_REQ                              & 40     & ---  & ---  & 用户请求开始 Write Leveling 训练功能. （只写） \tabularnewline
-  AXI0\_PORT\_ORDERING                    & 49:48  & ---  & ---  & 内部端口 0 是否可乱序执行 \tabularnewline
-  AXI1\_PORT\_ORDERING                    & 57:56  & ---  & ---  & 内部端口 1 是否可乱序执行，对于龙芯 3号无效 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_117     Offset: 0x750     DDR2 667：0x0100000101020101} \tabularnewline \hline 
-  AXI1\_R\_PRIORITY    & 1:0    & ---  & ---  & 内部端口 1 的读操作优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI1\_W\_PRIORITY    & 9:8    & ---  & ---  &   内部端口 1 的写操作优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_PORT\_ORDERING & 17:16  & ---  & ---  &   内部端口 2 是否可乱序执行，对于龙芯 3号无效 \tabularnewline
-  AXI2\_R\_PRIORITY    & 25:24  & ---  & ---  & 内部端口 2 的读操作优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_W\_PRIORITY    & 33:32  & ---  & ---  &    内部端口 2 的写操作优先级，对于龙芯 3 号无效 \tabularnewline
-  RDLVL\_CS            & 41:40  & ---  & ---  & 指示当前 Read Leveling 操作的片选信号 \tabularnewline
-  SW\_LEVELING\_MODE   & 49:48  & ---  & ---  & 定义软件 Leveling 操作的模式 \tabularnewline
-  WRLVL\_CS            & 57:56  & ---  & ---  & 指示当前 Write Leveling 操作的片选信号 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_118     Offset: 0x760    DDR2 667：0x0303030000020001} \tabularnewline \hline 
-  ZQ\_ON\_SREF\_EXIT                  & 1:0   & ---  & ---  & 定义在退出自刷新模式时 ZQ 调整功能的模式 \tabularnewline
-  ZQ\_REQ                             & 9:8   & ---  & ---  & 用户请求开始 ZQ 调整功能 \tabularnewline
-  BSTLEN                              & 18:16 & ---  & ---  & 设置控制器上向内存模块发送的 Burst 长 度值 \tabularnewline
-  TDFI\_DRAM\_CLK\_DISABLE            & 26:24 & ---  & ---  & 从内部时钟关闭到外部时钟关闭的延迟设置 \tabularnewline
-  ADDRESS\_MIRRORING                  & 35:32 & ---  & ---  & 指示哪个片选支持 Address mirroring 功 能 \tabularnewline
-  AXI0\_PRIORITY0\_RELATIVE\_PRIORITY & 43:40 & ---  & ---  & 内部端口 0 优先级 0 的命令的相对优先级 \tabularnewline
-  AXI0\_PRIORITY1\_RELATIVE\_PRIORITY & 51:48 & ---  & ---  & 内部端口 0 优先级 1 的命令的相对优先级 \tabularnewline
-  AXI0\_PRIORITY2\_RELATIVE\_PRIORITY & 59:56 & ---  & ---  & 内部端口 0 优先级 2 的命令的相对优先级 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_119     Offset: 0x770    DDR2 667：0x0101010202020203} \tabularnewline \hline 
-  AXI0\_PRIORITY3\_RELATIVE\_PRIORITY &  0:3  & ---  & ---  & 内部端口 0 优先级 3 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI1\_PRIORITY0\_RELATIVE\_PRIORITY & 11:8  & ---  & ---  & 内部端口 1 优先级 0 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI1\_PRIORITY1\_RELATIVE\_PRIORITY & 19:16 & ---  & ---  & 内部端口 1 优先级 1 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI1\_PRIORITY2\_RELATIVE\_PRIORITY & 27:24 & ---  & ---  & 内部端口 1 优先级 2 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI1\_PRIORITY3\_RELATIVE\_PRIORITY & 35:32 & ---  & ---  & 内部端口 1 优先级 3 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_PRIORITY0\_RELATIVE\_PRIORITY & 43:40 & ---  & ---  & 内部端口 2 优先级 0 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_PRIORITY1\_RELATIVE\_PRIORITY & 51:48 & ---  & ---  & 内部端口 2 优先级 1 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_PRIORITY2\_RELATIVE\_PRIORITY & 59:56 & ---  & ---  & 内部端口 2 优先级 2 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_120     Offset: 0x780 DDR2 667：0x0102020400040c01} \tabularnewline \hline 
-  AXI2\_PRIORITY3\_RELATIVE\_PRIORITY  & 3:0   & ---  & ---  & 内部端口 2 优先级 3 的命令的相对优先级，对于龙芯 3 号无效 \tabularnewline
-  BURST\_ON\_FLY\_BIT                  & 11:8  & ---  & ---  & 对 DRAM 发 出 的 模 式 配 置 中 的 burst-on-fly 位 \tabularnewline
-  DRAM\_CLASS                          & 19:16 & ---  & ---  & 110：DDR3 100：DDR2 \tabularnewline
-  LOWPOWER\_REFRESH\_ENABLE            & 27:24 & ---  & ---  & 使能低功耗模式下的刷新功能定义控制器外接内存类型 \tabularnewline
-  RDLVL\_DQ\_ZERO\_COUNT               & 35:32 & ---  & ---  & 设置读 Read Leveling 时，表求由 1 到 0的 0 的个数 \tabularnewline
-  RDLVL\_GATE\_DQ\_ZERO\_COUNT         & 43:40 & ---  & ---  & 设置读选通采样训练时，表求由 1 到 0 的  0 的个数 \tabularnewline
-  TDFI\_CTRL\_DELAY                    & 51:48 & ---  & ---  & 从时钟有效到输出命令之间的延迟 \tabularnewline
-  TDFI\_DRAM\_CLK\_ENABLE              & 59:56 & ---  & ---  & 从内部时钟有效到输出时钟有效的延迟 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_121      Offset: 0x790 DDR2 667：0x281900000f000303} \tabularnewline \hline 
-  TDFI\_RDLVL\_DLL       &  7:0    & ---  & ---  & 读操作到 Read Leveling 更新延迟线数目的最小周期 \tabularnewline
-  TDFI\_WRLVL\_DLL       & 15:8    & ---  & ---  & 读操作到 Write Leveling 更新延迟线数目的最小周期 \tabularnewline
-  WRR\_PARAM\_VALUE\_ERR & 19:16   & ---  & ---  & Errors/warnings related to the WRR parameters. （只读） \tabularnewline
-  ZQCS\_CHIP             & 27:24   & ---  & ---  & 定义下次 ZQ 时的有效片选 \tabularnewline
-  LOWPOWER\_AUTO\_ENABLE & 36:32   & ---  & ---  &  使能当控制器内闲时自动进入低功耗模式 控 制 位 与 LOWERPOWER\_CONTROL 相同 \tabularnewline
-  LOWPOWER\_CONTROL      & 44:40   & ---  & ---  & 低功耗模式使能 Bit 4: power down Bit 3: power down external Bit 2: self refresh Bit 1: external Bit 0: internal \tabularnewline
-  WLDQSEN                & 53:48   & ---  & ---  & 从 对 DRAM 发 送 模 式 配 置 到 Write Leveling 的的选通数据采样延迟 \tabularnewline
-  WLMRD                  & 61:56   & ---  & ---  & 从 对 DRAM 发 送 模 式 配 置 到 Write Leveling 的延迟 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_122      Offset: 0x7a0      DDR2 667：0x00000000000000ff} \tabularnewline \hline 
-  DFI\_WRLVL\_MAX\_DELAY & 7:0     & ---  & ---  & Write leveling 延迟线的最大级数 \tabularnewline
-  SWLVL\_RESP\_0         & 15:8    & ---  & ---  & 第 0 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_1         & 23:16   & ---  & ---  & 第 1 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_2         & 31:24   & ---  & ---  & 第 2 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_3         & 39:32   & ---  & ---  & 第 3 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_4         & 47:40   & ---  & ---  & 第 4 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_5         & 55:48   & ---  & ---  & 第 5 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_6         & 63:56   & ---  & ---  & 第 6 数据组的 Leveling 响应 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_123      Offset: 0x7b0    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  SWLVL\_RESP\_7         &   7:0 & ---  & ---  & 第 7 数据组的 Leveling 响应 \tabularnewline
-  SWLVL\_RESP\_8         &   15: & ---  & ---  & 第 8 数据组的 Leveling 响应 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_0 & 23:16 & ---  & ---  &   第 0 数据组中，Read Leveling 时从第一 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_1 & 31:24 & ---  & ---  &   第 1 数据组中，Read Leveling 时从第一 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_2 & 39:32 & ---  & ---  &   第 2 数据组中，Read Leveling 时从第一 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_3 & 47:40 & ---  & ---  &   第 3 数据组中，Read Leveling 时从第一 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_4 & 55:48 & ---  & ---  &   第 4 数据组中，Read Leveling 时从第一 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_5 & 63:56 & ---  & ---  &   第 5 数据组中，Read Leveling 时从第一 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_124      Offset: 0x7c0     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_BEGIN\_DELAY\_6 &  7:0   & ---  & ---  &  第 6 数据组中，Read Leveling 时从第一 个 1 到 0 的延迟单元数目 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_7 &  15:8  & ---  & ---  &  第 7 数据组中，Read Leveling 时从第一 个 1 到 0 的延迟单元数目 \tabularnewline
-  RDLVL\_BEGIN\_DELAY\_8 &  23:16 & ---  & ---  &  第 8 数据组中，Read Leveling 时从第一 个 1 到 0 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_0   &  31:24 & ---  & ---  &  第 0 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_1   &  39:32 & ---  & ---  &  第 1 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_2   &  47:40 & ---  & ---  &  第 2 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_3   &  55:48 & ---  & ---  &  第 3 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_4   &  63:56 & ---  & ---  &  第 4 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_125      Offset: 0x7d0    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_END\_DELAY\_5        & 7:0   & ---  & ---  & 第 5 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_6        & 15:8  & ---  & ---  & 第 6 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_7        & 23:16 & ---  & ---  & 第 7 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_END\_DELAY\_8        & 31:34 & ---  & ---  & 第 8 数据组中，Read Leveling 时从第一 个 0 到 1 的延迟单元数目 \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_0 & 39:32 & ---  & ---  & 第 0 数据组中，读采样训练的起始值 \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_1 & 47:40 & ---  & ---  & 第 1 数据组中，读采样训练的起始值 \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_2 & 55:48 & ---  & ---  & 第 2 数据组中，读采样训练的起始值 \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_3 & 63:56 & ---  & ---  & 第 3 数据组中，读采样训练的起始值 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_126      Offset: 0x7e0     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_GATE\_CLK\_ADJUST\_4  &   7:0    & ---  & ---  & 第 4 数据组，读采样训练的起始值  \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_5  &   15:8   & ---  & ---  & 第 5 数据组，读采样训练的起始值                                    \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_6  & 23:16    & ---  & ---  & 第 6 数据组，读采样训练的起始值                                    \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_7  & 31:24    & ---  & ---  & 第 7 数据组，读采样训练的起始值                                    \tabularnewline
-  RDLVL\_GATE\_CLK\_ADJUST\_8  & 39:32    & ---  & ---  & 第 8 数据组，读采样训练的起始值 \tabularnewline
-  RDLVL\_GATE\_DELAY\_0        & 47:40    & ---  & ---  & 第 0 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_1        & 55:48    & ---  & ---  & 第 1 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_2        & 63:56    & ---  & ---  & 第 2 数据组，采样时机到选通信号上升沿周期数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_127      Offset: 0x7f0     DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_GATE\_DELAY\_3   & 7:0   & ---  & ---  &  第 3 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_4   & 15:8  & ---  & ---  &  第 4 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_5   & 23:16 & ---  & ---  &  第 5 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_6   & 31:24 & ---  & ---  &  第 6 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_7   & 39:32 & ---  & ---  &  第 7 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  RDLVL\_GATE\_DELAY\_8   & 47:40 & ---  & ---  &  第 8 数据组，采样时机到选通信号上升沿周期数 \tabularnewline
-  {\footnotesize RDLVL\_GATE\_MAX\_DELAY} & 55:48 & ---  & ---  & 采样延迟线的最大数目 \tabularnewline
-  RDLVL\_MAX\_DELAY       & 63:56 & ---  & ---  & Read Leveling 延迟线的最大数目 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_128      Offset: 0x800     DDR2 667：0x0e0e0e0e0e0e0e0e} \tabularnewline \hline 
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_0} &   7:0  & ---  & ---  & 第 0 数据组数据延迟中点  \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_1} &   15:8 & ---  & ---  & 第 1 数据组数据延迟中点                                      \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_2} & 23:16  & ---  & ---  & 第 2 数据组数据延迟中点                                      \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_3} & 31:24  & ---  & ---  & 第 3 数据组数据延迟中点                                      \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_4} & 39:32  & ---  & ---  & 第 4 数据组数据延迟中点                                     \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_5} & 47:40  & ---  & ---  & 第 5 数据组数据延迟中点                                     \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_6} & 55:48  & ---  & ---  & 第 6 数据组数据延迟中点                                      \tabularnewline
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_7} & 63:56  & ---  & ---  & 第 7 数据组数据延迟中点 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_129      Offset: 0x810    DDR2 667：0x000000000000000e} \tabularnewline \hline                                             
-  {\footnotesize RDLVL\_MIDPOINT\_DELAY\_8} &   7:0  & ---  & ---  & 第 8 数据组，计算得出的数据延迟中点 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_0}   &   15:8 & ---  & ---  & 第 0 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_1}   & 23:16  & ---  & ---  & 第 1 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_2}   & 31:24  & ---  & ---  & 第 2 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_3}   & 39:32  & ---  & ---  & 第 3 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_4}   & 47:40  & ---  & ---  & 第 4 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_5}   & 55:48  & ---  & ---  & 第 5 数据组，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_6}   & 63:56  & ---  & ---  & 第 6 数据组，到 Read Leveling 中点的偏移 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_130      Offset: 0x820    DDR2 667：0x0420000c20400000} \tabularnewline \hline 
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_7}   & 7:0  & ---  & ---  & 第 7 数据组中，到 Read Leveling 中点的偏移 \tabularnewline
-  {\footnotesize RDLVL\_OFFSET\_DELAY\_8}  &15:8  & ---  & ---  &   第 8 数据组中，到 Read Leveling 中点的偏移 \tabularnewline
-  REFRESH\_PER\_ZQ          &23:16 & ---  & ---  & 自动 ZQCS 命令之间的刷新命令数目 \tabularnewline
-  TDFI\_RDLVL\_RESP         &31:24 & ---  & ---  & Read Leveling 请求到该模式使能的最大周期数 \tabularnewline
-  {\footnotesize TDFI\_RDLVL\_RESPLAT}      &39:32 & ---  & ---  & Read Leveling 选通到响应有效的周期数 \tabularnewline
-  TDFI\_RDLVL\_RR           &47:40 & ---  & ---  & Read Leveling 中读请求之间的最小周期间隔 \tabularnewline
-  TDFI\_WRLVL\_RES          &55:48 & ---  & ---  & Write Leveling 请求到该模式使能的最大周期数 \tabularnewline
-  {\footnotesize TDFI\_WRLVL\_RESPLAT}      &63:56 & ---  & ---  & Write Leveling 选通到响应有效的周期数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_131      Offset: 0x830   DDR2 667：0x0000000000000c0a} \tabularnewline \hline 
-  TDFI\_WRLVL\_WW    &   7:0     & ---  & ---  & Write Leveling 选 通之间的最小周期数 \tabularnewline
-  TMOD               &  15:8     & ---  & ---  & DRAM 模式配置后需空闲的周期数 \tabularnewline
-  WRLVL\_DELAY\_0    & 23:16     & ---  & ---  & 第 0 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_1    & 31:24     & ---  & ---  & 第 1 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_2    & 39:32     & ---  & ---  & 第 2 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_3    & 47:40     & ---  & ---  & 第 3 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_4    & 55:48     & ---  & ---  & 第 4 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_5    & 63:56     & ---  & ---  & 第 5 数据组的在 EN\_WR\_LEVELING 无 效 且      SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_132      Offset: 0x840   DDR2 667：0x0000640064000000} \tabularnewline \hline 
-  WRLVL\_DELAY\_6             &   7:0   & ---  & ---  & 第 6 数据组的在 EN\_WR\_LEVELING 无 效 且    SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_7             &   15:8  & ---  & ---  & 第 7 数据组的在 EN\_WR\_LEVELING 无 效 且    SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  WRLVL\_DELAY\_8             & 23:16   & ---  & ---  & 第 8 数据组的在 EN\_WR\_LEVELING 无 效 且    SW\_LEVELING\_MODE=1 ， SWLVL\_MODE=1 时控制写 DQS 经 DLL 延迟数 \tabularnewline
-  {\footnotesize AXI0\_PRIORITY\_RELAX}       & 33:24   & ---  & ---  &   内部端口 0 上触发优先控制放松的计数器值 \tabularnewline
-  {\footnotesize AXI1\_PRIORITY\_RELAX}       & 49:40   & ---  & ---  &   内部端口 1 上触发优先控制放松的计数器值，对于龙芯 3 号无效 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_133      Offset: 0x850    DDR2 667：0x0000000000000064} \tabularnewline \hline 
-  {\footnotesize AXI2\_PRIORITY\_RELAX}       &  9:0   & ---  & ---  &  内部端口 2 上触发优先控制放松的计数器 值，对于龙芯 3 号无效 \tabularnewline
-  ECC\_C\_ID                  &25:16   & ---  & ---  & 访问出现 1 位错请求的 ID 号（只读） \tabularnewline
-  ECC\_U\_ID                  &41:32   & ---  & ---  & 访问出现 2 位错请求的 ID 号（只读） \tabularnewline
-  OUT\_OF\_RANGE\_ SOURCE\_ID  &57:48   & ---  & ---  & 访问地址溢出请求的 ID 号（只读） \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_134      Offset: 0x860    DDR2 667：0x0200004000000000} \tabularnewline \hline 
-  PORT\_CMD\_ERROR\_ID  &   9:0   & ---  & ---  & 内部端口命令错请求的 ID 号（只读） \tabularnewline
-  {\footnotesize PORT\_DATA\_ERROR\_ID} & 25:16   & ---  & ---  & 内部端口数据错请求的 ID 号（只读） \tabularnewline
-  ZQCS                  & 43:32   & ---  & ---  & ZQCS 命令需要的周期数 \tabularnewline
-  ZQINI                 & 59:48   & ---  & ---  & ZQCL 命令需要的周期数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_135      Offset: 0x870    DDR2 667：0x0002000200020002} \tabularnewline \hline 
-  EMRS1\_DATA\_0  &      15:0   & ---  & ---  & 对应片选 0 的模式寄存器 1 配置值 \tabularnewline
-  EMRS1\_DATA\_1  &    31:16    & ---  & ---  & 对应片选 1 的模式寄存器 1 配置值 \tabularnewline
-  EMRS1\_DATA\_2  &    47:32    & ---  & ---  & 对应片选 2 的模式寄存器 1 配置值 \tabularnewline
-  EMRS1\_DATA\_3  &    62:48    & ---  & ---  & 对应片选 3 的模式寄存器 1 配置值 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_136      Offset: 0x880   DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  EMRS3\_DATA\_0     &   15:0 & ---  & ---  & 对应片选 0 的模式寄存器 3 配置值 \tabularnewline
-  EMRS3\_DATA\_1     & 31:16  & ---  & ---  & 对应片选 1 的模式寄存器 3 配置值 \tabularnewline
-  EMRS3\_DATA\_2     & 47:32  & ---  & ---  & 对应片选 2 的模式寄存器 3 配置值 \tabularnewline
-  EMRS3\_DATA\_3     & 62:48  & ---  & ---  & 对应片选 3 的模式寄存器 3 配置值 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_137      Offset: 0x890     DDR2 667：0x0a520a520a520a52} \tabularnewline \hline 
-  MRS\_DATA\_0 &         15:0 & ---  & ---  & 对应片选 0 的模式寄存器 0 配置值 \tabularnewline
-  MRS\_DATA\_1 &       31:16  & ---  & ---  & 对应片选 1 的模式寄存器 0 配置值 \tabularnewline
-  MRS\_DATA\_2 &       47:32  & ---  & ---  & 对应片选 2 的模式寄存器 0 配置值 \tabularnewline
-  MRS\_DATA\_3 &       62:48  & ---  & ---  & 对应片选 3 的模式寄存器 0 配置值 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_138      Offset: 0x8a0    DDR2 667：0x00000000001c001c} \tabularnewline \hline 
-  AXI1\_EN\_SIZE\_LT \_WIDTH\_INSTR &  15:0 & ---  & ---  &   使能内部端口 1 上的各种窄访问，对于龙芯 3 号无效 \tabularnewline
-  AXI2\_EN\_SIZE\_LT \_WIDTH\_INSTR & 31:16 & ---  & ---  &   使能内部端口 2 上的各种窄访问，对于龙芯 3 号无效 \tabularnewline
-  {\footnotesize LOWPOWER\_EXTERNAL\_CNT}         & 47:32 & ---  & ---  & Counts idle cycles to self-refresh with memory clock gating. \tabularnewline
-  {\footnotesize LOWPOWER\_INTERNAL\_CNT}         & 63:48 & ---  & ---  & Counts idle cycles to self-refresh with memory and controller clk gating. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_139      Offset: 0x8b0   DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  LOWPOWER\_SELF\_REFRESH\_CNT & 47:32   & ---  & ---  & 进入内存自刷新前所需周期数 \tabularnewline
-  REFRESH\_PER\_RDLVL          & 63:48   & ---  & ---  & 自动 Read Leveling 命令之间的刷新命令数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_140      Offset: 0x8c0   DDR2 667：0x0004000000000000} \tabularnewline \hline 
-  {\footnotesize REFRESH\_PER\_RDLVL\_GATE} & 15:0    & ---  & ---  &    自动采样训练命令之间刷新命令数 \tabularnewline
-  TDFI\_RDLVL\_MAX          & 31:16   & ---  & ---  & 与响应之间的最大周期数 \tabularnewline
-  TDFI\_WRLVL\_MAX          & 47:32   & ---  & ---  & 在 PHY Eval 模式下，Write Leveling 使能与响应之间的最大周期数在 PHY Eval 模式下，     Read Leveling 使能 \tabularnewline
-  WRLVL\_INTERVAL           & 63:48   & ---  & ---  & 自动 Write Leveling 命令之间的刷新命令数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_141      Offset: 0x8d0      DDR2 667：0x00000000c8000000} \tabularnewline \hline 
-  WRLVL\_STATUS        & 17:0  & ---  & ---  & 最近一次 Write Leveling 操作状态             （只读） \tabularnewline
-  CKE\_INACTIVE        & 55:24 & ---  & ---  & 从输出 DDR\_RESET 有效到 CKE 有效的时间间隔高位 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_142      Offset: 0x8e0      DDR2 667：0x0000000000000050} \tabularnewline \hline 
-  TRST\_PWRON   &      31:0& ---  & ---  & 从 start 有效 500 拍后到 DDR\_RESET有效之间的延迟 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_143      Offset: 0x8f0    DDR2 667：0x0000000000000080} \tabularnewline \hline 
-  DLL\_CTRL\_REG\_2[31:0] & 31:0   & ---  & ---  & 输出时钟 DLL 控制 ：输出时钟
-                                                    DLL 上 CLK4 与 CLK5 的延迟
-                                                    23:16：输出时钟 DLL 上 CLK2
-                                                    与 CLK3的延迟 15:8：
-                                                    输出时钟 DLL 上 CLK0 与
-                                                    CLK1 的延迟 7:0：输出时钟
-                                                    DLL 上精度值 \tabularnewline
-  DLL\_CTRL\_REG\_2[32]   & 32:32  & ---  & ---  & 输出时钟 DLL 使能信号，高有效 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_144      Offset: 0x900      DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  {\footnotesize RDLVL\_ERROR\_STATUS}  & 37:0 & ---  & ---  & Identifies the source of any read leveling errors. \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_145      Offset: 0x910    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_GATE\_ RESP\_MASK[63:0] & 63:0 & ---  & ---  & 采样训练中读返回屏蔽 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_146      Offset: 0x920      DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  RDLVL\_GATE\_ RESP\_MASK[71:64] & 7:0 & ---  & ---  & 采样训练中读返回屏蔽 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_147      Offset: 0x930    DDR2 667：0x0000000000000000} \tabularnewline \hline 
-  {\footnotesize RDLVL\_RESP\_MASK[63:0]} & 63:0 & ---  & ---  & Read Leveling 中读返回屏蔽 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_148      Offset: 0x940      DDR2 667：0x0300000000050500} \tabularnewline \hline 
-  {\footnotesize RDLVL\_RESP\_MASK[71:64]}
-                           &   7:0  & ---  & ---  &  Read Leveling 中读返回屏蔽 \tabularnewline
-  CKSRE                    &  11:8  & ---  & ---  & 进入自刷新模式的时钟周期延迟 \tabularnewline
-  CKSRX                    & 19:16  & ---  & ---  & 退出自刷新模式的时钟周期延迟 \tabularnewline
-  RDLVL\_EDGE              &    24  & ---  & ---  & Read Leveling 操作中，   指明 DQS 上升沿 有效或下降沿有效 \tabularnewline
-  LVL\_STATUS              & 34:32  & ---  & ---  & Write Leveling，Read Leveling 与采样训练请求的状态，用于 LVL\_REQ 中断（只读） \tabularnewline
-  W2R\_DIFFCS\_DLY         & 42:40  & ---  & ---  & 对不同片选信号，写到读之间的附加延迟 \tabularnewline
-  W2R\_SAMECS\_DLY         & 50:48  & ---  & ---  &  对同一个片选信号，写到读之间的附加延迟 \tabularnewline
-  TDFI\_RDLVL\_EN          & 59:56  & ---  & ---  & Read Leveling 使能到 Read Leveling 读之间的最小周期数 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_149      Offset: 0x950      DDR2 667：0x0000000000000a03} \tabularnewline \hline 
-  TDFI\_WRLVL\_EN  &    3:0  & ---  & ---  & Write Leveling 使能到 Write Leveling 读操作最小周期数 \tabularnewline
-  TXPDLL           &   23:8  & ---  & ---  & DRAM TXPDLL parameter in cycles. \tabularnewline
-  INT\_MASK        &  41:24  & ---  & ---  & 中断屏蔽 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_150      Offset: 0x960    DDR2 667：0x0504000000000000} \tabularnewline \hline 
-  SWLVL\_LOAD    &       32   & ---  & ---  & 软件 Leveling 模式下读操作（只写） \tabularnewline
-  SWLVL\_START   &       40   & ---  & ---  & 使能软件 Leveling 模式（只写） \tabularnewline
-  WRLAT\_ADJ     &    51:48   & ---  & ---  & PHY 写延迟周期 \tabularnewline
-  RDLAT\_ADJ     &    60:56   & ---  & ---  & PHY 读延迟周期 \tabularnewline \hhline
-  
-  \multicolumn{5}{|l|}{CONF\_CTL\_151      Offset: 0x970 DDR2 667：0x000000000003e805} \tabularnewline \hline 
-  DLL\_RST\_ADJ\_DLY & 7:0   & ---  & ---  & 配置 DLL 精度到 DLL 复位结束的最小周期数 \tabularnewline
-  DLL\_RST\_DELAY    &  23:8 & ---  & ---  & DLL 复位最小周期数 \tabularnewline
-  INT\_ACK           & 40:24 & ---  & ---  & 中断清除 （只写） \tabularnewline
 \end{longtable}
 
-定义 CS3 有读、写命令时，将指定的 CS 的 ODT 终端电阻有效，
-具体的配置应当参考 相应的内存颗粒手册对于 ODT 配置的要
-求。该参数的四位分别对应于 CS0- CS3
+0x0A0 Dq_oe_end_4       Dq_oe_begin_4 Dq_stop_edge_4 Dq_start_edge_4 Rddata_delay_4         Rddqs_lt_half_4 Wrdqs_lt_half_4     Wrdq_lt_half_4
+0x0A8 Rd_oe_end_4       Rd_oe_begin_4 Rd_stop_edge_4 Rd_start_edge_4 Dqs_oe_end_4           Dqs_oe_begin_4 Dqs_stop_edge_4 Dqs_start_edge_4
+0x0B0                                                   Wrdq_clkdelay_4 Odt_oe_end_4        Odt_oe_begin_4 Odt_stop_edge_4      Odt_start_edge_4
+0x0B8                                                   Dll_rddqs_n_4   Dll_rddqs_p_4   Dll_wrdqs_4     Dll_wrdata_4      Dll_gate_4
+0x0C0 Dq_oe_end_5        Dq_oe_begin_5 Dq_stop_edge_5 Dq_start_edge_5 Rddata_delay_5    Rddqs_lt_half_5 Wrdqs_lt_half_5   Wrdq_lt_half_5
+0x0C8 Rd_oe_end_5        Rd_oe_begin_5 Rd_stop_edge_5 Rd_start_edge_5 Dqs_oe_end_5      Dqs_oe_begin_5 Dqs_stop_edge_5 Dqs_start_edge_5
+0x0D0                                                   Wrdq_clkdelay_5 Odt_oe_end_5    Odt_oe_begin_5 Odt_stop_edge_5    Odt_start_edge_5
+0x0D8                                                   Dll_rddqs_n_5   Dll_rddqs_p_5   Dll_wrdqs_5     Dll_wrdata_5      Dll_gate_5
+0x0E0 Dq_oe_end_6        Dq_oe_begin_6 Dq_stop_edge_6 Dq_start_edge_6 Rddata_delay_6    Rddqs_lt_half_6 Wrdqs_lt_half_6   Wrdq_lt_half_6
+0x0E8 Rd_oe_end_6        Rd_oe_begin_6 Rd_stop_edge_6 Rd_start_edge_6 Dqs_oe_end_6      Dqs_oe_begin_6 Dqs_stop_edge_6 Dqs_start_edge_6
+0x0F0                                                   Wrdq_clkdelay_6 Odt_oe_end_6    Odt_oe_begin_6 Odt_stop_edge_6    Odt_start_edge_6
+0x0F8                                                   Dll_rddqs_n_6   Dll_rddqs_p_6   Dll_wrdqs_6     Dll_wrdata_6      Dll_gate_6
+0x100 Dq_oe_end_7        Dq_oe_begin_7 Dq_stop_edge_7 Dq_start_edge_7 Rddata_delay_7    Rddqs_lt_half_7 Wrdqs_lt_half_7   Wrdq_lt_half_7
+0x108 Rd_oe_end_7        Rd_oe_begin_7 Rd_stop_edge_7 Rd_start_edge_7 Dqs_oe_end_7      Dqs_oe_begin_7 Dqs_stop_edge_7 Dqs_start_edge_7
+0x110                                                   Wrdq_clkdelay_7 Odt_oe_end_7    Odt_oe_begin_7 Odt_stop_edge_7    Odt_start_edge_7
+0x118                                                   Dll_rddqs_n_7   Dll_rddqs_p_7   Dll_wrdqs_7     Dll_wrdata_7      Dll_gate_7
+0x120 Dq_oe_end_8        Dq_oe_begin_8 Dq_stop_edge_8 Dq_start_edge_8 Rddata_delay_8    Rddqs_lt_half_8 Wrdqs_lt_half_8   Wrdq_lt_half_8
+0x128 Rd_oe_end_8        Rd_oe_begin_8 Rd_stop_edge_8 Rd_start_edge_8 Dqs_oe_end_8      Dqs_oe_begin_8 Dqs_stop_edge_8 Dqs_start_edge_8
+0x130                                                   Wrdq_clkdelay_8 Odt_oe_end_8    Odt_oe_begin_8 Odt_stop_edge_8    Odt_start_edge_8
+0x138                                                   Dll_rddqs_n_8   Dll_rddqs_p_8   Dll_wrdqs_8     Dll_wrdata_8      Dll_gate_8
+0x140 Pad_ocd_clk        Pad_ocd_ctl    Pad_ocd_dqs     Pad_ocd_dq      Pad_enzi                        Pad_en_ctl        Pad_en_clk
+0x148 Pad_adj_code_dqs   Pad_code_dqs   Pad_adj_code_dqPad_code_dq                      Pad_vref_internalPad_odt_se       Pad_modezi1v8
+0x150                                   Pad_adj_code_clkPad_code_lk     Pad_adj_code_cmd Pad_code_cmd   Pad_adj_code_addr Pad_code_addr
+0x158                                   Pad_comp_okn Pad_comp_code_oPad_comp_code_i Pad_comp_mode Pad_comp_tm             Pad_comp_pd
+0x160 Rdfifo_empty(RD)                  Overflow(RD)                    Dram_init(RD)   Rdfifo_valid    Cmd_timming       Ddr3_mode
+0x168                    Addr_mirror    Cmd_delay       Burst_length    Bank            Cs_zq           Cs_mrs            Cs_enable
+0x170 Odt_wr_cs_map                     Odt_wr_length   Odt_wr_delay    Odt_rd_cs_map                   Odt_rd_length     Odt_rd_delay
+0x178
+0x180 Lvl_resp_0(RD)     Lvl_done(RD) Lvl_ready(RD)                     Lvl_cs          tLVL_DELAY      Lvl_req(WR)       Lvl_mode
+0x188 Lvl_resp_8(RD)     Lvl_resp_7(RD) Lvl_resp_6(RD) Lvl_resp_5(RD) Lvl_resp_4(RD)    Lvl_resp_3(RD) Lvl_resp_2(RD)     Lvl_resp_1(RD)
+0x190 Cmd_a                             Cmd_ba          Cmd_cmd         Cmd_cs          Status_cmd(RD) Cmd_req(WR)        Command_mode
+0x198                                   Status_sref(RD) Srefresh_req    Pre_all_done(RD) Pre_all_req(RD) Mrs_done(RD)     Mrs_req(WR)
+0x1A0 Mr_3_cs_0                         Mr_2_cs_0                       Mr_1_cs_0                       Mr_0_cs_0
+0x1A8 Mr_3_cs_1                         Mr_2_cs_1                       Mr_1_cs_1                       Mr_0_cs_1
+0x1B0 Mr_3_cs_2                         Mr_2_cs_2                       Mr_1_cs_2                       Mr_0_cs_2
+0x1B8 Mr_3_cs_3                         Mr_2_cs_3                       Mr_1_cs_3                       Mr_0_cs_3
+0x1C0 tRESET             tCKE           tXPR            tMOD            tZQCL           tZQ_CMD         tWLDQSEN          tRDDATA
+0x1C8 tFAW               tRRD          tRCD          tRP           tREF               tRFC          tZQCS              tZQperiod
+0x1D0 tODTL              tXSRD         tPHY_RDLAT    tPHY_WRLAT    tRAS_max                                            tRAS_min
+0x1D8 tXPDLL             tXP           tWR           tRTP          tRL                tWL           tCCD               tWTR
+0x1E0 tW2R_diffCS        tW2W_diffCS tR2P_sameBA     tW2P_sameBA   tR2R_sameBA        tR2W_sameBA tW2R_sameBA          tW2W_sameBA
+0x1E8 tR2R_diffCS        tR2W_diffCS   tR2P_sameCS   tW2P_sameCS   tR2R_sameCS        tR2W_sameCS   tW2R_sameCS        tW2W_sameCS
+0x1F0 Power_up           Age_step      tCPDED        Cs_map        Bs_config          Nc            Pr_r2w             Placement_en
+0x1F8 Hw_pd_3            Hw_pd_2       Hw_pd_1       Hw_pd_0       Credit_16          Credit_32     Credit_64          Selection_en
+0x200 Cmdq_age_16                      Cmdq_age_32                 Cmdq_age_64                      tCKESR             tRDPDEN
+0x208 Wfifo_age                        Ffifo_age                   Power_stat3        Power_stat2   Power_stat1        Power_stat0
+0x210 Active_age                       Cs_place_0    Addr_win_0    Cs_diff_0          Row_diff_0    Ba_diff_0          Col_diff_0
+0x218 Fastpd_age                       Cs_place_1    Addr_win_1    Cs_diff_1          Row_diff_1    Ba_diff_1          Col_diff_1
+0x220 Slowpd_age                       Cs_place_2    Addr_win_2    Cs_diff_2          Row_diff_2    Ba_diff_2          Col_diff_2
+0x228 Selfref_age                      Cs_place_3    Addr_win_3    Cs_diff_3          Row_diff_3    Ba_diff_3          Col_diff_3
+0x230 Win_mask_0                                                   Win_base_0
+0x238 Win_mask_1                                                   Win_base_1
+0x240 Win_mask_2                                                   Win_base_2
+0x248 Win_mask_3                                                   Win_base_3
+0x250                    Cmd_monitor   Axi_monitor                 Ecc_code(RD)       Ecc_enable    Int_vector         Int_enable
+0x258
+0x260 Ecc_addr(RD)
+0x268 Ecc_data(RD)
+0x270 Lpbk_ecc_mask(RD) Prbs_init                                  Lpbk_error(RD)     Prbs_23       Lpbk_start         Lpbk_en
+0x278 Lpbk_ecc(RD)                     Lpbk_data_mask(RD)          Lpbk_correct(RD)                 Lpbk_counter(RD)
+0x280 Lpbk_data_r(RD)
+0x288 Lpbk_data_f(RD)
+0x290 Axi0_bandwidth_w                                             Axi0_bandwidth_r
+0x298 Axi0_latency_w                                               Axi0_latency_r
+0x2A0 Axi1_bandwidth_w                                             Axi1_bandwidth_r
+0x2A8 Axi1_latency_w                                               Axi1_latency_r
+0x2B0 Axi2_bandwidth_w                                             Axi2_bandwidth_r
+0x2B8 Axi2_latency_w                                               Axi2_latency_r
+0x2C0 Axi3_bandwidth_w                                             Axi3_bandwidth_r
+0x2C8 Axi3_latency_w                                               Axi3_latency_r
+0x2D0 Axi4_bandwidth_w                                             Axi4_bandwidth_r
+0x2D8 Axi4_latency_w                                  Axi4_latency_r
+0x2E0 Cmdq0_bandwidth_w                               Cmdq0_bandwidth_r
+0x2E8 Cmdq0_latency_w                                 Cmdq0_latency_r
+0x2F0 Cmdq1_bandwidth_w                               Cmdq1_bandwidth_r
+0x2F8 Cmdq1_latency_w                                 Cmdq1_latency_r
+0x300 Cmdq2_bandwidth_w                               Cmdq2_bandwidth_r
+0x308 Cmdq2_latency_w                                 Cmdq2_latency_r
+0x310 Cmdq3_bandwidth_w                               Cmdq3_bandwidth_r
+0x318 Cmdq3_latency_w                                 Cmdq3_latency_r
 
-数据组DLL 控制信号
-24： 控制内部 DLL 的使能信号，为 0 时 DLL 有效
-23:16： 控制写数据（DQ）与 DQS 之间的相位关系，每个数值表示为 (1/精度) *
-360。在龙芯 3 号中，这个值一般为 1/4， 即 8’h20
-15:8：在 rdlvl\_en 无效的情况下，控制读
-数据返回时 DQS 的相位延迟
-7:0： 控制内部 DLL 的精度，在龙芯 3 号
-中，这个值一般为 8’h80
+详细说明列表：
+表 9-2 DDR2 SDRAM 配置参数寄存器格式
+
+     0x000        位域      读写    缺省值                            说明
+
+     Dll_value_0          56:48   只读   0x0    第 0 组数据 DLL 锁定值
+
+     Dll_value_ck         40:32   只读   0x0    时钟组 DLL 锁定值
+
+     Dll_init_done        25:16   只读   0x0    控制器内部 DLL 锁定信号
+
+                                              [25:17]：对应 9 组数据的 DLL 锁定信号
+
+                                              [16:16]：对应时钟组 DLL 锁定信号
+
+     Version              15:0    只读   0x1    控制器版本号
+
+     0x008
+
+     Dll_value_4          56:48   只读   0x0    第 4 组数据 DLL 锁定值
+
+     Dll_value_3          40:32   只读   0x0    第 3 组数据 DLL 锁定值
+
+     Dll_value_2          24:16   只读   0x0    第 2 组数据 DLL 锁定值
+
+     Dll_value_1          8:0     只读   0x0    第 1 组数据 DLL 锁定值
+
+     0x010
+
+     Dll_value_8          56:48   只读   0x0    第 8 组数据 DLL 锁定值
+
+     Dll_value_7          40:32   只读   0x0    第 7 组数据 DLL 锁定值
+
+     Dll_value_6          24:16   只读   0x0    第 6 组数据 DLL 锁定值
+
+     Dll_value_5          8:0     只读   0x0    第 5 组数据 DLL 锁定值
+
+     0x018
+
+     Dll_ck_3             63:56   读写   0x0    时钟 3 延迟值
+
+                                              [63:63]：bypass 控制
+
+                                              [62:56]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                                    当 bypass = 1 时，表示 n 个延迟单元
+Dll_ck_2          55:48   读写   0x0    时钟 2 延迟值
+
+                                      [55:55]：bypass 控制
+
+                                      [54:48]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                            当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_ck_1          47:40   读写   0x0    时钟 1 延迟值
+
+                                      [47:47]：bypass 控制
+
+                                      [46:40]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                            当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_ck_0          39:32   读写   0x0    时钟 0 延迟值
+
+                                      [39:39]：bypass 控制
+
+                                      [38:32]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                            当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_increment     31:24   读写   0x4    每次 DLL 下溢时，起始延迟单元增加个数
+
+Dll_start_point   23:16   读写   0x10   DLL 初始化的起始延迟单元个数
+
+Dll_bypass        8:8     读写   0x0    DLL 初始化 bypass 控制。
+
+                                      该位只有当 Dll_init_done 一直无法锁定时需要设置，
+
+                                      以使内存控制器初始化可以继续进行。
+
+                                      正确设置该位的方法是在 Init_start 有效一段时间后
+
+                                      再设为 1。而且设置之前相应的 DLL 延迟的最高位
+
+                                      （bypass 控制）也应该设置
+
+Init_start        0:0     读写   0x0    控制器初始化开始。
+
+                                      只有当其它的所有相关参数设置好了之后才可以将
+
+                                      该位置位，使控制器进行初始化，并向内存发起初始
+
+                                      化。只有这个操作完成后内存空间才可以被访问，否
+
+                                      则内存空间不可被外部访问。
+
+0x020
+
+Dq_oe_end_0       59:56   读写   0x2    第 0 组数据输出有效时期的结束时间，不可小于
+
+                                      Dq_oe_begin_0
+
+Dq_oe_begin_0     51:48   读写   0x2    第 0 组数据输出有效时期的开始时间，不可大于
+
+                                      Dq_oe_end_0
+
+Dq_stop_edge_0    41:40   读写   0x0    第 0 组数据输出有效时期的结束相位，其与
+
+                                      Dq_oe_end_0 组 合 得 到 的 时 钟 边 沿 不 可 早 于
+
+                                      Dq_start_edge_0 与 Dq_oe_begin_0 组合得到的时钟边
+
+                                      沿
+                                     0 – 比为 1 时提前 1/4 周期
+
+                                     1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                     2 – 比为 1 时推后 1/4 周期
+
+                                     3 – 比为 1 时推后 1/2 周期
+
+Dq_start_edge_0   33:32   读写   0x0   第 0 组数据输出有效时期的开始相位，其与
+
+                                     Dq_oe_begin_0 组 合 得 到 的 时 钟 边 沿 不 可 晚 于
+
+                                     Dq_stop_edge_0 与 Dq_oe_end_0 组合得到的时钟边
+
+                                     沿
+
+                                     0 – 比为 1 时提前 1/4 周期
+
+                                     1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                     2 – 比为 1 时推后 1/4 周期
+
+                                     3 – 比为 1 时推后 1/2 周期
+
+Rddata_delay_0    24:24   读写   0x1   读返回数据在 FIFO 中延迟一周期输出
+
+Rddqs_lt_half_0   16:16   读写   0x0   当读返回 DQS 信号(延时后)相比内部时钟的延迟小
+
+                                     于半周期时需要设为 1
+
+Wrdqs_lt_half_0   8:8     读写   0x0   当 Dll_wrdqs_0 的设置小于 0x40 时需要设为 1
+
+Wrdq_lt_half_0    0:0     读写   0x0   当 Dll_wrdata_0 的设置小于 0x40 时需要设为 1
+
+0x028
+
+Rd_oe_end_0       59:56   读写   0x1   第 0 组数据读采样有效时期的结束时间，不可小于
+
+                                     Rd_oe_begin_0
+
+Rd_oe_begin_0     51:48   读写   0x1   第 0 组数据读采样有效时期的开始时间，不可大于
+
+                                     Rd_oe_end_0
+
+Rd_stop_edge_0    41:40   读写   0x0   第 0 组 数 据 读 采 样 有效 时 期 的 结 束 相 位， 其 与
+
+                                     Rd_oe_end_0 组 合 得 到 的 时 钟 边 沿 不 可 早 于
+
+                                     Rd_start_edge_0 与 Rd_oe_begin_0 组合得到的时钟边
+
+                                     沿
+
+                                     0 – 比为 1 时提前 1/4 周期
+
+                                     1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                     2 – 比为 1 时推后 1/4 周期
+
+                                     3 – 比为 1 时推后 1/2 周期
+
+Rd_start_edge_0   33:32   读写   0x0   第 0 组 数 据 读 采 样 有效 时 期 的 开 始 相 位， 其 与
+
+                                     Rd_oe_begin_0 组 合 得 到 的 时 钟 边 沿 不 可 晚 于
+
+                                     Rd_stop_edge_0 与 Rd_oe_end_0 组合得到的时钟边沿
+
+                                     0 – 比为 1 时提前 1/4 周期
+                                      1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                      2 – 比为 1 时推后 1/4 周期
+
+                                      3 – 比为 1 时推后 1/2 周期
+
+Dqs_oe_end_0       27:24   读写   0x2   第 0 组数据写 DQS 有效时期的结束时间，不可小于
+
+                                      Dqs_oe_begin_0
+
+Dqs_oe_begin_0     19:16   读写   0x1   第 0 组数据写 DQS 有效时期的开始时间，不可大于
+
+                                      Dqs_oe_end_0
+
+Dqs_stop_edge_0    9:8     读写   0x1   第 0 组数据写 DQS 有效时期的结束相位，其与
+
+                                      Dqs_oe_end_0 组 合 得 到 的 时 钟 边 沿 不 可 早 于
+
+                                      Dqs_start_edge_0 与 Dqs_oe_begin_0 组合得到的时钟
+
+                                      边沿
+
+                                      0 – 比为 1 时提前 1/4 周期
+
+                                      1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                      2 – 比为 1 时推后 1/4 周期
+
+                                      3 – 比为 1 时推后 1/2 周期
+
+Dqs_start_edge_0   1:0     读写   0x1   第 0 组数据写 DQS 有效时期的开始相位，其与
+
+                                      Dqs_oe_begin_0 组 合 得 到 的 时 钟 边 沿 不 可 晚 于
+
+                                      Dqs_stop_edge_0 与 Dqs_oe_end_0 组合得到的时钟边
+
+                                      沿
+
+                                      0 – 比为 1 时提前 1/4 周期
+
+                                      1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                      2 – 比为 1 时推后 1/4 周期
+
+                                      3 – 比为 1 时推后 1/2 周期
+
+0x030
+
+Wrdq_clkdelay_0    32:32   读写   0x0   第 0 组数据写 DQ 延迟控制信号
+
+                                      在 Wrdq_lt_half_0 = 0 的时候将本组数据延迟增加一
+
+                                      拍
+
+Odt_oe_end_0       27:24   读写   0x2   第 0 组数据读 ODT（控制器内部）有效时期的结束
+
+                                      时间，不可小于 Odt_oe_begin_0
+
+Odt_oe_begin_0     19:16   读写   0x1   第 0 组数据读 ODT（控制器内部）有效时期的开始
+
+                                      时间，不可大于 Odt_oe_end_0
+
+Odt_stop_edge_0    9:8     读写   0x0   第 0 组数据读 ODT（控制器内部）有效时期的结束
+
+                                      相位，其与 Odt_oe_end_0 组合得到的时钟边沿不可
+
+                                      早于 Odt_start_edge_0 与 Odt_oe_begin_0 组合得到的
+                                       时钟边沿
+
+                                       0 – 比为 1 时提前 1/4 周期
+
+                                       1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                       2 – 比为 1 时推后 1/4 周期
+
+                                       3 – 比为 1 时推后 1/2 周期
+
+Odt_start_edge_0   1:0     读写   0x0    第 0 组数据读 ODT（控制器内部）有效时期的开始
+
+                                       相位，其与 Odt_oe_begin_0 组合得到的时钟边沿不可
+
+                                       晚于 Odt_stop_edge_0 与 Odt_oe_end_0 组合得到的时
+
+                                       钟边沿
+
+                                       0 – 比为 1 时提前 1/4 周期
+
+                                       1 – 对应于 wrdqs_0（第 0 组写 DQS）的上升沿
+
+                                       2 – 比为 1 时推后 1/4 周期
+
+                                       3 – 比为 1 时推后 1/2 周期
+
+0x038
+
+Dll_rddqs_n_0      39:32   读写   0x20   读 DQSn 采样延迟值
+
+                                       [39:39]：bypass 控制
+
+                                       [38:32]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                             当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_rddqs_p_0      31:24   读写   0x20   读 DQSp 采样延迟值
+
+                                       [31:31]：bypass 控制
+
+                                       [30:24]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                             当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_wrdqs_0        23:16   读写   0x7F   写 DQS 延迟值
+
+                                       [23:23]：bypass 控制
+
+                                       [22:16]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                             当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_wrdata_0       15:8    读写   0x60   写数据延迟值（应该比 DQS 提前 1/4 周期）
+
+                                       [15:15]：bypass 控制
+
+                                       [14:8]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                             当 bypass = 1 时，表示 n 个延迟单元
+
+Dll_gate_0         7:0     读写   0x0    读 DQS 采样有效时期控制延迟值
+
+                                       [7:7]：bypass 控制
+
+                                       [6:0]：当 bypass = 0 时，表示 n/128 个时钟周期
+
+                                            当 bypass = 1 时，表示 n 个延迟单元
+0x040
 
 
-第 1 数据组 DLL 控制信号
-15:8：读数据返回时，      DQSn 的相位延迟。
-在龙芯 3 号中，这个值一般为 8’h0E
-5:0： DLL 测试控制信号，正常情况下为
-8’h0
 
-第 0 数据组时延控制.
-28： 是否对读 DQS 使用去毛刺电路，指
-gate 信号是否通过 PAD\_feedback 延迟
-27： 使用读 FIFO 有效信号自动控制读数
-据返回采样（1）   ，还是使用 26:24 中的固
-定时间采样（0）
-26:24： 读数据返回采样完成时机，从内
-部时钟域采样的延迟。
-21： 在 Read Leveling 模式下，采样数
-据总线的电平高低
-20： 数据有效控制信号的电平，龙芯 3
-号中为 0
-19： 是否将写数据延迟再增加一周期
-18： 读 DQS 采样是否提前 1/4 周期（与
-clk\_wr 同步）
-17： 写数据/DQS 延迟是否增加半周期延
-迟
-16： CAS 延迟是否为半周期
-15:12：写 DQS 有效的起始时间，对于
-DDR3 应该比 DDR2 提前一个周期打开，
-提供颗粒要求的 Preamble DQS
-11:8： 写 DQS 有效的结束时间
-6:4：写数据有效的起始时间
-2:0： 写数据有效的结束时间
+0x138
 
 
-第 1 数据组中 PAD 的终端电阻控制，发
-起读操作时，才会启用
-31:28：终端电阻关闭时机控制，每个值
-表示半周期
-27:24：终端电阻开启时机控制，从发送
-读命令后 4 拍开始计算
-23：终端电阻的有效电平控制，对于龙芯
-3 号应为 1
-22：终端电阻的使能信号，为 1 时，使用
-动态方式控制终端电阻的使能；为 0 时，
-可以通过第 23 位 PAD 上的终端电阻永远
-有效（置 0）或永远无效（置 1）
-21：测试用信号，正常应为 0
-20:16：测试用信号，正常应为 0
-14:12：测试用信号，正常应为 0
-11:8：读采样延时 1，其中只能 1 位有效，
-用于控制读 DQS 采样窗口关闭时机
-7:0：读采样延时 0，其中只能 1 位有效，
-用于控制读 DQS 采样窗口打开时机
+
+0x140
+
+Pad_ocd_clk        58:56   读写   0x0   时钟引脚输出阻抗控制
+
+                                      000 – 40 欧姆
+
+                                      001 – 30 欧姆
+
+                                      010 – 24 欧姆
+
+                                      011 – 20 欧姆
+
+                                      100 – 15 欧姆
+
+Pad_ocd_ctl        50:48   读写   0x0   控制引脚输出阻抗控制
+
+                                      000 – 40 欧姆
+
+                                      001 – 30 欧姆
+
+                                      010 – 24 欧姆
+
+                                      011 – 20 欧姆
+
+                                      100 – 15 欧姆
+
+Pad_ocd_dqs        40:40   读写   0x0   DQS 引脚输出阻抗控制
+
+                                      0 – 34 欧姆
+
+                                      1 – 40 欧姆
+
+Pad_ocd_dq         32:32   读写   0x0   DQ 引脚输出阻抗控制
+
+                                      0 – 34 欧姆
+
+                                      1 – 40 欧姆
+
+Pad_enzi           24:16   读写   0x0   分别对应 9 个数据组的引脚输入使能
+
+                                      1 – 使能
+
+                                      0 – 高阻
+
+Pad_en_ctl         8:8     读写   0x0   控制引脚输出使能
+
+                                      1 – 使能
+
+                                      0 – 高阻
+
+Pad_en_clk         7:0     读写   0x0   时钟引脚输出使能
+
+                                      1 – 使能
+
+                                      0 – 高阻
+
+0x148
+
+Pad_adj_code_dqs   63:56   读写   0x0   设置当 Pad_code_dqs[0]有效时 DQS 信号附加 CODE
+
+                                       [7:4] N_CODE：1 使能，0 关闭
+
+                                       [3:0] P_CODE：0 关闭，1 使能
+
+Pad_code_dqs        50:48   读写   0x0   DQS 信号附加 CODE 使能设置
+
+                                       Bit 2：0 有效，表示附加码作用于输出及 ODT
+
+                                       Bit 1：0 有效，表示附加码作用于 SLEWRATE
+
+                                       Bit 0：附加 CODE 符号位，0 为正，1 为负
+
+Pad_adj_code_dq     47:40   读写   0x0   设置当 Pad_code_dq[0]有效时 DQ 信号附加 CODE
+
+                                       [7:4] N_CODE：1 使能，0 关闭
+
+                                       [3:0] P_CODE：0 关闭，1 使能
+
+Pad_code_dq         34:32   读写   0x0   DQ 信号附加 CODE 使能设置
+
+                                       Bit 2：0 有效，表示附加码作用于输出及 ODT
+
+                                       Bit 1：0 有效，表示附加码作用于 SLEWRATE
+
+                                       Bit 0：附加 CODE 符号位，0 为正，1 为负
+
+Pad_vref_internal   16:16   读写   0x0   使能内部 VREF 分压电路
+
+                                       1 - 同时使用内部 VREF 分压与外部引脚输出电压
+
+                                       0 - 只使用外部引脚输出电压
+
+Pad_odt_se          8:8     读写   0x0   引脚匹配电阻值控制
+
+                                       0 – 60 欧姆
+
+                                       1 – 120 欧姆
+
+Pad_modezi1v8       0:0     读写   0x0   PAD MODE ZI 1v8
+
+                                       1 – 使用 PAD 的 ZITEST 输入
+
+                                       0 – 使用 PAD 的 ZI 输入
+
+0x150
+
+Pad_adj_code_clk    47:40   读写   0x0   设置当 Pad_code_clk[0]有效时 CLK 信号附加 CODE
+
+                                       [7:4] N_CODE：1 使能，0 关闭
+
+                                       [3:0] P_CODE：0 关闭，1 使能
+
+Pad_code_clk        34:32   读写   0x0   CLK 信号附加 CODE 使能设置
+
+                                       Bit 2：0 有效，表示附加码作用于输出及 ODT
+
+                                       Bit 1：0 有效，表示附加码作用于 SLEWRATE
+
+                                       Bit 0：附加 CODE 符号位，0 为正，1 为负
+
+Pad_adj_code_cmd    31:24   读写   0x0   设 置 当 Pad_code_cmd[0] 有 效 时 CMD 信 号 附 加
+
+                                       CODE
+
+                                       [7:4] N_CODE：1 使能，0 关闭
+
+                                       [3:0] P_CODE：0 关闭，1 使能
+Pad_code_cmd        18:16   读写   0x0    CMD 信号附加 CODE 使能设置
+
+                                        Bit 2：0 有效，表示附加码作用于输出及 ODT
+
+                                        Bit 1：0 有效，表示附加码作用于 SLEWRATE
+
+                                        Bit 0：附加 CODE 符号位，0 为正，1 为负
+
+Pad_adj_code_addr   15:8    读写   0x0    设置 当 Pad_code_addr[0]有效时 ADDR 信 号附 加
+
+                                        CODE
+
+                                        [7:4] N_CODE：1 使能，0 关闭
+
+                                        [3:0] P_CODE：0 关闭，1 使能
+
+Pad_code_addr       2:0     读写   0x0    ADDR 信号附加 CODE 使能设置
+
+                                        Bit 2：0 有效，表示附加码作用于输出及 ODT
+
+                                        Bit 1：0 有效，表示附加码作用于 SLEWRATE
+
+                                        Bit 0：附加 CODE 符号位，0 为正，1 为负
+
+0x158
+
+Pad_comp_okn        40:40   只读   0x0    引脚补偿单元自动调节完成标志
+
+Pad_comp_code_o     39:32   只读   0x0    引脚补偿单元自动调节调整值
+
+Pad_comp_code_i     31:24   读写   0xF0   引脚补偿单元手动设置值
+
+                                        [7:4] N_CODE：1 使能，0 关闭
+
+                                        [3:0] P_CODE：0 关闭，1 使能
+
+Pad_comp_mode       16:16   读写   0x0    引脚补偿单元设置
+
+                                        1 – 手动设置 CODE
+
+                                        0 – 自动调节 CODE
+
+Pad_comp_tm         8:8     读写   0x0    外部引脚测试模块使能
+
+                                        1 – 使用引脚 COMP_NOUT/COMP_POUT 连接电阻
+
+                                        0 – 使用引脚 COMP_REXT 连接电阻
+
+Pad_comp_pd         0:0     读写   0x1    引脚补偿单元 Power Down
+
+                                        1 – Power Down
+
+                                        0 – 正常工作
+
+0x160
+
+Rdfifo_empty        56:48   只读   0x0    PHY 中收集每个 SLICE 的读 FIFO 错误读出标志，当
+
+                                        对应的 FIFO 为空时发生出队列操作时有效。可以用
+
+                                        于判断 Rdfifo_valid 无效时，tPHY_RDLAT 的值是否
+
+                                        设置过小
+
+                                        每一位分别对应于 SLICE8 … SLICE0
+
+Overflow            40:32   只读   0x0    PHY 中每个 SLICE 中的读 FIFO 溢出标志，每一位分
+
+                                  别对应于 SLICE8 … SLICE0
+
+Dram_init      27:24   只读   0x0   DRAM 初始化完成标志，在 Init_start 设置之后才会
+
+                                  生效，每一位分别对应于一个片选
+
+Rdfifo_valid   16:16   读写   0x1   表示使用 PHY 内部逻辑控制读数据同步时间
+
+                                  该位无效时，这个同步时间由 tPHY_RDLAT 决定
+
+Cmd_timming    9:8     读写   0x0   控制线 2T/3T 功能使能
+
+                                  0 – 1T
+
+                                  1 – 2T
+
+                                  2 – 3T
+
+                                  与其他几个参数需要满足关系式：
+
+                                  tRDDATA - Cmd_delay - Cmd_timing = CASLAT – 3
+
+                                  tPHY_WRLAT – Cmd_delay – Cmd_timing = WRLAT
+
+                                  -4
+
+Ddr3_mode      0:0     读写   0x1   使用 DDR3 模式时将该位设为 1
+
+0x168
+
+Addr_mirror    51:48   读写   0x0   表示该 CS 对应的地址需要进行地址镜像
+
+Cmd_delay      41:40   读写   0x0   表示命令总线需要的附加延迟
+
+                                  有效值为 0/1/2
+
+                                  与其他几个参数需要满足关系式：
+
+                                  tRDDATA - Cmd_delay - Cmd_timing = CASLAT – 3
+
+                                  tPHY_WRLAT – Cmd_delay – Cmd_timing = WRLAT
+
+                                  -4
+
+Burst_length   35:32   读写   0x7   表示 DRAM 总线上的突发请求长度，该参数设置应
+
+                                  与 MRS 参数一致。突发长度为 8 时设为 4’h7，突发
+
+                                  长度为 4 时设为 4’h3
+
+Bank           27:24   读写   0x7   表示每个片选上的 Bank 数量
+
+                                  Bank 数为 2 时：
+
+                                       需设置 Ba_diff = 2 , Addr_win[3:2] = 2’b01
+
+                                  Bank 数为 4 时：
+
+                                       需设置 Ba_diff = 1 , Addr_win[3:2] = 2’b10
+
+                                  Bank 数为 8 时：
+
+                                       需设置 Ba_diff = 0 , Addr_win[3:2] = 2’b11
+
+Cs_zq          19:16   读写   0x1   使能对应片选信号的 ZQ 请求
+
+Cs_mrs         11:8    读写   0x1   使能对应片选信号的 MRS 请求
+
+Cs_enable       3:0     读写   0x1      使能对应片选信号
+
+0x170
+
+Odt_wr_cs_map   63:48   读写   0x8421   对应 CS 发送写命令时，使能的 ODT 信号
+
+                                      Bit [15:12]：CS3 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [11: 8]：CS2 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [ 7: 4]：CS1 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [ 3: 0]：CS0 发读时对应 ODTx 是否有效，x=3..0
+
+Odt_wr_length   43:40   读写   0x5      发送写命令时，ODT 信号有效周期数
+
+Odt_wr_delay    35:32   读写   0x0      发送写命令时，ODT 信号与写命令的起始间隔
+
+Odt_rd_cs_map   31:16   读写   0x4812   对应 CS 发送读命令时，使能的 ODT 信号
+
+                                      Bit [15:12]：CS3 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [11: 8]：CS2 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [ 7: 4]：CS1 发读时对应 ODTx 是否有效，x=3..0
+
+                                      Bit [ 3: 0]：CS0 发读时对应 ODTx 是否有效，x=3..0
+
+Odt_rd_length   11:8    读写   0x5      发送读命令时，ODT 信号有效周期数
+
+Odt_rd_delay    3:0     读写   0x1      发送读命令时，ODT 信号与读命令的起始间隔
+
+0x178
 
 
-REG45
-PAD\_CTRL\_REG\_0     25:0  0x0000 0x0- 0x3ffffff  引脚控制信号
-                              25:22：对应 COMPZCP\_dig
-                              21:18：对应 COMPZCN\_dig
-                              17：对应引脚的 TQ1v8
-                              16：对应内部反馈引脚的使能信号，低有效
-                              15：对应内部反馈引脚的输出使能信号，低有效
-                              14：对应数据选通引脚的输出使能信号，低有效
-                              13：对应数据屏蔽引脚的输出使能信号，低有效
-                              12：对应数据引脚的输出使能信号，低有效
-                              11：对应引脚的 USEPAD
-                                          0：使用内部参考电压；
-                                          1：使用外部参考电压。
-                              8： 对应时钟引脚{1,3,5}的使能信号，高有效
-                              7： 对应时钟引脚{0,2,4}的使能信号，高有效
-                              6：对应地址引脚的使能信号，低有效
-                              5：对应引脚的 PROGB1v8
-                              4：对应引脚的 PROGA1v8 用于控制引脚驱动能力
-                              3：对应引脚的 ODTB
-                              2：对应引脚的 ODTA
-                                  用于控制引脚 ODT 阻值大小
-                                   ODTA    ODTB  DDRII     DDRIII
-                                   1       0     150       120
-                                   1       1     75        60
-                                   0       0     Disable   Disable
-                              1：对应引脚的 MODEZI1v8
-                                  对于龙芯 3 号应该设为 0。
-                              0：对应引脚的 DDR1v8
-                                  0：对应 DDRII 的 1.8v 模式
-                                  1：对应 DDRIII 的 1.5v 模式
 
-REG54
-PHY\_CTRL\_REG\_2   63:32  0x0000 0x0-0xffffff 读写数据延迟控制
-                                               27：选择读数据缓冲类型，默认为 0
-                                               26：用于清除读返回缓冲区的数据，正常为0
-                                               25：高速引脚使能，为 1 时，所有信号通
-                                               过引脚向外传输的延迟减小 1 周期
-                                               16:13：设置读数据有效时机，从 FIFO 中
-                                               收集数据返回控制器的延迟。如果从引脚
-                                               到 FIFO 的延迟增加，这个值也必须增加
-                                               8：设置 DQS 信号输出是否为 DDR3 模式，
-                                               DDR3 模式下， DQS 的 Preamble 将含写有一个脉冲
-                                               5：测试模式信号，正常为 0
-                                               4：测试模式信号，正常为 0
+0x180
+
+Lvl_resp_0      63:56   只读   0x0      Leveling 操作时，第 0 数据组的反馈信号
+
+Lvl_done        48:48   只读   0x0      Leveling 操作时，表示 Lvl_resp_\*有效信号
+
+Lvl_ready       40:40   只读   0x0      Leveling 操作时，表示当前控制器已经进入 Leveling
+
+                                      操作模式。（用户程序正确设置 Lvl_mode 的值后，
+
+                                      应该对这个寄存器进行采样，如果值为 1 表示可以对
+
+                                      控制器发起 Leveling 请求，也就是说，此时才可以将
+
+                                      设 Lvl_req 为 1）
+
+Lvl_cs          27:24   读写   0x1      Leveling 操作时，当前控制的片选信号
+
+tLVL_DELAY      23:16   读写   0x10     Leveling 操作时，有效采样延迟周期
+
+                                      单位为时钟周期
+
+Lvl_req         8:8     只写   0x0      Leveling 操作时，向外发起 Leveling 操作请求
+
+Lvl_mode        1:0     读写   0x0      Leveling 模式使能
+
+                                      00 – 正常功能模式
+
+                                      01 – Write Leveling 模式
+
+                                      10 – Gate Leveling 模式
+
+0x188
+
+Lvl_resp_8     63:56   只读   0x0   Leveling 操作时，第 8 数据组的反馈信号
+
+                                  当 Lvl_mode == 1 时，为数据线上的反馈
+
+                                  当 Lvl_mode == 2 时
+
+                                   Bit[7:5]：内部有效读 DQS 时钟上升沿计数器
+
+                                   Bit[4:2]：内部有效读 DQS 时钟下升沿计数器
+
+                                   Bit[1:0]：内部 DQS 采样信号采样 DQS 的反馈
+
+                                  对于一个正确配置的 Gate Leveling 操作来说
+
+                                  Bit[7:5]与 Bit[4:2]应该在每一次 Leveling_req 增加
+
+                                  Burst_length/2 个计数，否则需要调整 Dll_gate_x 的值
+
+Lvl_resp_7     55:48   只读   0x0   Leveling 操作时，第 7 数据组的反馈信号
+
+Lvl_resp_6     47:40   只读   0x0   Leveling 操作时，第 6 数据组的反馈信号
+
+Lvl_resp_5     39:32   只读   0x0   Leveling 操作时，第 5 数据组的反馈信号
+
+Lvl_resp_4     31:24   只读   0x0   Leveling 操作时，第 4 数据组的反馈信号
+
+Lvl_resp_3     23:16   只读   0x0   Leveling 操作时，第 3 数据组的反馈信号
+
+Lvl_resp_2     15:8    只读   0x0   Leveling 操作时，第 2 数据组的反馈信号
+
+Lvl_resp_1     7:0     只读   0x0   Leveling 操作时，第 1 数据组的反馈信号
+
+0x190
+
+Cmd_a          63:48   读写   0x0   命令发送模式下，对 DRAM 发出的地址线信号 （最
+
+                                  高位 bit[15]保留，cmd_a[15]==0)
+
+Cmd_ba         42:40   读写   0x0   命令发送模式下，对 DRAM 发出的 ba 线信号
+
+Cmd_cmd        34:32   读写   0x0   命令发送模式下，对 DRAM 发出的控制信号
+
+                                  bit2 – RASn
+
+                                  bit1 – CASn
+
+                                  bit0 – WEn
+
+Cmd_cs         27:24   读写   0x0   命令发送模式下，对 DRAM 发出的片选信号
+
+Status_cmd     16:16   只读   0x0   表示控制器进入命令发送模式，在 command_mode
+
+                                  设置之后才会生效
+
+Cmd_req        8:8     只写   0x0   命令发送模式下，对 DRAM 发出一次控制命令
+
+Command_mode   0:0     读写   0x0   使控制器进入命令发送模式
+
+0x198
+
+Status_sref    43:40   只读   0x0   已经进入自刷新模式，每位分别对应一个片选
+
+Srefresh_req   35:32   读写   0x0   自刷新控制信号，设 1 进入自刷新，设 0 退出自刷新
+
+Pre_all_done   27:24   只读   0x0   Precharge All 操作完成
+
+Pre_all_req   19:16   只写   0x0      请求发出 Precharge All 命令，每位分别对应一个片选
+
+Mrs_done      8:8     只读   0x0      命令模式下，表示 MRS 命令发送完毕
+
+Mrs_req       0:0     只写   0x0      命令模式下，向 DRAM 发出一次 MRS 命令，发送的
+
+                                    命令序列为
+
+                                    MRS2、MRS3、MRS1、MRS0
+
+0x1A0
+
+Mr_3_cs_0     63:48   读写   0x0000   向 DRAM CS 0 发送 MRS 3 命令时对应的值
+
+Mr_2_cs_0     47:32   读写   0x0018   向 DRAM CS 0 发送 MRS 2 命令时对应的值
+
+Mr_1_cs_0     31:16   读写   0x0004   向 DRAM CS 0 发送 MRS 1 命令时对应的值
+
+Mr_0_cs_0     15:0    读写   0x0d60   向 DRAM CS 0 发送 MRS 0 命令时对应的值
+
+0x1A8
+
+Mr_3_cs_1     63:48   读写   0x0000   向 DRAM CS 1 发送 MRS 3 命令时对应的值
+
+Mr_2_cs_1     47:32   读写   0x0018   向 DRAM CS 1 发送 MRS 2 命令时对应的值
+
+Mr_1_cs_1     31:16   读写   0x0004   向 DRAM CS 1 发送 MRS 1 命令时对应的值
+
+Mr_0_cs_1     15:0    读写   0x0d60   向 DRAM CS 1 发送 MRS 0 命令时对应的值
+
+0x1B0
+
+Mr_3_cs_2     63:48   读写   0x0000   向 DRAM CS 2 发送 MRS 3 命令时对应的值
+
+Mr_2_cs_2     47:32   读写   0x0018   向 DRAM CS 2 发送 MRS 2 命令时对应的值
+
+Mr_1_cs_2     31:16   读写   0x0004   向 DRAM CS 2 发送 MRS 1 命令时对应的值
+
+Mr_0_cs_2     15:0    读写   0x0d60   向 DRAM CS 2 发送 MRS 0 命令时对应的值
+
+0x1B8
+
+Mr_3_cs_3     63:48   读写   0x0000   向 DRAM CS 3 发送 MRS 3 命令时对应的值
+
+Mr_2_cs_3     47:32   读写   0x0018   向 DRAM CS 3 发送 MRS 2 命令时对应的值
+
+Mr_1_cs_3     31:16   读写   0x0004   向 DRAM CS 3 发送 MRS 1 命令时对应的值
+
+Mr_0_cs_3     15:0    读写   0x0D60   向 DRAM CS 3 发送 MRS 0 命令时对应的值
+
+0x1C0
+
+tRESET        63:56   读写   0x28     DRAM 初始化前的复位时间
+
+                                    单位为 4096 个时钟周期
+
+tCKE          55:48   读写   0x70     DRAM 初始化从复位释放到 CKE 有效时间
+
+                                    单位为 4096 个时钟周期
+
+tXPR          47:40   读写   0x80     DRAM 初始化从 CKE 有效到 MRS 命令的时间
+
+                                    单位为时钟周期
+
+tMOD          39:32   读写   0x0C     发送 MRS 命令后至下一条命令的时间间隔
+
+                                    单位为时钟周期
+
+tZQCL        31:24   读写   0x03   发送 ZQCL 命令后至下一条命令的时间间隔
+
+                                 单位为 256 个时钟周期
+
+tZQ_CMD      23:16   读写   0x03   不同片选之间发送 ZQ 命令的时间间隔
+
+                                 单位为时钟周期
+
+tWLDQSEN     15:8    读写   0x20   Write Leveling 中，从 MRS 到 DQS 为低的时间间隔
+
+                                 单位为时钟周期
+
+tRDDATA      7:0     读写   0x07   从发送读命令到发送读数据有效命令的时间间隔。
+
+                                 单位为时钟周期
+
+                                 与其他几个参数需要满足关系式：
+
+                                 tRDDATA - Cmd_delay - Cmd_timing = CASLAT – 3
+
+                                 该参数最小设置值为 2
+
+0x1C8
+
+tFAW         61:56   读写   0x30   连续打开 4 个 Bank 的最小允许时间
+
+                                 单位为时钟周期
+
+tRRD         50:48   读写   0x06   打开两个行之间的最小间隔时间
+
+                                 单位为时钟周期
+
+tRCD         43:40   读写   0x09   打开行到对应行的读写操作之间的最小间隔时间
+
+                                 单位为时钟周期
+
+tRP          39:32   读写   0x09   Precharge 操作需要时间
+
+                                 单位为时钟周期
+
+tREF         31:24   读写   0x03   同一片选刷新操作之间的时间间隔
+
+                                 单位为 256 个时钟周期
+
+tRFC         23:16   读写   0x85   刷新操作需要时间
+
+                                 单位为时钟周期
+
+tZQCS        15:8    读写   0x40   ZQCS 操作需要时间
+
+                                 单位为时钟周期
+
+tZQperiod    7:0     读写   0x04   同一片选 ZQCS 操作之间的时间间隔
+
+                                 单位为 tREF（刷新操作之间的时间间隔）
+
+0x1D0
+
+tODTL        59:56   读写   0x0A   Write Leveling 中从 ODT 无效到 MRS 命令时间间隔
+
+                                 单位为时钟周期
+
+tXSRD        55:48   读写   0x02   从自刷新模式恢复到第一条访问的最小时间间隔
+
+                                 单位为 256 个时钟周期
+
+tPHY_RDLAT   43:40   读写   0x9    读内存操作的 PHY 内部读数据同步时间
+
+                                    0x5 时一般可以正常工作，极端情况下可以将这个值
+
+                                    增加或减小。减小可能会影响到读数据的正确性，增
+
+                                    加会增加读操作的延迟
+
+                                    当 Rdfifo_valid 有效时，这个配置不起作用
+
+                                    单位为时钟周期
+
+tPHY_WRLAT   36:32   读写   0x04      从发送写命令到发送写数据的时间间隔。
+
+                                    单位为时钟周期
+
+                                    与其他几个参数需要满足关系式：
+
+                                    tPHY_WRLAT – Cmd_delay – Cmd_timing = WRLAT
+
+                                    –4
+
+                                    该参数最小设置值为 2
+
+tRAS_max     25:8    读写   0x20000   行打开的最长有效时间
+
+                                    单位为时钟周期
+
+tRAS_min     5:0     读写   0x1C      行打开的最短有效时间
+
+                                    单位为时钟周期
+
+0x1D8
+
+tXPDLL       63:56   读写   0x14      从离开 Power down （DLL 关闭）状态到下一个命令
+
+                                    的间隔时间
+
+                                    单位为始终周期
+
+tXP          55:48   读写   0x05      从离开 Power down （DLL 打开）状态到下一个命令
+
+                                    的间隔时间
+
+tWR          44:40   读写   0x0C      写恢复时间
+
+                                    单位为时钟周期
+
+                                    该参数设置值应大于等于 MRS 中设置值
+
+tRTP         34:32   读写   0x06      读到 Precharge 操作的间隔时间
+
+                                    单位为时钟周期
+
+tRL          27:24   读写   0x0a      读操作延迟，相当于 CASLAT
+
+                                    单位为时钟周期
+
+                                    该参数设置值应大于等于 MRS 中设置值
+
+tWL          19:16   读写   0x08      写操作延迟，相当于 WRLAT
+
+                                    单位为时钟周期
+
+                                    该参数设置值应大于等于 MRS 中设置值
+
+tCCD         11:8    读写   0x04      两个读写操作之间的最小间隔时间
+
+                                    单位为时钟周期
+
+tWTR                3:0     读写   0x06   写操作到读操作之间的最小间隔时间
+
+                                        单位为时钟周期
+
+0x1E0
+
+tW2R_diffCS_dly     61:56   读写   0x03   不同 CS 上的写操作到读操作之间间隔时间减 1
+
+                                        单位为时钟周期，最小值等于 tCCD+tWL-tRL.
+
+tW2W_diffCS_adj_    53:48   读写   0x0    不同 CS 上的写操作到写操作之间的附加间隔时间
+
+dly                                     单位为时钟周期，最小值等于 tCCD-1
+
+tR2P_sameBA_adj     45:40   读写   0x0    相同 Bank 上的读操作到 Precharge 之间附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tW2P_sameBA_adj     37:32   读写   0x0    相同 Bank 上的写操作到 Precharge 之间附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tR2R_sameBA_adj     29:24   读写   0x0    相同 Bank 上的读操作到读操作之间的附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tR2W_sameBA_adj     21:16   读写   0x0    相同 Bank 上的读操作到写操作之间的附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tW2R_sameBA_adj     13:8    读写   0x0    相同 Bank 上的写操作到读操作之间的附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tW2W_sameBA_ad      5:0     读写   0x0    相同 Bank 上的写操作到写操作之间的附加间隔时间
+
+j_dly                                   单位为时钟周期
+
+0x1E8
+
+tR2R_diffCS_adj_d   61:56   读写   0x0    不同 CS 上的读操作到读操作之间的附加间隔时间
+
+ly                                      单位为时钟周期，最小值等于 tCCD-1
+
+tR2W_diffCS_dly     53:48   读写   0x05   不同 CS 上的读操作到写操作之间间隔时间减 1
+
+                                        单位为时钟周期，最小值等于
+
+                                        tCCD+tRL(+1)-tWL.
+
+tR2P_sameCS_dly     45:40   读写   0x0    相同 CS 上的读操作到 Precharge 之间的间隔时间减
+
+                                        去 1 的值
+
+                                        单位为时钟周期
+
+tW2P_sameCS_dly     37:32   读写   0x0    相同 CS 上的写操作到 Precharge 之间的间隔时间减
+
+                                        去 1 的值
+
+                                        单位为时钟周期
+
+tR2R_sameCS_adj     29:24   读写   0x0    相同 CS 上的读操作到读操作之间的附加间隔时间
+
+_dly                                    单位为时钟周期
+
+tR2W_sameCS_adj     21:16   读写   0x0    相同 CS 上的读操作到写操作之间的附加间隔时间
+
+_dly                                  单位为时钟周期
+
+tW2R_sameCS_adj   13:8    读写   0x0    相同 CS 上的写操作到读操作之间的附加间隔时间
+
+_dly                                  单位为时钟周期
+
+tW2W_sameCS_ad    5:0     读写   0x0    相同 CS 上的写操作到写操作之间的附加间隔时间
+
+j_dly                                 单位为时钟周期
+
+0x1F0
+
+Power_up          59:56   读写   0x0    分别对应四个 CS。设为 1 时，可以使对应的 CS 离开
+
+                                      或者不进入 Power down 状态。
+
+Age_step          55:48   读写   0x08   Power down 计数器步长。
+
+tCPDED            47:40   读写   0x01   CKE 为 0 后，命令和地址总线失效时间
+
+                                      单位为时钟周期
+
+Cs_map            39:32   读写   0x0    CS 地址映射控制，每两位分别对应地址译码后的 CS
+
+                                      与真实 CS 之间的映射关系
+
+Bs_config         31:24   读写   0xFF   命令调度 CS 状态使能
+
+                                      Bit7：CS3 对应状态机状态使能
+
+                                           1-使能；0-禁用（下同）
+
+                                      Bit6：CS3 对应状态机状态重置
+
+                                           1-解复位；0-重置（下同）
+
+                                      Bit5：CS2 对应状态机状态使能
+
+                                      Bit4：CS2 对应状态机状态重置
+
+                                      Bit3：CS1 对应状态机状态使能
+
+                                      Bit2：CS1 对应状态机状态重置
+
+                                      Bit1：CS0 对应状态机状态使能
+
+                                      Bit0：CS0 对应状态机状态重置
+
+Nc                18:16   读写   0x0    多通道模式使能
+
+                                      000 – 普通 64 位模式
+
+                                      001 – 多通道模式
+
+                                      011 – 普通 16 位模式
+
+                                      101 – 普通 32 位模式
+
+                                      其它 – 保留
+
+Pr_r2w            11:8    读写   0x1    读操作优先级是否高于写操作
+
+Placement_en      0:0     读写   0x1    使能读写命令重排逻辑
+
+0x1F8
+
+Hw_pd_3           59:56   读写   0x0    从低到高分别对应 Active Standby，Fast Power Down，
+
+                                     Slow Power Down 和 Self Refresh。设为 1 表示允许
+
+                                     CS3 进入对应的低功耗状态。
+
+Hw_pd_2        51:48   读写   0x0      设为 1 表示允许 CS2 进入对应的低功耗状态。
+
+Hw_pd_1        43:40   读写   0x0      设为 1 表示允许 CS1 进入对应的低功耗状态。
+
+Hw_pd_0        35:32   读写   0x0      设为 1 表示允许 CS0 进入对应的低功耗状态。
+
+Credit_16      29:24   读写   0x4      16 位通道优先级设置
+
+Credit_32      21:16   读写   0x8      32 位通道优先级设置
+
+Credit_64      13:8    读写   0x10     64 位通道优先级设置
+
+Selection_en   0:0     读写   0x1      不同通道优先级调度使能
+
+0x200
+
+Cmdq_age_16    59:48   读写   0xC00    16 位通道调度初始年龄。0xFFF 为超时。
+
+Cmdq_age_32    43:32   读写   0xC00    32 位通道调度初始年龄。0xFFF 为超时。
+
+Cmdq_age_64    27:16   读写   0xC00    64 位通道调度初始年龄。0xFFF 为超时。
+
+tCKESR         15:8    读写   0x07     进入自刷新时，CKE 为低的最短时间
+
+                                     单位为时钟周期
+
+tRDPDEN        7:0     读写   0x0C     从发出 RD/RDA 命令到进入低功耗状态的时间间隔
+
+                                     单位为时钟周期
+
+0x208
+
+Wfifo_age      59:48   读写   0xC00    写队列中命令初始年龄。0xFFF 为超时。
+
+Rfifo_age      43:32   读写   0xC00    读队列中命令初始年龄。0xFFF 为超时。
+
+Power_stat3    27:24   只读   0x0      从低到高分别对应 Active Standby，Fast Power Down，
+
+                                     Slow Power Down 和 Self Refresh。
+
+                                     设为 1 表示 CS3 处于对应的低功耗状态。
+
+Power_stat2    19:16   只读   0x0      设为 1 表示 CS2 处于对应的低功耗状态。
+
+Power_stat1    11:8    只读   0x0      设为 1 表示 CS1 处于对应的低功耗状态。
+
+Power_stat0    3:0     只读   0x0      设为 1 表示 CS0 处于对应的低功耗状态。
+
+0x210
+
+Active_age     63:48   读写   0x0008   Active Standby 低功耗状态计数器
+
+Cs_place_0     40:40   读写   0x0      普通模式或窗口 0 译码时 CS 在地址中的位置
+
+                                     0 – 译码方式为{CS、ROW、BA、COL}
+
+                                     1 – 译码方式为{ROW、CS、BA、COL}
+
+Addr_win_0     35:32   读写   0xF      普通模式或窗口 0 地址命中及配置
+
+                                     Bit [3:2]：窗口使用 DRAM 的 Bank 数
+
+                                     11 – 8 bank；10 – 4 bank；01 – 2 bank；00 – 保留
+                                   Bit [1:0]：窗口使用 DRAM 位数
+
+                                   11 – 64 位；10 – 32 位；01 – 16 位；00 – 保留
+
+Cs_diff_0    27:24   读写   0x0      普通模式或窗口 0 实际使用的 CS 译码前地址与 2 之
+
+                                   差
+
+                                   当 Pm_nc 有效时，
+
+                                   对于 64 位窗口，应该为 2；
+
+                                   对于 32 位窗口，应该为 1；
+
+                                   对于 16 位窗口，应该为 0
+
+Row_diff_0   19:16   读写   0x2      普通模式或窗口 0 实际使用的行地址线个数与 16 之
+
+                                   差
+
+                                   这个值等于 16 – 实际使用的行地址线个数
+
+Ba_diff_0    9:8     读写   0x0      普通模式或窗口 0 实际使用的 BA 线个数与 3 之差
+
+                                   这个值等于 3 – 实际使用的 BA 线个数
+
+Col_diff_0   3:0     读写   0x6      普通模式或窗口 0 实际使用的列地址线个数与 16 之
+
+                                   差
+
+                                   这个值等于 16 – 实际使用的列地址线个数
+
+0x218
+
+Fastpd_age   63:48   读写   0x0008   Fast Powerdown 低功耗状态计数器
+
+Cs_place_1   40:40   读写   0x0      普通模式或窗口 1 译码时 CS 在地址中的位置
+
+                                   0 – 译码方式为{CS、ROW、BA、COL}
+
+                                   1 – 译码方式为{ROW、CS、BA、COL}
+
+Addr_win_1   35:32   读写   0xF      普通模式或窗口 1 地址命中及配置
+
+                                   Bit [3:2]：窗口使用 DRAM 的 Bank 数
+
+                                   11 – 8 bank；10 – 4 bank；01 – 2 bank；00 – 保留
+
+                                   Bit [1:0]：窗口使用 DRAM 位数
+
+                                   11 – 64 位；10 – 32 位；01 – 16 位；00 – 保留
+
+Cs_diff_1    27:24   读写   0x0      普通模式或窗口 1 实际使用 CS 译码前地址与 2 之差
+
+                                   当 Pm_nc 有效时，
+
+                                   对于 64 位窗口，应该为 2；
+
+                                   对于 32 位窗口，应该为 1；
+
+                                   对于 16 位窗口，应该为 0
+
+Row_diff_1   19:16   读写   0x2      普通模式或窗口 1 实际使用行地址线个数与 16 之差
+
+                                   这个值等于 16 – 实际使用的行地址线个数
+
+Ba_diff_1    9:8     读写   0x0      普通模式或窗口 1 实际使用的 BA 线个数与 3 之差
+
+                                    这个值等于 3 – 实际使用的 BA 线个数
+
+Col_diff_1    3:0     读写   0x6      普通模式或窗口 1 实际使用列地址线个数与 16 之差
+
+                                    这个值等于 16 – 实际使用的列地址线个数
+
+0x220
+
+Slowpd_age    63:48   读写   0x0008   Slow Powerdown 低功耗状态计数器
+
+Cs_place_2    40:40   读写   0x0      普通模式或窗口 2 译码时 CS 在地址中的位置
+
+                                    0 – 译码方式为{CS、ROW、BA、COL}
+
+                                    1 – 译码方式为{ROW、CS、BA、COL}
+
+Addr_win_2    35:32   读写   0xF      普通模式或窗口 2 地址命中及配置
+
+                                    Bit [3:2]：窗口使用 DRAM 的 Bank 数
+
+                                    11 – 8 bank；10 – 4 bank；01 – 2 bank；00 – 保留
+
+                                    Bit [1:0]：窗口使用 DRAM 位数
+
+                                    11 – 64 位；10 – 32 位；01 – 16 位；00 – 保留
+
+Cs_diff_2     27:24   读写   0x0      普通模式或窗口 2 实际使用 CS 译码前地址与 2 之差
+
+                                    当 Pm_nc 有效时，
+
+                                    对于 64 位窗口，应该为 2；
+
+                                    对于 32 位窗口，应该为 1；
+
+                                    对于 16 位窗口，应该为 0
+
+Row_diff_2    19:16   读写   0x2      普通模式或窗口 2 实际使用行地址线个数与 16 之差
+
+                                    这个值等于 16 – 实际使用的行地址线个数
+
+Ba_diff_2     9:8     读写   0x0      普通模式或窗口 2 实际使用的 BA 线个数与 3 之差
+
+                                    这个值等于 3 – 实际使用的 BA 线个数
+
+Col_diff_2    3:0     读写   0x6      普通模式或窗口 2 实际使用列地址线个数与 16 之差
+
+                                    这个值等于 16 – 实际使用的列地址线个数
+
+0x228
+
+Selfref_age   63:48   读写   0x0008   Selfrefresh 低功耗状态计数器
+
+Cs_place_3    40:40   读写   0x0      普通模式或窗口 3 译码时 CS 在地址中的位置
+
+                                    0 – 译码方式为{CS、ROW、BA、COL}
+
+                                    1 – 译码方式为{ROW、CS、BA、COL}
+
+Addr_win_3    35:32   读写   0xF      普通模式或窗口 3 地址命中及配置
+
+                                    Bit [3:2]：窗口使用 DRAM 的 Bank 数
+
+                                    11 – 8 bank；10 – 4 bank；01 – 2 bank；00 – 保留
+
+                                    Bit [1:0]：窗口使用 DRAM 位数
+
+                                    11 – 64 位；10 – 32 位；01 – 16 位；00 – 保留
+
+Cs_diff_3     27:24   读写   0x0       普通模式或窗口 3 实际使用 CS 译码前地址与 2 之差
+
+                                     当 Pm_nc 有效时，
+
+                                     对于 64 位窗口，应该为 2；
+
+                                     对于 32 位窗口，应该为 1；
+
+                                     对于 16 位窗口，应该为 0
+
+Row_diff_3    19:16   读写   0x2       普通模式或窗口 3 实际使用行地址线个数与 16 之差
+
+                                     这个值等于 16 – 实际使用的行地址线个数
+
+Ba_diff_3     9:8     读写   0x0       普通模式或窗口 3 实际使用的 BA 线个数与 3 之差
+
+                                     这个值等于 3 – 实际使用的 BA 线个数
+
+Col_diff_3    3:0     读写   0x6       普通模式或窗口 3 实际使用列地址线个数与 16 之差
+
+                                     这个值等于 16 – 实际使用的列地址线个数
+
+0x230
+
+Win_mask_0    59:32   读写   0xFFFF    0 号窗口 MASK，对应地址[47:20]
+
+                           F00
+
+Win_base_0    27:0    读写   0x00000   0 号窗口 BASE，对应地址[47:20]
+
+                           00
+
+0x238
+
+Win_mask_1    59:32   读写   0xFFFF    1 号窗口 MASK，对应地址[47:20]
+
+                           F00
+
+Win_base_1    27:0    读写   0x00001   1 号窗口 BASE，对应地址[47:20]
+
+                           00
+
+0x240
+
+Win_mask_2    59:32   读写   0xFFFF    2 号窗口 MASK，对应地址[47:20]
+
+                           F00
+
+Win_base_2    27:0    读写   0x00002   2 号窗口 BASE，对应地址[47:20]
+
+                           00
+
+0x248
+
+Win_mask_3    59:32   读写   0xFFFF    3 号窗口 MASK，对应地址[47:20]
+
+                           F00
+
+Win_base_3    27:0    读写   0x00003   3 号窗口 BASE，对应地址[47:20]
+
+                           00
+
+0x250
+
+Cmd_monitor   55:48   读写   0x0       Bit 7：使能命令队列 3 监控功能
+
+                                     Bit 6：复位命令队列 3 性能计数值
+
+                                 Bit 5：使能命令队列 2 监控功能
+
+                                 Bit 4：复位命令队列 2 性能计数值
+
+                                 Bit 3：使能命令队列 1 监控功能
+
+                                 Bit 2：复位命令队列 1 性能计数值
+
+                                 Bit 1：使能命令队列 0 监控功能
+
+                                 Bit 0：复位命令队列 0 性能计数值
+
+Axi_monitor   41:32   读写   0x0   使能 AXI 命令队列性能监控，每两位控制一个 AXI
+
+                                 监控模块，控制方法与 Cmd_monitor 相同
+
+Ecc_code      31:24   只读   0x0   第一次发生 ECC 错误时从内存读出的校验码
+
+                                 记 录 的 出 错 信 息 的 时 机 由 Int_vector[0] 或
+
+                                 Int_vector[1]由 0 变 1 时触发，使用 Ecc_enable[3]进
+
+                                 行配置
+
+Ecc_enable    18:16   读写   0x0   ECC 功能使能
+
+                                 Bit-3：设置保存 ECC 出错信号时机
+
+                                      0 - 出现 ECC 错时触发；1 – 出现两位错时触发
+
+                                 Bit-2：使能写时 ECC 校验错的内部总线报错（异常）
+
+                                 Bit-1：使能读时 ECC 校验错的内部总线报错（异常）
+
+                                 Bit-0：使能 ECC 功能（只在 64 位模式下有效）
+
+Int_vector    9:8     读写   0x0   中断向量寄存器
+
+                                 Bit-1：ECC 两位校验错
+
+                                 Bit-0：ECC 校验错（包括一位错与两位错）
+
+                                 对这个寄存器的读操作将得到当前的 ECC 出错情况，
+
+                                 对这个寄存器的“写 1”操作将清除对应的位
+
+Int_enable    1:0     读写   0x0   中断使能寄存器
+
+                                 Bit-1：ECC 两位较验错中断使能
+
+                                 Bit-0：ECC 较验错中断使能（包括一位错与两位错）
+
+0x258
+
+
+
+0x260
+
+Ecc_addr      63:0    只读   0x0   第一次发生 ECC 错误时向内存读的出错地址
+
+                                 记 录 的 出 错 信 息 的 时 机 由 Int_vector[0] 或
+
+                                 Int_vector[1]由 0 变 1 时触发，使用 Ecc_enable[3]进
+
+                                 行配置
+
+0x268
+
+Ecc_data         63:0    只读   0x0    第一次发生 ECC 错误时从内存读出的数据
+
+                                     记 录 的 出 错 信 息 的 时 机 由 Int_vector[0] 或
+
+                                     Int_vector[1]由 0 变 1 时触发，使用 Ecc_enable[3]进
+
+                                     行配置
+
+0x270
+
+Lpbk_ecc_mask    58:57   只读   0x0    自循环测试第一次出错时的 ECC MASK 值
+
+                                     Bit 1：对应于 ECC MASK 的上升沿数据
+
+                                     Bit 0：对应于 ECC MASK 的下降沿数据
+
+Prbs_init        54:32   只写   0x10   自循环测试时使用的 PRBS 初始值
+
+Lpbk_error       25:25   只读   0x0    自循环测试出错
+
+Prbs_23          16:16   读写   0x0    自循环测试时使用的编码方式
+
+                                     1 – PRBS 23
+
+                                     0 – PRBS 7
+
+Lpbk_start       8:8     读写   0x0    自循环测试开始
+
+Lpbk_en          0:0     读写   0x0    自循环测试模式使能
+
+0x278
+
+Lpbk_ecc         63:49   只读   0x0    自循环测试第一次出错时的 ECC 值
+
+                                     Bit [63:57]：对应于 ECC 的上升沿数据的低 15 位
+
+                                     Bit [56:49]：对应于 ECC 的下降沿数据
+
+Lpbk_data_mask   48:33   只读   0x0    自循环测试第一次出错时的 DQM 值
+
+                                     Bit [48:41]：对应于 DQM 的上升沿数据
+
+                                     Bit [40:33]：对应于 DQM 的下降沿数据
+
+Lpbk_correct     32:17   只读   0x0    自循环测试第一次出错时的 PRBS 编码
+
+                                     Bit [32:25]：对应于上升沿数据
+
+                                     Bit [24:17]：对应于下降沿数据
+
+Lpbk_counter     16:1    只读   0x0    自循环测试第一次出错时的计数周期
+
+0x280
+
+Lpbk_data_r      63:0    只读   0x0    自循环测试第一次出错时的 DQ 上升沿数据
+
+0x288
+
+Lpbk_data_f      63:0    只读   0x0    自循环测试第一次出错时的 DQ 下降沿数据
+
+0x290
+
+Axi0_bw_w        63:32   只读   0x0    AXI0 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Axi0_bw_r        31:0    只读   0x0    AXI0 读带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+0x298
+
+Axi0_latency_w   63:32   只读   0x0   AXI0 写延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+Axi0_latency_r   31:0    只读   0x0   AXI0 读延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+0x2A0
+
+Axi1_bw_w        63:32   只读   0x0   AXI1 写带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+Axi1_bw_r        31:0    只读   0x0   AXI1 读带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2A8
+
+Axi1_latency_w   63:32   只读   0x0   AXI1 写延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+Axi1_latency_r   31:0    只读   0x0   AXI1 读延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+0x2B0
+
+Axi2_bw_w        63:32   只读   0x0   AXI2 写带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+Axi2_bw_r        31:0    只读   0x0   AXI2 读带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2B8
+
+Axi2_latency_w   63:32   只读   0x0   AXI2 写延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+Axi2_latency_r   31:0    只读   0x0   AXI2 读延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+
+0x2C0
+
+Axi3_bw_w        63:32   只读   0x0   AXI3 写带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+Axi3_bw_r        31:0    只读   0x0   AXI3 读带宽性能计数值
+
+                                    表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2C8
+
+Axi3_latency_w   63:32   只读   0x0   AXI3 写延迟性能计数值
+
+                                    这个值表示 64K 个访问的总延迟周期之和
+Axi3_latency_r    31:0    只读   0x0   AXI3 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+0x2D0
+
+Axi4_bw_w         63:32   只读   0x0   AXI4 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Axi4_bw_r         31:0    只读   0x0   AXI4 读带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2D8
+
+Axi4_latency_w    63:32   只读   0x0   AXI4 写延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+Axi4_latency_r    31:0    只读   0x0   AXI4 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+0x2E0
+
+Cmdq0_bw_w        63:32   只读   0x0   命令队列 0 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Cmdq0_bw_r        31:0    只读   0x0   命令队列 0 读带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2E8
+
+Cmdq0_latency_w   63:32   只读   0x0   命令队列 0 写延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+Cmdq0_latency_r   31:0    只读   0x0   命令队列 0 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+0x2f0
+
+Cmdq1_bw_w        63:32   只读   0x0   命令队列 1 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Cmdq1_bw_r        31:0    只读   0x0   命令队列 1 读带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+0x2f8
+
+Cmdq1_latency_w   63:32   只读   0x0   命令队列 1 写延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+Cmdq1_latency_r   31:0    只读   0x0   命令队列 1 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+0x300
+
+Cmdq2_bw_w        63:32   只读   0x0   命令队列 2 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Cmdq2_bw_r        31:0    只读   0x0   命令队列 2 读带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+0x308
+
+Cmdq2_latency_w   63:32   只读   0x0   命令队列 2 写延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+Cmdq2_latency_r   31:0    只读   0x0   命令队列 2 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+0x310
+
+Cmdq3_bw_w        63:32   只读   0x0   命令队列 3 写带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+Cmdq3_bw_r        31:0    只读   0x0   命令队列 3 读带宽性能计数值
+
+                                     表示 64K 个时钟周期里总线数据有效的周期数
+
+0x318
+
+Cmdq3_latency_w   63:32   只读   0x0   命令队列 3 写延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+Cmdq3_latency_r   31:0    只读   0x0   命令队列 3 读延迟性能计数值
+
+                                     这个值表示 64K 个访问的总延迟周期之和
+
+
+
+DDR2/3 SDRAM 软件编程指南
+-------------------------
+
+### 初始化操作
+
+初始化操作由软件向寄存器 Init_start（0x018）写入 1 时开始，在设置 Init_start
+信号之 前，必须将其它所有寄存器设置为正确的值。 软硬件协同的 DRAM
+初始化过程如下：
+
+ 1. 软件向所有的寄存器写入正确的配置值，但是 Init_start（0x018）在这一过程中必
+    须保持为 0；
+ 1. 软件将 Init_start（0x018）设置为 1，这将导致硬件初始化的开始；
+ 1. PHY 内部开始初始化操作，DLL 将尝试进行锁定操作。如果锁定成功，则可以从
+    Dll_init_done（0x000）读出对应状态，并可以从 Dll_value_ck（0x000）读写当前
+    锁定延迟线个数；如果锁定不成功，则初始化不会继续进行（此时可以通过设置
+    Dll_bypass（0x018）使得初始化继续执行）；
+ 1. DLL 锁定（或者 bypass 设置）之后，控制器将根据对应 DRAM 的初始化要求向 DRAM
+    发出相应的初始化序列，例如对应的 MRS 命令，ZQCL 命令等等；
+ 1. 软件可以通过采样 Dram_init（0x160）寄存器来判断内存初始化操作是否完成。
+
+### Leveling
+
+Leveling 操作是在 DDR3 中，用于智能配置内存控制器读写操作中各种信号间相位关系的
+操作。通常它包括了 Write Leveling、Read Leveling 和 Gate Leveling。在本控制器中
+，只实现了 Write Leveling 与 Gate Leveling，Read Leveling 没有实现，软件需要通
+过判断读写的正确性来实现 Read Leveling 所完成的功能。除了在 Leveling 过程中操作
+的 DQS 相位、 GATE 相位之外，还可以根据这些最后确认的相位来计算出写 DQ 相位、读
+DQ 相位的配置方法。 Write Leveling
+
+Write Leveling 用于配置写 DQS 与时钟之间的相位关系，软件编程需要参照如下步骤。
+
+    (1) 完成控制器初始化，参见上一小节内容；
+    (2) 将 Dll_wrdqs_x（x = 0…8）设置为 0；
+    (3) 设置 Lvl_mode（0x180）为 2’b01；
+    (4) 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Write Leveling 请求；
+    (5) 设置 Lvl_req（0x180）为 1；
+    (6) 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Write Leveling 请求完成；
+    (7) 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0 则跳至步骤(8)。否则(采
+        样 Lvl_resp_x 结果为 1)，将对应的 Dll_wrdqs_x[6:0]增加 1，并重复执行
+        5-7 直至采样 Lvl_resp_x 结果为 0；
+    (8) 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0，则将对应的 Dll_wrdqs_x[6:0]
+        增加 1，并重复执行步骤 5，6，8 直至采样 Lvl_resp_x 结果为 1；
+    (9) 此时 Dll_wrdqs_x 的值就应该是正确的设置值。至此 Write Leveling 操作结束。
+    (10) 接着根据 Dll_wrdqs_x 的值是否小于 0x40 来设置 Wrdqs_lt_half_x；
+    (11) 根据 Dll_wrdqs_x 的值是否小于 0x20 来设置 Dll_wrdata_x。如果
+         Dll_wrdqs_x > 0x20，Dll_wrdata_x = Dll_wrdqs_x – 0x20，否则
+         Dll_wrdata_x = Dll_wrdqs_x + 0x60；
+    (12) 根据 Dll_wrdata_x 的值是否小于 0x40 来设置 Wrdata_lt_half_x；
+    (13) 接下来需要根据 DIMM 类型进行不同的操作
+         对于 UDIMM，Slice0-7 的 Dll_wrdata 的值依次增大(当跨越 0x7F 边界时也视
+         为依次增大)。如果所有 Wrdq_lt_half_x 都为 1，即所有 Dll_wrdata_x 都小
+         于 0x40，则将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果有的 Wrdq_lt_half_x
+         为 1，有的 Wrdq_lt_half_x 为 0，即 Dll_wrdata_x 的值有跨越 0x40 边界的
+         情况，则将 0x40 边界右边(不一定是大于 0x40，因为有可能有的
+         Dll_wrdata_x 的值跨越 0x7F 边界)的 Slice 对应的 Wrdq_clkdelay_x 设为 1
+         ，然后将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果所有 Wrdq_lt_half_x 都为
+         0，即所有 Dll_wrdata_x 都大于等于 0x40，不做任何处理。
+         对于 RDIMM，tPHY_WRDATA 与 tRDDATA 的默认配置值需要在 UDIMM 的基础上增
+         加 1 。然后分别对于 Slice8,3,2,1,0 和 Slice4,5,6,7 作同 UDIMM 的处理。
+    (14) 将 Lvl_mode（0x180）设置为 2’b00，退出 Write Leveling 模式；
+
+Gate Leveling
+
+Gate Leveling 用于配置控制器内使能采样读 DQS 窗口的时机，软件编程参照如下步骤。
+
+(1) 完成控制器初始化，参见上一小节内容；
+    (2) 完成 Write Leveling，参见上一小节内容；
+    (3) 将 Dll_gate_x（x = 0…8）设置为 0；
+    (4) 设置 Lvl_mode（0x180）为 2’b10；
+    (5) 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Gate Leveling 请求；
+    (6) 设置 Lvl_req（0x180）为 1；
+    (7) 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Gate Leveling 请求完成；
+    (8) 采样 Lvl_resp_x[0]（0x180、0x188）寄存器。如果第一次采样发现 Lvl_resp_x[0]为
+1，则将对应的 Dll_gate_x[6:0]增加 1，并重复执行 6-8，直至采样结果为 0，否则进行下一
+步。在这个过程中如果 Dll_gate_x[6:0]的值增加到 0x7F 还没采样到 Lvl_resp_x[0]为 0，则将
+对应的 Rd_oe_begin_x 和 Rd_oe_end_x 增加 1；
+    (9) 采样 Lvl_resp_x[0]（0x180、0x188）寄存器，如果采样结果为 0，则将对应的
+Dll_gate_x[6:0]增加 1，并重复执行 6、7、9，直至采样结果 1，则表示 Gate Leveling 操作已
+经成功；
+    至此 Gate Leveling 操作结束，此时 Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和实际上就是
+读 DQS 相对于 PHY 内部时钟的相位关系。下面根据 Leveling 的结果对各个参数进行调整。
+    (10) 如果 Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和小于 0x20 或者大于 0x60，那么
+Dll_rddqs_lt_halt 设置为 1。因为 rddqs 的相位关系实际上等于在输入的读 DQS 基础上再延
+迟 1/4。
+    (11) 此时如果 Dll_gate_x 的值大于 0x20，则将 Dll_gate_x 的值减去 0x20；否则将其设
+为 0 即可。
+    (12) 调整完毕后，再分别进行两次 Lvl_req 操作，观察 Lvl_resp_x[7:5]与 Lvl_resp_x[4:2]
+的值变化，如果各增加为 Burst_length/2，则继续进行第 13 步操作；如果不为 Burst_length/2，
+可能需要对 Rd_oe_begin_x 进行加一或减一操作，如果大于 Burst_length/2，很可能需要对
+Dll_gate_x 的值进行一些微调
+    (13) 将 Lvl_mode（0x180）设置为 2’b00，退出 Gate Leveling 模式；
+
+### 单独发起 MRS 命令
+
+内存控制器向内存发出的 MRS 命令次序分别为：
+
+        MR2_CS0、MR2_CS1、MR2_CS2、MR2_CS3、
+        MR3_CS0、MR3_CS1、MR3_CS2、MR3_CS3、
+        MR1_CS0、MR1_CS1、MR1_CS2、MR1_CS3、
+        MR0_CS0、MR1_CS1、MR1_CS2、MR1_CS3。
+
+其中，对应 CS 的 MRS 命令是否有效，是由 Cs_mrs 决定，只有 Cs_mrs 上对应每个片
+选的位有效，才会真正向 DRAM 发出这个 MRS 命令。对应的每个 MR 的值由寄存器
+Mr\*\_cs\* 决定。这些值同时也用于初始化内存时的 MRS 命令。具体操作如下：
+
+  (1) 将寄存器 Cs_mrs（0x168）、Mr\*\_cs\*（0x190 – 0x1B8）设置为正确的值；
+  (2) 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
+  (3) 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
+      进行下一步操作，如果为 0，则需要继续等待；
+  (4) 写 Mrs_req（0x198）为 1，向 DRAM 发送 MRS 命令；
+  (5) 采样 Mrs_done（0x198），如果为 1，则表示 MRS 命令已经发送完毕，可以退出，
+      如果为 0，则需要继续等待；
+  (6) 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
+
+### 任意操作控制总线
+
+内存控制器可以通过命令发送模式向 DRAM 发出任意的命令组合，软件可以设置 Cmd_cs、
+Cmd_cmd、Cmd_ba、Cmd_a（0x190），在命令发送模式下向 DRAM 发出。具体操作如下：
+
+  (1) 将寄存器 Cmd_cs、Cmd_cmd、Cmd_ba、Cmd_a（0x190）设置为正确的值；
+  (2) 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
+  (3) 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
+      进行下一步操作，如果为 0，则需要继续等待；
+  (4) 写 Cmd_req（0x190）为 1，向 DRAM 发送命令；
+  (5) 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
+
+### 自循环测试模式控制
+
+自循环测试模式可以分别在测试模式下或者正常功能模式下使用，为此，本内存控制器分
+别实现了两套独立的控制接口，一套用于在测试模式下由测试端口直接控制，另一套用于
+在正常功能模式下由寄存器配置模块进行配置使能测试。
+
+这两套接口的复用使用端口 test_phy 进行控制，当 test_phy 有效时，使用控制器的
+test_\* 端口进行控制，此时的自测试完全由硬件控制；当 test_phy 无效时，使用软件
+编程的 pm_\* 的参数进行控制。使用测试端口的具体信号含义可以参考寄存器参数中的同
+名部分。
+
+这两套接口从控制的参数来说基本一致，仅仅是接入点不同，在此介绍软件编程时的控制
+方法。具体操作如下：
+
+  (1) 将内存控制器所有的参数全部正确设置。需要注意的是， Dqs_oe_begin_\*
+      、 Dqs_oe_end_\* 应该设为 0，Rd_oe_begin_\*、Rd_oe_end_\* 应该设为 1 或 2
+      ，否则可能会导致测试出错；
+  (2) 将寄存器 Lpbk_en（0x270）设为 1；
+  (3) 将寄存器 Init_start（0x018）设为 1；
+  (4) 采样寄存器 Dll_init_done（0x000），如果这个值为 1，表示 DLL 已经锁定，可
+      以进行下一步操作；如果这个值为 0，则需要继续等待；（当使用测试端口进行控
+      制的时候，因为看不到这个寄存器的输出，所以不需要采样这个寄存器，而只需要
+      在此处等待一定的时间，以确保 DLL 锁定完成，再进行下一步操作）；
+  (5) 将寄存器 Lpbk_start（0x270）设为 1；此时自循环测试正式开始。到此为止自循
+      环测试已经开始，软件需要经常检测是否有错误发生，具体操作如下：
+  (6) 采样寄存器 Lpbk_error（0x270），如果这个值为 1，表示有错误发生，此时可以通
+      过 Lpbk_\*等观测用寄存器（0x270、0x278、0x280、0x288）来观测第一个出错时
+      的错误数据和正确数据；如果这个值为 0，表示还没有出现过数据错误。
+
+### 细粒度多通道模式控制
+
+硬件连接
+
+需要使用细粒度多通道模式，硬件连接时每个 CS/ODT 连接 16 位 DQ，也即 CS0/ODT0 对
+应 DQ[15:0]，CS1/ODT1 对应 DQ[31:16]，CS2/ODT2 对应 DQ[47:32]，CS3/ODT3 对应
+DQ[63:48]。地址线与其它控制线连接所有内存颗粒。
+
+软件编程
+
+进行软件初始化时，与普通模式时不同的是，需要打开所有的 Cs_enable、Cs_mrs、
+Lvl_cs，以便对所有的颗粒进行初始化及 Leveling 操作。需要将 Rdfifo_valid 设为 0
+，并正确设置 tPHY_RDLAT 的值。接下来按照需要设置四个
+Addr_win/Cs_diff/Row_diff/Ba_diff/Col_diff 的值。四组不同的窗口每组表示总地址空
+间的 1/4。需要进行分别配置。
+
+### ECC 功能使用控制
+
+ECC 功能只有在 64 位模式下可以使用。Ecc_enable 包括以下 4 个控制位：
+
+ - Ecc_enable[0]控制是否使能 ECC 功能，只有设置了这个有效位，才会使能 ECC 功能。
+ - Ecc_enable[1]控制是否通过处理器内部的读响应通路进行报错，以使得出现 ECC 两位
+   错的读访问能立即导致处理器核的异常发生。
+ - Ecc_enable[2]控制是否通过处理器内部的写响应通路进行报错，以使得出现 ECC 两位
+   错的写访问（读后写）能立即导致处理器核的异常发生。
+ - Ecc_enable[3]控制寄存器内记录出错信息的触发时机。这些出错信息在没有软件进行
+   处理的情况下不会连续触发，只会记录第一次出错时的信息。这些信息包括 Ecc_code
+   ， Ecc_addr，Ecc_data。当 Ecc_enable[3]为 0 的情况下，只要出现了 ECC 错误（
+   包括 1 位错与 2 位错），这个记录就会被触发，当 Ecc_enable[3]为 1 的情况下，
+   只有出现了 ECC 两位错，这个记录才会被触发。而这个“第一次”指的是中断向量寄存
+   器的对应位被置位。也就是说，记录的是导致中断发生的那一次访问。
+
+除此之外，ECC 出错还可以通过中断方式通知处理器核。这个中断通过 Int_enable 进行
+控制。中断包括两个向量，Int_vector[0]表示出现 ECC 错误（包括 1 位错与 2 位错）
+， Int_vecotr[1] 表示出现 ECC 两位错。Int_vector 的清除通过向对应位写 1 实现。
+
+### 32/16 位窄通道使用控制
+
+除了 64 位模式，通过配置还可以将内存控制器置于 32 位或者 16 位工作模式，具体的
+配置如下。
+
+ - 32 位模式：
+     1. 将寄存器 Nc（0x1F0）设为 0x5；
+     1. 将寄存器 Addr_win_\*（0x210，0x218，0x220，0x228）设为 0xe；
+     1. 将寄存器 Cs_diff_\*（0x210，0x218，0x220，0x228）设为 0x1。
+ - 16 位模式：
+     1. 将寄存器 Nc（0x1F0）设为 0x3；
+     1. 将寄存器 Addr_win_\*（0x210，0x218，0x220，0x228）设为 0xd；
+     1. 将寄存器 Cs_diff_\*（0x210，0x218，0x220，0x228）设为 0x0。
+

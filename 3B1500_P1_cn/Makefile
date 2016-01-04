@@ -26,4 +26,4 @@ json: $(SOURCES) $(TEMPLATE)
 	pandoc $(SOURCES) -o $(JSONFILE) $(OPTIONS) -t json
 
 clean:
-	@rm -f $(TARGET) $(TEXFILE) $(JSONFILE)
+	@rm -f $(TARGET) $(TEXFILE) $(JSONFILE) *.aux *.lot *.lof *.log
