@@ -1,16 +1,17 @@
-\chapter{HyperTransport 控制器}
+HyperTransport 控制器
+=====================
 
 龙芯 3B1500 提供了两个 HyperTransport 控制器 (HT0 和 HT1)，用于连接外部设备及多
 芯片互联。这两个 HT 控制器实现了对 IO Cache 一致性的支持。 在 Cache 一致性支持
 模式下， IO 设备的 DMA 访问对于 Cache 层透明， 即不需要通过 Cache 指令，而是由
 硬件自动维护其一致性。用于外设连接时，用户程序可选择是否支持 IO Cache 一致性（
-通过地址窗口 Uncache 进行设置，详见 10.5.13 节）：当配置为支持 Cache 一致性模式
-时，IO 设备对内 DMA 的访问对于 Cache 层次透明，即由硬件自动维护其一致性 ,而无需
-软件通过程序 Cache 指令进行维护。同时， 用户程序也可以通过对非缓存地址窗口设置
-（见 \ref{subsec:htuncachewin}节）， 对某些特定内存段不提供 IO Cache 一致性支
-持，这有助于提高某些设备如显卡等的效率。
+通过地址窗口 Uncache 进行设置，详见 节）：当配置为支持 Cache 一致性模式时，IO
+设备对内 DMA 的访问对于 Cache 层次透明，即由硬件自动维护其一致性 ,而无需软件通
+过程序 Cache 指令进行维护。同时， 用户程序也可以通过对非缓存地址窗口设置（见
+\ref{subsec:htuncachewin} 节）， 对某些特定内存段不提供 IO Cache 一致性支持，这
+有助于提高某些设备如显卡等的效率。
 
-当系统引脚 ICCC\_EN 被置位时， HT0 控制器将会被用于多芯片互联，这时 HT0 控制器
+当系统引脚 ICCC_EN 被置位时， HT0 控制器将会被用于多芯片互联，这时 HT0 控制器
 硬件自动维护相联的 CPU 之间的 Cache 一致性 （即片间 Cache 一致性）。 HT1 控制器
 不支持片间 Cache 一致性维护，而只能用于连接 IO 外设。
 
@@ -26,7 +27,8 @@
  - 总线控制信号（包括 PowerOK，Rstn，LDT_Stopn）方向可配置。
  - HT0 控制器用于多片互联时可配置为片间 Cache 一致性模式；
 
-\section{HT 协议支持}
+HT 协议支持
+-----------
 
 龙芯 3B1500 的 HyperTransport 总线支持 HT 1.03 协议中的大部分命令，并增加了支持
 多芯片互联的扩展一致性协议。 在这两种模式（标准及扩展）下，HyperTransport 接收
@@ -88,7 +90,8 @@ Post Write： HyperTransport 协议中，这种写访问不需要 等待写完�
   \label{tab:htscmd}
 \end{table}
 
-\section{HyperTransport 硬件设置及初始化}
+HyperTransport 控制信号及初始化
+-------------------------------
 
 HyperTransport 总线由传输总线信号和控制信号引脚等组成。 这些控制信号包括
 HT\_8x2，HT\_Mode， HT\_PowerOK，HT\_Rstn，HT\_Ldt\_Stopn，HT\_Ldt\_Reqn，
@@ -112,14 +115,14 @@ HT\_8x2，HT\_Mode， HT\_PowerOK，HT\_Rstn，HT\_Ldt\_Stopn，HT\_Ldt\_Reqn，
   \ptabincell{l}{1：将总线配置为两个独立的 8 位 HT 总线 \\
   0：将总线作为单个 16 位总线使用。} \\ \hline
 
-  HT\_Lo\_mode & 主设备模式 & \ptabincell{l}{
+  HT\_Lo\_Homemode & 主设备模式 & \ptabincell{l}{
   1：将 HT\_Lo 设为主设备模式；\\ 0：将 HT\_Lo 设为从设备模式。} \\ \hline
   HT\_Lo\_PowerOK & 总线 PowerOK & HT\_Lo PowerOK 信号 \\ \hline
   HT\_Lo\_Rstn & 总线 Rstn & HT\_Lo 连接重置信号 \\ \hline
   HT\_Lo\_Ldt\_Stopn & 总线 Ldt\_Stopn & HT\_Lo 连接暂停信号 \\ \hline
   HT\_Lo\_Ldt\_Reqn & 总线 Ldt\_Reqn & HT\_Lo 连接请求信号 \\ \hline
 
-  HT\_Hi\_mode &  主设备模式 & \ptabincell{l}{
+  HT\_Hi\_Homemode &  主设备模式 & \ptabincell{l}{
   1：将 HT\_Hi 设为主设备模式；\\ 0：将 HT\_Hi 设为从设备模式。 (HT\_8x2=0时，无效)} \\ \hline
   HT\_Hi\_PowerOK & 总线 PowerOK & HT\_Hi PowerOK 信号 (HT\_8x2=0时，无效)\\ \hline
   HT\_Hi\_Rstn & 总线 Rstn & HT\_Hi 连接重置信号 (HT\_8x2=0时，无效) \\ \hline
@@ -150,42 +153,52 @@ HT\_8x2，HT\_Mode， HT\_PowerOK，HT\_Rstn，HT\_Ldt\_Stopn，HT\_Ldt\_Reqn，
   HT\_8x2 为 0 时，& CAD[15:0] 由 HT\_Lo 控制} \\ \hline
 \end{longtable}
 
-在这些信号中，HT\_8x2、HT\_Lo\_mode、HT\_Hi\_mode 的设置又进一步决定了
+在这些信号中，HT\_8x2、HT\_Lo\_Homemode、HT\_Hi\_Homemode 的设置又进一步决定了
 其他的 HT 信号的作用及意义。 首先，HT\_8x2 决定了 16 位的 HT 总线是否作为两个
 独立的 HT 控制器控制。
-\begin{itemize}
-  \item 当 HT\_8x2 = 1时，16 位的 HT 总线作为两个独立的 HT 控制器控制， 这时 HT
-    的 40 位地址空间按如下规则划分：
+
+  - 当 HT\_8x2 = 1时，16 位的 HT 总线作为两个独立的 HT 控制器控制， 这时 HT 的
+    40 位地址空间按如下规则划分：
     \begin{flushleft}
       \mbox{\hspace{2cm}}HT\_Lo：address[39] = 0； \\
       \mbox{\hspace{2cm}}HT\_Hi：address[39] = 1。
     \end{flushleft}
-  \item 当 HT\_8x2 = 0时，整个 HT 总线将作为一个 16 位总线使用， 由 HT\_Lo
-    控制， 合法的地址空间为 HT\_Lo 的地址，即 address[39] =0；同时所有 HT\_Hi
+  - 当 HT\_8x2 = 0时，整个 HT 总线将作为一个 16 位总线使用， 由 HT\_Lo 控制，
+    合法的地址空间为 HT\_Lo 的地址，即 address[39] =0；同时所有 HT\_Hi
     信号无效， 包括 Hi\_PowerOK、Hi\_Rstn、Hi\_Ldt\_Stopn。当然， 高位设备
-    的主模式引脚 Hi\_mode 亦无效。
-\end{itemize}
+    的主模式引脚 Hi\_Homemode 亦无效。
 
-HT\_Lo\_mode、HT\_Hi\_mode 为主设备模式引脚。如果该引脚置位， 则对应的
+HT\_Lo\_Homemode、HT\_Hi\_Homemode 为主设备模式引脚。如果该引脚置位， 则对应的
 HT 设备被设为主设备模式， 反之为从设备模式。
-\begin{itemize}
-  \item 在主设备模式下，总线控制信号等由该设备驱动：这些控制信号包括 PowerOK，
-    Rstn， 和 Ldt\_Stopn （注意：不包括 Reqn）；
 
-  \item 控制信号可以为双向驱动：即 HT 总线两端的设备都为主设备模式。
+  - 在主设备模式下，总线控制信号等由该设备驱动：这些控制信号包括 PowerOK， Rstn
+    ， 和 Ldt\_Stopn （注意：不包括 Reqn）；
+  - 控制信号可以为双向驱动：即 HT 总线两端的设备都为主设备模式。
+  - 主设备模式引脚同时也决定了对应的功能指针寄存器(见表\ref{tab:htcapreg1})的
+    "Act As Slave" 位的初始值（取反）： (1) 当该位为 0 时，HyperTransport 总线
+    上的包中的 Bridge 位为 1，否则为 0； (2) 同时， 当 Act\_As\_Slave 位为 0 时
+    ，如果 HT 总线上的请求地址未命中控制器的接收窗口，将作为 P2P 请求重新发回总
+    线；否则将作为错误请求做出响应。
 
-  \item 主设备模式引脚同时也决定了对应的功能指针寄存器(见表\ref{tab:htcapreg1})的``Act As
-    Slave'' 位的初始值（取反）： (1) 当该位为 0 时，HyperTransport 总线上的包中的
-    Bridge 位为 1，否则为 0； (2) 同时， 当 Act\_As\_Slave 位为 0 时，如果 HT
-    总线上的请求地址未命中控制器的接收窗口，将作为 P2P 请求重新发回总线；
-    否则将作为错误请求做出响应。
-\end{itemize}
 需要注意的是，HyperTransport 总线两端的设备配置需要一一对应，
 如果没有被正确设置并正确驱动， 将导致 HyperTransport 接口不能正常工作。
 
-\remark{是不是 HT1 无所谓主从模式？}
+### HT 总线重初始化 {#subsec:htreinit}
 
-\section{HT 控制器配置寄存器模块}
+HyperTransport 的初始化在每次复位完成后自动开始， 冷启动后 HyperTransport
+总线将自动工作在最低频率 (200Mhz)与最小宽度(8bit)，并尝
+试进行总线初始化握手。初始化是否完成的状态可以由寄存器“Init Complete” （见
+9.6.2 节） 读出。 初始化完成后， 总线的宽度可以由寄存器“Link Width Out”
+与“Link Width In” （见 9.6.2 节）读出。在初始化完成后，用户可以重新对
+寄存器“Link Width Out”, “Link Width In”以及“Link Freq”进行编程，
+同时需要对对方设备的相应寄存器也进行编程， 编程完成后需要重新热复位总线
+或是通过 HT\_Ldt\_Stopn 信号对总线进行重新初始化操作，以使编程后的值在重
+新初始化后生效。在重新初始化后 HyperTransport 总线将工作在新的频率和宽
+度。需要注意的是， 对 HT 总线两端的设备配置需要一一对应，否则将导致
+HyperTransport 接口不能正常工作。
+
+HyperTransport 配置寄存器
+-------------------------
 
 HT 控制器配置寄存器模块主要用于控制从 AXI SLAVE 端或是 HT RECEIVER
 端到达的配置寄存器访问，外部中断处理，并保存了大量软件可见用于控制系统各种
@@ -193,9 +206,6 @@ HT 控制器配置寄存器模块主要用于控制从 AXI SLAVE 端或是 HT RE
 HT 控制器各种行为的配置寄存器都在本模块中。本模块的访问地址在 AXI 端为
 0xFD\_FB00\_0000 到 0xFD\_FBFF\_FFFF，表\ref{tab:htconfigreg}
 列出了其所有软件可见寄存器。
-
-\remark{需要说明那些寄存器及其寄存器位是针对HT0的； 同时说明如何分别
-设置 HT0 和 HT1。。。}
 
 \begin{longtable}{|c|c|c|l|}
   \caption{配置寄存器模块寄存器列表}\label{tab:htconfigreg} \\
@@ -207,40 +217,43 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
   \rmcol{4}{\tiny 未完待续} \endfoot
   \endlastfoot
 
-  0x3C & 桥控制寄存器          &  32 & 总线重置控制                                      \\ \hline
-  0x40 & 功能寄存器组          &  32 & 命令功能指针                                      \\*
-  0x44 &                       &  32 & 连接控制                                          \\*
-  0x48 &                       &  32 & Revision ID，Link Freq，Link Error，Link Freq Cap \\*
-  0x4C &                       &  32 & 特征功能寄存器                                    \\ \hline
-  0x50 & 自定义寄存器          &  32 & MISC                                              \\ \hline
-  0x54 &                       &  32 &                                                   \\*
-  0x58 &                       &  32 &                                                   \\*
-  0x5C &                       &  32 &                                                   \\ \hline
-  0x60 & 接收地址窗口寄存器    &  32 & 接收地址窗口 0 使能（外部访问）                   \\*
-  0x64 &                       &  32 & 接收地址窗口 0 基址（外部访问）                   \\*
-  0x68 &                       &  32 & 接收地址窗口 1 使能（外部访问）                   \\*
-  0x6C &                       &  32 & 接收地址窗口 1 基址（外部访问）                   \\*
-  0x70 &                       &  32 & 接收地址窗口 2 使能（外部访问）                   \\*
-  0x74 &                       &  32 & 接收地址窗口 2 基址（外部访问）                   \\ \hline
-  0x78 &                       &  32 &                                                   \\*
-  0x7C &                       &  32 &                                                   \\ \hline
-  0x80 & 中断向量寄存器        & 256 & 中断向量寄存器                                    \\ \hline
-  0xA0 & 中断使能寄存器        & 256 & 中断使能寄存器                                    \\ \hline
-  0xC0 & 中断检测配置寄存器    &  32 & Interrupt Capability                              \\*
-  0xC4 &                       &  32 & DataPort                                          \\*
-  0xC8 &                       &  64 & IntrInfo                                          \\ \hline
-  0xD0 & POST 地址窗口寄存器   &  32 & POST 地址窗口 0 使能（内部访问）                  \\*
-  0xD4 &                       &  32 & POST 地址窗口 0 基址（内部访问）                  \\*
-  0xD8 &                       &  32 & POST 地址窗口 1 使能（内部访问）                  \\*
-  0xDC &                       &  32 & POST 地址窗口 1 基址（内部访问）                  \\ \hline
-  0xE0 & 可预取地址窗口寄存器  &  32 & 可预取地址窗口 0 使能（内部访问）                 \\*
-  0xE4 &                       &  32 & 可预取地址窗口 0 基址（内部访问）                 \\*
-  0xE8 &                       &  32 & 可预取地址窗口 1 使能（内部访问）                 \\*
-  0xEC &                       &  32 & 可预取地址窗口 1 基址（内部访问）                 \\ \hline
-  0xF0 & 非缓存地址窗口寄存器  &  32 & 非缓存地址窗口 0 使能（内部访问）                 \\*
-  0xF4 &                       &  32 & 非缓存地址窗口 0 基址（内部访问）                 \\*
-  0xF8 &                       &  32 & 非缓存地址窗口 1 使能（内部访问）                 \\*
-  0xFC &                       &  32 & 非缓存地址窗口 1 基址（内部访问）                 \\ \hline
+  0x3C & 桥控制寄存器           & 32  & 总线重置控制                                      \\ \hline
+  0x40 & 功能寄存器组           & 32  & 命令功能指针                                      \\ 
+  0x44 &                        & 32  & 连接控制                                          \\ 
+  0x48 &                        & 32  & Revision ID，Link Freq，Link Error，Link Freq Cap \\ 
+  0x4C &                        & 32  & 特征功能寄存器                                    \\ \hline
+  0x50 & 自定义寄存器           & 32  & Misc                                              \\ 
+  0x54 & 接收诊断寄存器         & 32  & 用于诊断接收端采样的信号                          \\ 
+  0x58 & 中断路由方式选择寄存器 & 32  & 对应于 3 种中断路由方式                           \\ 
+  0x5C & 接收缓存寄存器         & 32  &                                                   \\ 
+  0x60 & 接收地址窗口寄存器     & 32  & 接收地址窗口 0 使能（外部访问）                   \\ 
+  0x64 &                        & 32  & 接收地址窗口 0 基址（外部访问）                   \\ 
+  0x68 &                        & 32  & 接收地址窗口 1 使能（外部访问）                   \\ 
+  0x6C &                        & 32  & 接收地址窗口 1 基址（外部访问）                   \\ 
+  0x70 &                        & 32  & 接收地址窗口 2 使能（外部访问）                   \\ 
+  0x74 &                        & 32  & 接收地址窗口 2 基址（外部访问）                   \\ \hline
+  0x78 &                        & 32  &                                                   \\
+  0x7C &                        & 32  &                                                   \\ \hline
+  0x80 & 中断向量寄存器         & 256 & 中断向量寄存器                                    \\ \hline
+  0xA0 & 中断使能寄存器         & 256 & 中断使能寄存器                                    \\ \hline
+  0xC0 & 中断检测配置寄存器     & 32  & Interrupt Capability                              \\
+  0xC4 &                        & 32  & DataPort                                          \\
+  0xC8 &                        & 64  & IntrInfo                                          \\ \hline
+  0xD0 & POST 地址窗口寄存器    & 32  & POST 地址窗口 0 使能（内部访问）                  \\ 
+  0xD4 &                        & 32  & POST 地址窗口 0 基址（内部访问）                  \\ 
+  0xD8 &                        & 32  & POST 地址窗口 1 使能（内部访问）                  \\ 
+  0xDC &                        & 32  & POST 地址窗口 1 基址（内部访问）                  \\ \hline
+  0xE0 & 可预取地址窗口寄存器   & 32  & 可预取地址窗口 0 使能（内部访问）                 \\ 
+  0xE4 &                        & 32  & 可预取地址窗口 0 基址（内部访问）                 \\ 
+  0xE8 &                        & 32  & 可预取地址窗口 1 使能（内部访问）                 \\ 
+  0xEC &                        & 32  & 可预取地址窗口 1 基址（内部访问）                 \\ \hline
+  0xF0 & 非缓存地址窗口寄存器   & 32  & 非缓存地址窗口 0 使能（内部访问）                 \\ 
+  0xF4 &                        & 32  & 非缓存地址窗口 0 基址（内部访问）                 \\ 
+  0xF8 &                        & 32  & 非缓存地址窗口 1 使能（内部访问）                 \\ 
+  0xFC &                        & 32  & 非缓存地址窗口 1 基址（内部访问）                 \\ \hline
+ 0x100 & 发送端缓存大小寄存器   & 32  & 发送端命令缓存大小寄存器                          \\ 
+ 0x104 &                        & 32  & 发送端数据缓存大小寄存器                          \\ 
+ 0x108 & 发送端缓存调试寄存器   & 32  & 用于人工设置发送端缓存的大小（调试用）            \\ \hline
 \end{longtable}
 
 在以下的小节中， 将给出 HT 控制器配置寄存器模块的桥控制寄存器(bridge control)，
@@ -250,7 +263,7 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
 可预取地址窗口、非缓存地址窗口将在 HT 地址空间及窗口配置
 (\ref{sec:htAddrWinConf}) 中详述。
 
-\subsection{桥控制寄存器（Bridge Control）}
+### 桥控制寄存器（Bridge Control）
 
 \begin{table}[h]
   \centering
@@ -268,7 +281,7 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
   \label{tab:bridgecontrol}
 \end{table}
 
-\subsection{功能寄存器组（Capability Registers）}
+### 功能寄存器组（Capability Registers）
 
 \begin{table}[htbp]
   \centering
@@ -278,7 +291,7 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
     31:29  & HOST/Sec             & 3      & 0x1       & R      & 命令格式为 HOST/Sec \\
     28:27  & ---                  & 2      & 0x0       & R      & 保留 \\
     26     & Act as Slave         & 1      & ---       & RW     &
-    设备是否采用从模式,初始值由对应的 HT\_mode 引脚决定 （见表\ref{tab:htSignals}） \\
+    设备是否采用从模式,初始值由对应的 HT\_Homemode 引脚决定 （见表\ref{tab:htSignals}） \\
     25     & ---                  & 1      & 0x0       & ---    & 保留 \\
     24     & Host Hide            & 1      & 0x0       & RW     & 是否禁止来自 HT 总线的寄存器访问 \\
     23     & ---                  & 1      & 0x0       & ---    & 保留 \\
@@ -311,7 +324,8 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
 
 200Mhz，400Mhz，800Mhz
 
-写入此寄存器的值后将在下次热复位或 是 HT Disconnect 之后生效 0000：200M 0010：400M 0101：800M \\
+写入此寄存器的值后将在下次热复位或 是 HT Disconnect 之后生效 0000：200M 0010：
+400M 0101：800M
 
 \begin{table}[htbp]
   \centering
@@ -369,7 +383,7 @@ Disconnect 之后生效 000：8 位方式 001：16 位方式
 冷复位后的值为当前连接的最大宽度， 写入此寄存器的值将会在下次热复位或是 HT
 Disconnect 之后生效
 
-\subsection{自定义寄存器（MISC）}
+### 自定义寄存器（MISC）
 
 \begin{table}[htbp]
   \centering
@@ -396,32 +410,120 @@ Disconnect 之后生效
   \label{tab:misc}
 \end{table}
 
-将除了标准中断之外的其它中断重定向到哪个中断向量中（包括
-SMI，NMI， INIT，INTA，INTB，INTC，INTD） 总共 256 个中断向量， 本寄存器表示的是中断向量的高 5 位 \\
+将除了标准中断之外的其它中断重定向到哪个中断向量中（包括 SMI，NMI， INIT，INTA
+，INTB，INTC，INTD） 总共 256 个中断向量， 本寄存器表示的是中断向量的高 5 位
 
-HT 内部中断向量如下： 000：SMI 001：NMI 010：INIT 011：Reservered 100：INTA 101：INTB 110：INTC
-111：INTD
+HT 内部中断向量如下： 000：SMI 001：NMI 010：INIT 011：Reservered 100：INTA 101
+：INTB 110：INTC 111：INTD
 
 0x0：最高优先级 0xF：最低优先级.  对于各个通道的优先级均采用根据时间
 变化提高的优先级策略，该组存器用于 配置各个通道的初始优先级
 
-\subsection{HT 总线重初始化} \label{subsec:htreinit}
+### 命令发送缓存大小寄存器
 
-HyperTransport 的初始化在每次复位完成后自动开始， 冷启动后 HyperTransport
-总线将自动工作在最低频率 (200Mhz)与最小宽度(8bit)，并尝
-试进行总线初始化握手。初始化是否完成的状态可以由寄存器“Init Complete” （见
-9.6.2 节） 读出。 初始化完成后， 总线的宽度可以由寄存器“Link Width Out”
-与“Link Width In” （见 9.6.2 节）读出。在初始化完成后，用户可以重新对
-寄存器“Link Width Out”, “Link Width In”以及“Link Freq”进行编程，
-同时需要对对方设备的相应寄存器也进行编程， 编程完成后需要重新热复位总线
-或是通过 HT\_Ldt\_Stopn 信号对总线进行重新初始化操作，以使编程后的值在重
-新初始化后生效。在重新初始化后 HyperTransport 总线将工作在新的频率和宽
-度。需要注意的是， 对 HT 总线两端的设备配置需要一一对应，否则将导致
-HyperTransport 接口不能正常工作。
+命令发送缓存大小寄存器用于观测发送端可用各个命令通道的缓存个数。
 
-\section{HT 地址空间及窗口配置}\label{sec:htAddrWinConf}
+\begin{table}[htbp]
+  \centering
+  \caption{命令发送缓存大小寄存器}
+  \begin{tabular}{|c|c|c|c|c|p{7cm}|} \hline
+    \multicolumn{6}{|l|}{寄存器名：命令发送缓存大小寄存器；偏移：0x100；复位值：0x0000\_0000} \\ \hline
+    位域  & 位域名             & 位宽 & 复位值 & 访问 & 描述 \\ \hhline
+    31:24 & B\_CMD\_txbuffer   & 8    & 0x0    & R    & 发送端 B 通道命令缓存个数 \\
+    2316  & R\_CMD\_txbuffer   & 8    & 0x0    & R    & 发送端 R 通道命令缓存个数 \\
+    15:8  & NPC\_CMD\_txbuffer & 8    & 0x0    & R    & 发送端 NPC 通道命令缓存个数 \\
+    7:0   & PC\_CMD\_txbuffer  & 8    & 0x0    & R    & 发送端 PC 通道命令缓存个数 \\
+  \end{tabular}
+  \label{tab:misc}
+\end{table}
 
-\subsection{HyperTransport空间}
+
+### 数据发送缓存大小寄存器
+
+数据发送缓存大小寄存器用于观测发送端可用各个数据通道的缓存个数。
+
+\begin{table}[htbp]
+  \centering
+  \caption{数据发送缓存大小寄存器}
+  \begin{tabular}{|c|c|c|c|c|p{7cm}|} \hline
+    \multicolumn{6}{|l|}{寄存器名：数据发送缓存大小寄存器；偏移：0x104；复位值：0x0000\_0000} \\ \hline
+    位域  & 位域名              & 位宽 & 复位值 & 访问 & 描述 \\ \hhline
+    31:24 & Reserved            & 8    & 0x0    & R    & 保留 \\
+    2316  & R\_DATA\_txbuffer   & 8    & 0x0    & R    & 发送端 R 通道数据缓存个数 \\
+    15:8  & NPC\_DATA\_txbuffer & 8    & 0x0    & R    & 发送端 NPC 通道数据缓存个数 \\
+    7:0   & PC\_DATA\_txbuffer  & 8    & 0x0    & R    & 发送端 PC 通道数据缓存个数 \\
+  \end{tabular}
+  \label{tab:misc}
+\end{table}
+
+### 发送缓存调试寄存器
+
+发送缓存调试寄存器用于人工设置 HT 控制器发送端缓冲区的个数，通过增或减的方式对
+不同的发送缓存个数进行调整。
+
+\begin{table}[htbp]
+  \centering
+  \caption{发送缓存调试寄存器}
+  \begin{tabular}{|c|c|c|c|c|p{7cm}|} \hline
+    \multicolumn{6}{|l|}{寄存器名：发送缓存调试寄存器；偏移：0x108；复位值：0x0000\_0000} \\ \hline
+    位域  & 位域名   & 位宽 & 复位值 & 访问 & 描述 \\ \hhline
+    31   &  B\_interleave    &     1  &  0x0 &  R/W &     一致性写响应通道交错使能
+                                                      （片间互连模式时必须设置） \\
+    30   &  NOP\_interleave  &      1 &  0x0 &  R/W &  流控包交错使能（片间互连模式时必须设置） \\
+    29   &  Tx\_neg          &      1 &  0x0 &  R/W &  发送端缓存调试符号
+                                                      0：增加相应个数
+                                                      1：减少（相应寄存器个数+1）个 \\
+    28   &  Tx\_buff\_adj\_en  &      1 &  0x0 &  R/W &  发送端缓存调试使能寄存器
+                                                      0->1：使本寄存器的值产生一次增减效果 \\
+    27:24&  R\_DATA\_txadj    &      4 &  0x0 &  R/W &  发送端 R 通道数据缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 R\_DATA\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 R\_DATA\_txadj+1 个 \\
+    23:20&  NPC\_DATA\_txadj  &      4 &  0x0 &  R/W &  发送端 NPC 通道数据缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 NPC\_DATA\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 NPC\_DATA\_txadj+1 个 \\
+    19:16&  PC\_DATA\_txadj   &      4 &  0x0 &  R/W &  发送端 PC 通道数据缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 PC\_DATA\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 PC\_DATA\_txadj+1 个 \\
+    15:12&  B\_CMD\_txadj     &      4 &  0x0 &  R/W &  发送端 B 通道命令缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 B\_CMD\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 B\_CMD\_txadj+1 个 \\
+    11:8 &  R\_CMD\_txadj     &      4 &  0x0 &  R/W &  发送端 R 通道命令缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 R\_CMD\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 R\_CMD\_txadj+1 个 \\
+    7:4  &  NPC\_CMD\_txadj   &      4 &  0x0 &  R/W &  发送端 NPC 通道命令/数据缓存增减个数
+                                                      当 tx\_neg 为 0 时，增加 NPC\_CMD\_txadj 个；
+                                                      当 tx\_neg 为 1 时，减少 NPC\_CMD\_txadj+1 个 \\
+    3:0  &  PC\_CMD\_txadj    &      4 &  0x0 &  R/W &  发送端 PC 通道命令缓存增减个数
+                                                  当 tx\_neg 为 0 时，增加 PC\_CMD\_txadj 个；
+                                                  当 tx\_neg 为 1 时，减少 PC\_CMD\_txadj+1 个 \\
+  \end{tabular}
+  \label{tab:misc}
+\end{table}
+
+### 预加重和输出阻抗寄存器
+
+\begin{table}[htbp]
+  \centering
+  \caption{预加重和输出阻抗寄存器}
+  \begin{tabular}{|c|c|c|c|c|p{7cm}|} \hline
+    \multicolumn{6}{|l|}{寄存器名：预加重和输出阻抗寄存器；偏移：0x10c；复位值：0x0000\_0030} \\ \hline
+    位域  & 位域名   & 位宽 & 复位值 & 访问 & 描述 \\ \hhline
+     6    &  csr\_phy\_tx\_code\_en &   1  &   0x0 &  R/W &  0：输出阻抗自动校准 1：输出阻抗人工校准 \\
+     5:4  &  csr\_phy\_tx\_ncode   &   2  &   0x3 &  R/W &  下拉阻抗
+                                                         csr\_phy\_tx\_code\_en=0：not care
+                                                         csr\_phy\_tx\_code\_en=1：人工设置 \\
+     3:2  &  csr\_phy\_tx\_pcode   &   2  &   0x0 &  R/W &  上拉阻抗
+                                                         csr\_phy\_tx\_code\_en=0：not care
+                                                         csr\_phy\_tx\_code\_en=1：人工设置 \\
+     1:0  &  csr\_phy\_tx\_de\_tap  &   2  &   0x0 &  R/W &  预加重 00：      normal 01 or 10: 3dB 11:     6dB \\
+  \end{tabular}
+  \label{tab:misc}
+\end{table}
+
+HT 地址空间及窗口配置 {#sec:htAddrWinConf}
+---------------------
+
+### HyperTransport空间
 
 龙芯 3B1500 处理器中，默认的 4 个 HyperTransport 地址窗口如下：
 \begin{table}[htbp]
@@ -460,7 +562,7 @@ HyperTransport 接口不能正常工作。
   \label{tab:htaddrspace}
 \end{table}
 
-\subsection{HT 地址窗口}
+### HT 地址窗口
 
 龙芯 3B1500 处理器 HyperTransport 接口中提供了多种丰富的地址窗口供用户使用，
 见表\ref{tab:htwindows}。这些接口窗口的设置都是通过对配置寄存器模块的
@@ -501,7 +603,7 @@ HyperTransport 接口不能正常工作。
 MASK 皆为网络掩码格式， 即高位为 1，低位为 0。 掩码中 0
 的个数则表示了地址窗口的大小。
 
-\subsubsection{接收地址窗口配置寄存器}
+#### 接收地址窗口配置寄存器 
 
 龙芯 3A 提供了 3 个接收地址窗口，用于外部访问。窗口的地址为 HT 总上接收的地址，
 落在本窗口内的 HT 地址将被发往 CPU，而其它地址的命令将作为 P2P (Peer-to-peer)
@@ -531,13 +633,13 @@ MASK 皆为网络掩码格式， 即高位为 1，低位为 0。 掩码中 0
   \caption{HT 接收地址窗口寄存器}
   \label{tab:htrxreg}
 \end{table}
-接受地址窗口的命中公式如下：
-\begin{verbatim}
-         hit      = (BASE & MASK ) == ( ADDR & MASK )
-         addr_out = TRANS_EN ? TRANS | ADDR & MASK : ADDR
-\end{verbatim}
 
-\subsubsection{Post 地址窗口配置寄存器}
+接受地址窗口的命中公式如下：
+
+         hit      = (BASE & MASK ) == ( ADDR & MASK )
+         addr_out = TRANS_EN ? TRANS | ADDR & ~MASK : ADDR
+
+#### Post 地址窗口配置寄存器 
 
 龙芯 3A 提供了 2 个 POST 地址窗口。本窗口的地址是 AXI
 总线上接收到的地址。落在本窗口的所有写访问将立即 在 AXI B (??) 通道返回，并以 POST
@@ -568,12 +670,12 @@ WRITE 的命令格式发给 HT 总线。而不在本窗口的 写请求则以 NO
   \caption{HT 总线 Post 地址窗口寄存器}
   \label{tab:htPOSTReg}
 \end{table}
-POST地址窗口的命中公式如下：
-\begin{verbatim}
-        hit = (BASE & MASK) == (ADDR & MASK)
-\end{verbatim}
 
-\subsubsection{可预取地址窗口配置寄存器}
+POST地址窗口的命中公式如下：
+
+        hit = (BASE & MASK) == (ADDR & MASK)
+
+#### 可预取地址窗口配置寄存器 
 
 龙芯 3A 提供了 2 个 可预取 地址窗口，用于内部访问。本窗口的地址是 AXI 总线上
 接收到的地址。落在本窗口的取指指令，CACHE 访问才会被发往 HT 总线，
@@ -602,13 +704,12 @@ POST地址窗口的命中公式如下：
   \caption{HT 可预取地址窗口寄存器}
   \label{tab:htPrefetchReg}
 \end{table}
+
 可预取地址窗口的命中公式如下：
-\begin{verbatim}
+
         hit = (BASE & MASK) == (ADDR & MASK)
-\end{verbatim}
 
-
-\subsubsection{非缓存地址窗口配置寄存器}\label{subsec:htuncachewin}
+#### 非缓存地址窗口配置寄存器 \label{subsec:htuncachewin}
 
 龙芯 3A 提供了 2 个非缓存地址窗口，用于内部访问。本窗口的地址是 HT
 总线上接收到的地址。落在本窗口地址的读写命令，将 不会被送往二级 CACHE，
@@ -618,7 +719,8 @@ POST地址窗口的命中公式如下：
 的操作，如显存的访问等。每个Uncache窗口都由
 两个寄存器（使能和基地址）控制。它们的地址列在表\ref{tab:htUncacheRegAddr}中。
 表\ref{tab:htUncacheReg}给除了每个窗口的寄存器的具体解释。
-\begin{table}[ht]
+
+\begin{table}[htbp]
   \centering
   \begin{tabular}{|c|c|c|c|c|} \hline
     & 窗口 0 使能 & 窗口 0 基址
@@ -639,13 +741,14 @@ POST地址窗口的命中公式如下：
   \caption{HT 总线非缓存地址窗口寄存器}
   \label{tab:htUncacheReg}
 \end{table}
+
 非缓存地址窗口的命中公式如下：
-\begin{verbatim}
+
          hit = (BASE & MASK) == (ADDR & MASK)
          addr_out = TRANS_EN ? TRANS | ADDR & MASK : ADDR
-\end{verbatim}
 
-\subsection{HyperTransport 设备配置空间访问}
+
+### HyperTransport 设备配置空间访问
 
 HyperTransport 接口软件层的协议与 PCI
 协议基本一致，配置访问由于直接与底层协议相关，访问的方法可能略有不同。如表 9-5
@@ -673,7 +776,8 @@ HyperTransport 接口软件层的协议与 PCI
   \label{fig:htconfig}
 \end{figure}
 
-\section{HT 中断支持}\label{sec:htIntConfig}
+HT 中断支持 {#sec:htIntConfig}
+-----------
 
 HyperTransport 控制器提供了 256 个中断向量，可以支持 Fix，Arbitor 等
 类型的中断，但是，没有对硬件自动中断结束（EOI）提供支持。对于这两种(??)类型的中断，控
@@ -682,18 +786,18 @@ HyperTransport 控制器提供了 256 个中断向量，可以支持 Fix，Arbit
 
 另外，HT 控制器对 PIC 中断做了专门的支持，以加速这种类型的中断处理。 一个典型的
 PIC 中断由下述步骤完成：
-\begin{itemize}
-  \item PIC 控制器向系统发送 PIC 中断请求；
-  \item 系统向 PIC 控制器发送中断向量查询；
-  \item PIC 控制器向系统发送中断向量 号；
-  \item 系统清除 PIC 控制器上的对应中断。
-\end{itemize}
+
+ - PIC 控制器向系统发送 PIC 中断请求；
+ - 系统向 PIC 控制器发送中断向量查询；
+ - PIC 控制器向系统发送中断向量 号；
+ - 系统清除 PIC 控制器上的对应中断。
+
 只有上述 4 步都完成后，PIC 控制器 才会对系统发出下一个中断。 对于龙芯 3B1500 
 HyperTransport 控制器，将自动进行前 3 步的处理， 并将 PIC 中断向量写入 256
 个中断向量中的对应位置。而软件系统在处理了该中断之后，需要进行第 4 步处理，即向
 PIC 控制器发出清中断，之后开始下一个中断的处理过程。
 
-\subsection{HT 中断向量寄存器}
+### HT 中断向量寄存器
 
 中断向量寄存器共有 256 位，其中除去 HT 总线上 Fixed 与 Arbitrated，PIC
 中断直接映射到此 256 个中断向量之中， 其它的中断， SMI， 如 NMI， INIT， INTA，
@@ -719,7 +823,7 @@ INTB，INTC，INTD 可以通过自定义寄存器（MISC）的 [28:24] 映射到
   \label{tab:htintvec}
 \end{table}
 
-\subsection{中断使能寄存器}
+### 中断使能寄存器
 
 同样，HT 总线中断使能寄存器也有 256 位，与中断向量寄存器一一对应。 置 1 为对应中断 打开，置 0 则为中断屏蔽。
 
@@ -741,7 +845,7 @@ INTB，INTC，INTD 可以通过自定义寄存器（MISC）的 [28:24] 映射到
   \label{tab:htintenable}
 \end{table}
 
-\subsection{中断发现配置寄存器（Interrupt Discovery \& Configuration）}
+### 中断发现配置寄存器（Interrupt Discovery & Configuration）
 
 \begin{table}
   \centering
@@ -772,13 +876,13 @@ configuration block \\
   \label{tab:htIntDiscConfig}
 \end{table}
 
+HT 多处理器支持
+---------------
 
-\section{HT 多处理器支持}
+龙芯 3B1500 处理器使用 HyperTransport 接口进行多处理器互联，并且可以硬 件自动维
+护 4 个芯片之间的一致性请求。下面提供两种多处理器互联方法：
 
-龙芯 3B1500 处理器使用 HyperTransport 接口进行多处理器互联，并且可以硬 件自动维护
-4 个芯片之间的一致性请求。下面提供两种多处理器互联方法：
-
-\subsection{四片龙芯 3B1500 互联结构}
+### 四片龙芯 3B1500 互联结构
 
 四片 CPU 两两相联构成环状结构。每个 CPU 利用 HT0 的两个 8
 位控制器与相 邻两片相联，其中 HTx\_LO 作为主设备，HTx\_HI
@@ -793,7 +897,7 @@ Y，以四片 芯片为例，ID 号分别为 00，01，10，11。如果从 11 �
 11。可以看到，这是两个不同的路由线路。由于这个算法的特征，我们在构
 建两片芯片互联的时候，将采用不同的办法。
 
-\subsection{两片龙芯 3B1500 互联结构}
+### 两片龙芯 3B1500 互联结构
 
 由于固定路由算法的特性， 我们在构建两片芯片互联时，
 有两种不同的方法。 首先是采用 8 位 HT
