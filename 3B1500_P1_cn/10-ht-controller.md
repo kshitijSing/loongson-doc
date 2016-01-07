@@ -1,43 +1,46 @@
 \chapter{HyperTransport 控制器}
 
-龙芯 3 号提供了两个 HyperTransport 控制器 (HT0 和 HT1)，用于连接外部设备及多芯片互联。
-这两个 HT 控制器实现了对 IO Cache 一致性的支持。 在 Cache 一致性支持模式下， IO
-设备的 DMA 访问对于 Cache 层透明， 即不需要通过 Cache 指令，而是由硬件自动维护其一致性。
-同时， 用户程序也可以通过对非缓存地址窗口设置 （见 \ref{subsec:htuncachewin}~节）， 对
-某些特定内存段不提供 IO Cache 一致性支持， 这有助于提高某些设备如显卡等的效率。
-当系统引脚 ICCC\_EN 被置位时， HT0 控制器将会被用于多芯片互联， 这时控制器硬件自动
-维护相联的 CPU 之间的 Cache 一致性 （即片间 Cache 一致性）。 HT1 控制器只能用于连接
-IO 外设。 
+龙芯 3B1500 提供了两个 HyperTransport 控制器 (HT0 和 HT1)，用于连接外部设备及多
+芯片互联。这两个 HT 控制器实现了对 IO Cache 一致性的支持。 在 Cache 一致性支持
+模式下， IO 设备的 DMA 访问对于 Cache 层透明， 即不需要通过 Cache 指令，而是由
+硬件自动维护其一致性。用于外设连接时，用户程序可选择是否支持 IO Cache 一致性（
+通过地址窗口 Uncache 进行设置，详见 10.5.13 节）：当配置为支持 Cache 一致性模式
+时，IO 设备对内 DMA 的访问对于 Cache 层次透明，即由硬件自动维护其一致性 ,而无需
+软件通过程序 Cache 指令进行维护。同时， 用户程序也可以通过对非缓存地址窗口设置
+（见 \ref{subsec:htuncachewin}节）， 对某些特定内存段不提供 IO Cache 一致性支
+持，这有助于提高某些设备如显卡等的效率。
 
-龙芯 3 号的 HT 控制器最高支持双向 16 位宽度，最高运行频率为 800Mhz。
-在系统自动初始化建立连接后， HT 控制器总是工作在最低宽度、最低频率。
-用户可通过修改协议中的配置寄存器对需要的运行频率与宽度进行修改， 并重新初始化。 具体细节见
-\ref{subsec:htreinit}~节。
+当系统引脚 ICCC\_EN 被置位时， HT0 控制器将会被用于多芯片互联，这时 HT0 控制器
+硬件自动维护相联的 CPU 之间的 Cache 一致性 （即片间 Cache 一致性）。 HT1 控制器
+不支持片间 Cache 一致性维护，而只能用于连接 IO 外设。
 
-龙芯 3 号 HyperTransport 控制器的主要特征如下：
-\begin{itemize}
-  \item 两个 HyperTransport 控制器： HT0 和 HT1；
-  \item HT0 控制器用于多片互联时可配置为片间 Cache 一致性模式；
-  \item 外设 DMA 空间 Cache/Uncache 可配置；
-  \item 最大支持 16 位宽度， 同时每个 HT 控制器可配置为两个 8 位 HT 控制器；
-  \item 支持频率： 200/400/800Mhz；
-  \item 总线控制信号（包括 PowerOK，Rstn，LDT\_Stopn）方向可配置。
-\end{itemize}
+龙芯 3B1500 的 HT 控制器最高支持双向 16 位宽度，最高运行频率为 800Mhz。在系统自
+动初始化建立连接后， HT 控制器总是工作在最低宽度、最低频率。用户可通过修改协议
+中的配置寄存器对需要的运行频率与宽度进行修改， 并重新初始化。 具体细节见
+\ref{subsec:htreinit}节。龙芯 3B1500  HyperTransport 控制器的主要特征如下：
+
+ - 两个 HyperTransport 控制器： HT0 和 HT1；
+ - 支持频率： 200/400/800Mhz；
+ - 支持 8/16 位宽度，同时每个 HT 控制器可配置为两个 8 位 HT 控制器；
+ - 外设 DMA 空间 Cache/Uncache 可配置；
+ - 总线控制信号（包括 PowerOK，Rstn，LDT_Stopn）方向可配置。
+ - HT0 控制器用于多片互联时可配置为片间 Cache 一致性模式；
 
 \section{HT 协议支持}
 
-龙芯 3 号的 HyperTransport 总线支持 HT 1.03 协议中的大部分命令，
-并增加了支持多芯片互联的扩展一致性协议。 在这两种模式（标准及扩展）下，HyperTransport
-接收端可接收的命令， 以及发送端可发送的命令分别列在表~\ref{tab:htrcmd} 和
-\ref{tab:htscmd} 中。 注意，HT 总线的原子操作命令以及 EOI (End of Interrupt, 自动中断结束)
-未被支持。
+龙芯 3B1500 的 HyperTransport 总线支持 HT 1.03 协议中的大部分命令，并增加了支持
+多芯片互联的扩展一致性协议。 在这两种模式（标准及扩展）下，HyperTransport 接收
+端可接收的命令， 以及发送端可发送的命令分别列在表\ref{tab:htrcmd} 和
+\ref{tab:htscmd} 中。 注意，HT 总线的原子操作命令以及 EOI (End of Interrupt, 自
+动中断结束) 未被支持。
 
 Post Write： HyperTransport 协议中，这种写访问不需要 等待写完成响应，即在控制
 器向总线发出这个写访问之后就将对处理器进行写访问完成响应。 
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{|c|c|c|l|l|} \hline
+  \caption{HyperTransport 接收端可接收的命令}\vspace{.2cm}
+  \begin{tabular}{|c|c|c|p{4cm}|p{4cm}|} \hline
     编码   & 通道   & 命令         & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
     000000 & ---    & NOP          & 空包或流控 & --- \\
     000001 & NPC    & Flush        & 无操作     & --- \\
@@ -58,13 +61,13 @@ Post Write： HyperTransport 协议中，这种写访问不需要 等待写完�
     111100 & PC     & Fence        & 保证序关系 & --- \\
     111111 & ---    & Sync/Error   & Sync/Error & --- \\ \hline
   \end{tabular}
-  \caption{HyperTransport 接收端可接收的命令}
   \label{tab:htrcmd}
 \end{table}
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{|c|c|c|l|l|} \hline
+  \caption{HyperTransport 发送端可发送的命令}\vspace{.2cm}
+  \begin{tabular}{|c|c|c|p{4cm}|p{4cm}|} \hline
     编码   & 通道   & 命令         & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
     000000 &        & NOP          & 空包或流控 & -- \\
     x01x0x & NPC/PC & Write        &
@@ -82,16 +85,15 @@ Post Write： HyperTransport 协议中，这种写访问不需要 等待写完�
     111011 & NPC    & RdAddr       & ---        & 读地址扩展 \\
     111111 & ---    & Sync/Error   & 只会转发   & -- \\ \hline
   \end{tabular}
-  \caption{HyperTransport 发送端可发送的命令}
   \label{tab:htscmd}
 \end{table}
 
-\section{HT 信号引脚}
+\section{HyperTransport 硬件设置及初始化}
 
 HyperTransport 总线由传输总线信号和控制信号引脚等组成。 这些控制信号包括
 HT\_8x2，HT\_Mode， HT\_PowerOK，HT\_Rstn，HT\_Ldt\_Stopn，HT\_Ldt\_Reqn，
 它们的电压值由系统 引脚 PCI\_Config[7], PCI\_Config[0]
-设置（见表~\ref{tab:sysPinControl})。 表~\ref{tab:htSignals}
+设置（见表\ref{tab:sysPinControl})。 表\ref{tab:htSignals}
 给出了这些控制引脚信号的说明及其用途。
 
 \begin{longtable}{|c|c|p{9cm}|}
@@ -172,7 +174,7 @@ HT 设备被设为主设备模式， 反之为从设备模式。
 
   \item 控制信号可以为双向驱动：即 HT 总线两端的设备都为主设备模式。
 
-  \item 主设备模式引脚同时也决定了对应的功能指针寄存器(见表~\ref{tab:htcapreg1})的``Act As
+  \item 主设备模式引脚同时也决定了对应的功能指针寄存器(见表\ref{tab:htcapreg1})的``Act As
     Slave'' 位的初始值（取反）： (1) 当该位为 0 时，HyperTransport 总线上的包中的
     Bridge 位为 1，否则为 0； (2) 同时， 当 Act\_As\_Slave 位为 0 时，如果 HT
     总线上的请求地址未命中控制器的接收窗口，将作为 P2P 请求重新发回总线；
@@ -189,7 +191,7 @@ HT 控制器配置寄存器模块主要用于控制从 AXI SLAVE 端或是 HT RE
 端到达的配置寄存器访问，外部中断处理，并保存了大量软件可见用于控制系统各种
 工作方式的配置寄存器。所有用于控制
 HT 控制器各种行为的配置寄存器都在本模块中。本模块的访问地址在 AXI 端为
-0xFD\_FB00\_0000 到 0xFD\_FBFF\_FFFF，表~\ref{tab:htconfigreg}
+0xFD\_FB00\_0000 到 0xFD\_FBFF\_FFFF，表\ref{tab:htconfigreg}
 列出了其所有软件可见寄存器。
 
 \remark{需要说明那些寄存器及其寄存器位是针对HT0的； 同时说明如何分别
@@ -276,7 +278,7 @@ HT 控制器各种行为的配置寄存器都在本模块中。本模块的访�
     31:29  & HOST/Sec             & 3      & 0x1       & R      & 命令格式为 HOST/Sec \\
     28:27  & ---                  & 2      & 0x0       & R      & 保留 \\
     26     & Act as Slave         & 1      & ---       & RW     &
-    设备是否采用从模式,初始值由对应的 HT\_mode 引脚决定 （见表~\ref{tab:htSignals}） \\
+    设备是否采用从模式,初始值由对应的 HT\_mode 引脚决定 （见表\ref{tab:htSignals}） \\
     25     & ---                  & 1      & 0x0       & ---    & 保留 \\
     24     & Host Hide            & 1      & 0x0       & RW     & 是否禁止来自 HT 总线的寄存器访问 \\
     23     & ---                  & 1      & 0x0       & ---    & 保留 \\
@@ -421,7 +423,7 @@ HyperTransport 接口不能正常工作。
 
 \subsection{HyperTransport空间}
 
-龙芯 3 号处理器中，默认的 4 个 HyperTransport 地址窗口如下：
+龙芯 3B1500 处理器中，默认的 4 个 HyperTransport 地址窗口如下：
 \begin{table}[htbp]
   \centering
   \begin{tabular}{|c|c|c|c|} \hline
@@ -436,8 +438,8 @@ HyperTransport 接口不能正常工作。
 \end{table}
 在默认情况下（未对系统地址窗口另行配置），软件通过上述地址空间对各个 HyperTransport
 接口进行访问，除此之外，软件可以通过对交叉开关上的地址窗口进行配置以用其它的地址空间对其访问（见
-\ref{sec:htAddrRoute}~节）每个 HyperTransport。 接口内部 40
-位地址空间的具体地址窗口分布如下表~\ref{tab:htaddrspace}所述。
+\ref{sec:htAddrRoute}节）每个 HyperTransport。 接口内部 40
+位地址空间的具体地址窗口分布如下表\ref{tab:htaddrspace}所述。
 
 \begin{table}[htbp]
   \centering
@@ -460,8 +462,8 @@ HyperTransport 接口不能正常工作。
 
 \subsection{HT 地址窗口}
 
-龙芯 3 号处理器 HyperTransport 接口中提供了多种丰富的地址窗口供用户使用，
-见表~\ref{tab:htwindows}。这些接口窗口的设置都是通过对配置寄存器模块的
+龙芯 3B1500 处理器 HyperTransport 接口中提供了多种丰富的地址窗口供用户使用，
+见表\ref{tab:htwindows}。这些接口窗口的设置都是通过对配置寄存器模块的
 相应寄存器实现的。
 
 \begin{table}[htbp]
@@ -472,7 +474,7 @@ HyperTransport 接口不能正常工作。
     是否接收 HT 总线的访问 &
     落在这些地址窗口中的访问会被内部总线所接收并处理。
     对落在这些地址窗口外的访问， 当 CPU 处于主桥模式时（即配置寄存器中
-    Act~As~Slave 位为 0）， 这些访问将会被以 P2P 方式重新发回到 HT 总线上；CPU
+    ActAsSlave 位为 0）， 这些访问将会被以 P2P 方式重新发回到 HT 总线上；CPU
     处于设备模式时， 这些访问将会按照协议给出错误信息，并返回。 \\ \hline
 
     \ptabincell{c}{Post 窗口 \\（见 XXX 节）}      & 2 & 内部总线 &
@@ -486,7 +488,7 @@ HyperTransport 接口不能正常工作。
     总线进行访问。通过这些窗口可以使能对 HT 总线的这类访问。 \\ \hline
 
     \ptabincell{c}{非缓存窗口 \\ （见 XXX 节）} & 2 & HT       & 判断是否使用非缓存
-    模式访问 HT 总线 & 对龙芯 3 号处理器内部的 IO DMA 访问，硬件将
+    模式访问 HT 总线 & 对龙芯 3B1500 处理器内部的 IO DMA 访问，硬件将
     维护其 IO 一致性信息。 而通过这些窗口的配置，可以使命中这些窗口的访
     问以非缓存方式直接访问内存，而不通过硬件维护其 IO 一致性信息。
     \\ \hline
@@ -504,7 +506,7 @@ MASK 皆为网络掩码格式， 即高位为 1，低位为 0。 掩码中 0
 龙芯 3A 提供了 3 个接收地址窗口，用于外部访问。窗口的地址为 HT 总上接收的地址，
 落在本窗口内的 HT 地址将被发往 CPU，而其它地址的命令将作为 P2P (Peer-to-peer)
 命令被转发回 HT 总线。每个接受窗口都由两个寄存器（使能和基地址）控制。
-表~\ref{tab:htrxreg}给它们的地址及每个寄存器的具体解释。
+表\ref{tab:htrxreg}给它们的地址及每个寄存器的具体解释。
 \begin{table}[htbp]
   \centering
   \begin{tabular}{|c*{6}{|c}|} \hline
@@ -532,7 +534,7 @@ MASK 皆为网络掩码格式， 即高位为 1，低位为 0。 掩码中 0
 接受地址窗口的命中公式如下：
 \begin{verbatim}
          hit      = (BASE & MASK ) == ( ADDR & MASK )
-         addr_out = TRANS_EN ? TRANS | ADDR & ~MASK : ADDR
+         addr_out = TRANS_EN ? TRANS | ADDR & MASK : ADDR
 \end{verbatim}
 
 \subsubsection{Post 地址窗口配置寄存器}
@@ -542,9 +544,9 @@ MASK 皆为网络掩码格式， 即高位为 1，低位为 0。 掩码中 0
 WRITE 的命令格式发给 HT 总线。而不在本窗口的 写请求则以 NONPOST WRITE
 的方式发送到 HT 总线，并等待 HT 总线响应后再返回 AXI
 总线。每个POST窗口都由两个寄存器（使能和基地址）控制。
-列在表~\ref{tab:htPOSTRegAddr}中。
+列在表\ref{tab:htPOSTRegAddr}中。
 
-表~\ref{tab:htPostReg}给出了它们的地址及每个窗口寄存器的具体解释。
+表\ref{tab:htPostReg}给出了它们的地址及每个窗口寄存器的具体解释。
 \begin{table}[ht]
   \centering
   \begin{tabular}{|c|c|c|c|c|} \hline
@@ -577,8 +579,8 @@ POST地址窗口的命中公式如下：
 接收到的地址。落在本窗口的取指指令，CACHE 访问才会被发往 HT 总线，
 其它的取指或是 CACHE 访问将不会被发往 HT 总线，而是立即返回，
 如果是读命令，则会返回相应个数的无效读数据。每个可预取窗口都由
-两个寄存器（使能和基地址）控制。列在表~\ref{tab:htPrefetchRegAddr}中。
-表~\ref{tab:htPrefetchReg}给出了它们的地址及每个窗口寄存器的具体位域解释。
+两个寄存器（使能和基地址）控制。列在表\ref{tab:htPrefetchRegAddr}中。
+表\ref{tab:htPrefetchReg}给出了它们的地址及每个窗口寄存器的具体位域解释。
 \begin{table}[ht]
   \centering
   \begin{tabular}{|c|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} \hline
@@ -614,8 +616,8 @@ POST地址窗口的命中公式如下：
 或是其它的地址空间。这也就是说这个地址窗口中的读写命令将不会维持 IO 的 CACHE
 一致性。这一窗口主要针对一些不会在 CACHE 中命中而可以提高存问效率
 的操作，如显存的访问等。每个Uncache窗口都由
-两个寄存器（使能和基地址）控制。它们的地址列在表~\ref{tab:htUncacheRegAddr}中。
-表~\ref{tab:htUncacheReg}给除了每个窗口的寄存器的具体解释。
+两个寄存器（使能和基地址）控制。它们的地址列在表\ref{tab:htUncacheRegAddr}中。
+表\ref{tab:htUncacheReg}给除了每个窗口的寄存器的具体解释。
 \begin{table}[ht]
   \centering
   \begin{tabular}{|c|c|c|c|c|} \hline
@@ -640,7 +642,7 @@ POST地址窗口的命中公式如下：
 非缓存地址窗口的命中公式如下：
 \begin{verbatim}
          hit = (BASE & MASK) == (ADDR & MASK)
-         addr_out = TRANS_EN ? TRANS | ADDR & ~MASK : ADDR
+         addr_out = TRANS_EN ? TRANS | ADDR & MASK : ADDR
 \end{verbatim}
 
 \subsection{HyperTransport 设备配置空间访问}
@@ -648,7 +650,7 @@ POST地址窗口的命中公式如下：
 HyperTransport 接口软件层的协议与 PCI
 协议基本一致，配置访问由于直接与底层协议相关，访问的方法可能略有不同。如表 9-5
 中所示，配置访问空间位于地址 (0xFD\_FE00\_0000 ～ 0xFD\_FFFF\_FFFF)。对于 HT
-协议中的配置访问，在龙芯 3 号中如图~\ref{fig:htconfig}实现。
+协议中的配置访问，在龙芯 3B1500 中如图\ref{fig:htconfig}实现。
 
 \setlength{\bitwidth}{.4cm}
 \begin{figure}[t]
@@ -686,7 +688,7 @@ PIC 中断由下述步骤完成：
   \item PIC 控制器向系统发送中断向量 号；
   \item 系统清除 PIC 控制器上的对应中断。
 \end{itemize}
-只有上述 4 步都完成后，PIC 控制器 才会对系统发出下一个中断。 对于龙芯 3 号
+只有上述 4 步都完成后，PIC 控制器 才会对系统发出下一个中断。 对于龙芯 3B1500 
 HyperTransport 控制器，将自动进行前 3 步的处理， 并将 PIC 中断向量写入 256
 个中断向量中的对应位置。而软件系统在处理了该中断之后，需要进行第 4 步处理，即向
 PIC 控制器发出清中断，之后开始下一个中断的处理过程。
@@ -773,25 +775,25 @@ configuration block \\
 
 \section{HT 多处理器支持}
 
-龙芯 3 号处理器使用 HyperTransport 接口进行多处理器互联，并且可以硬 件自动维护
+龙芯 3B1500 处理器使用 HyperTransport 接口进行多处理器互联，并且可以硬 件自动维护
 4 个芯片之间的一致性请求。下面提供两种多处理器互联方法：
 
-\subsection{四片龙芯 3 号互联结构}
+\subsection{四片龙芯 3B1500 互联结构}
 
 四片 CPU 两两相联构成环状结构。每个 CPU 利用 HT0 的两个 8
 位控制器与相 邻两片相联，其中 HTx\_LO 作为主设备，HTx\_HI
 作为从设备连接，由此而得到下 图的互联结构：
 
-图 9-2 四片龙芯 3 号互联结构
+图 9-2 四片龙芯 3B1500 互联结构
 
-龙芯 3 号互联路由 龙芯 3 号互联路由采用简单 X-Y 路由方法。即，路由时，先 X 后
+龙芯 3B1500 互联路由 龙芯 3B1500 互联路由采用简单 X-Y 路由方法。即，路由时，先 X 后
 Y，以四片 芯片为例，ID 号分别为 00，01，10，11。如果从 11 向 00 发出请求，则为
 11 向 00 路由，首先走 X 方向，从 11 走到 10，再走 Y 方向，从 10 走到 00。而在请
 求的响应从 00 返回 11 时，路由首先走 X 方向，从 00 到 01，再走 Y 方向，从 01 到
 11。可以看到，这是两个不同的路由线路。由于这个算法的特征，我们在构
 建两片芯片互联的时候，将采用不同的办法。
 
-\subsection{两片龙芯 3 号互联结构}
+\subsection{两片龙芯 3B1500 互联结构}
 
 由于固定路由算法的特性， 我们在构建两片芯片互联时，
 有两种不同的方法。 首先是采用 8 位 HT
@@ -799,7 +801,7 @@ Y，以四片 芯片为例，ID 号分别为 00，01，10，11。如果从 11 �
 00 与 01，由路由算法，我们可以知道，两个芯片相
 互访问时都是通过与四片互联时一致的 8 位 HT 总线。如下所示：
 
-图 9-3 两片龙芯 3 号 8 位互联结构 (FIXME)
+图 9-3 两片龙芯 3B1500  8 位互联结构 (FIXME)
 
 但是，我们的 HT 总线最宽可以采用 16 位模式，由此最大化带宽的连接方式 应该是采用
 16 位互联结构。 在龙芯三号中， 只要把 HT0 控制器设置为 16 位模式， 所有发到 HT0
@@ -809,5 +811,5 @@ CPU1 的 16 位模式正确配置并将高低位总线正确连接即可 使用 
 总线互联。而这种互联结构同时也可以使用 8 位的 HT 总线协议进
 行相互访问。所得到的互联结构如下：
 
-图 9-4 两片龙芯 3 号 16 位互联结构 (FIXME)
+图 9-4 两片龙芯 3B1500  16 位互联结构 (FIXME)
 
