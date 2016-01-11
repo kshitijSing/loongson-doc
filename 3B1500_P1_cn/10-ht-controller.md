@@ -2,93 +2,82 @@ HyperTransport 控制器
 =====================
 
 龙芯 3B1500 提供了两个 HyperTransport 控制器 (HT0 和 HT1)，用于连接外部设备及多
-芯片互联。这两个 HT 控制器实现了对 IO Cache 一致性的支持。 在 Cache 一致性支持
-模式下， IO 设备的 DMA 访问对于 Cache 层透明， 即不需要通过 Cache 指令，而是由
-硬件自动维护其一致性。用于外设连接时，用户程序可选择是否支持 IO Cache 一致性（
-通过地址窗口 Uncache 进行设置，详见 节）：当配置为支持 Cache 一致性模式时，IO
-设备对内 DMA 的访问对于 Cache 层次透明，即由硬件自动维护其一致性 ,而无需软件通
-过程序 Cache 指令进行维护。同时， 用户程序也可以通过对非缓存地址窗口设置（见
-\ref{subsec:htuncachewin} 节）， 对某些特定内存段不提供 IO Cache 一致性支持，这
-有助于提高某些设备如显卡等的效率。
+芯片互联。 用于外设连接时， 这两个 HT 控制器实现了对 IO Cache 一致性的支持。
+用户程序可选择是否支持 IO Cache 一致性：当配置为支持 Cache 一致性模式时，IO
+设备 DMA 的访问对于 Cache 层次透明，即由硬件自动维护其一致性，而无需软件通
+过 Cache 指令进行维护。同时， 用户程序也可以通过对[非缓存地址窗口][]设置，
+对某些特定内存段不提供 IO Cache 一致性支持。
 
-当系统引脚 ICCC_EN 被置位时， HT0 控制器将会被用于多芯片互联，这时 HT0 控制器
-硬件自动维护相联的 CPU 之间的 Cache 一致性 （即片间 Cache 一致性）。 HT1 控制器
-不支持片间 Cache 一致性维护，而只能用于连接 IO 外设。
+HT0 控制器还可以被用于多芯片互联，这时 HT0 控制器 硬件可以自动维护相联的 CPU
+之间的 Cache 一致性 （即片间 Cache 一致性）。 HT1 控制器 不支持片间 Cache
+一致性维护，而只能用于连接 IO 外设。
 
 龙芯 3B1500 的 HT 控制器最高支持双向 16 位宽度，最高运行频率为 800Mhz。在系统自
-动初始化建立连接后， HT 控制器总是工作在最低宽度、最低频率。用户可通过修改协议
-中的配置寄存器对需要的运行频率与宽度进行修改， 并重新初始化。 具体细节见
-\ref{subsec:htreinit}节。龙芯 3B1500  HyperTransport 控制器的主要特征如下：
+动初始化建立连接后， 用户可通过修改协议中的配置寄存器对需要的运行频率与宽度进行
+修改，并重新初始化。 具体细节见 \ref{subsec:htreinit}节。龙芯 3B1500
+HyperTransport 控制器的主要特征如下：
 
  - 两个 HyperTransport 控制器： HT0 和 HT1；
  - 支持频率： 200/400/800Mhz；
  - 支持 8/16 位宽度，同时每个 HT 控制器可配置为两个 8 位 HT 控制器；
  - 外设 DMA 空间 Cache/Uncache 可配置；
- - 总线控制信号（包括 PowerOK，Rstn，LDT_Stopn）方向可配置。
- - HT0 控制器用于多片互联时可配置为片间 Cache 一致性模式；
+ - 总线控制信号（包括 PowerOK，Rstn，LDT_Stopn）方向可配置；
+ - HT0 控制器用于多片互联时可配置为片间 Cache 一致性模式。
 
 HT 协议支持
 -----------
 
 龙芯 3B1500 的 HyperTransport 总线支持 HT 1.03 协议中的大部分命令，并增加了支持
 多芯片互联的扩展一致性协议。 在这两种模式（标准及扩展）下，HyperTransport 接收
-端可接收的命令， 以及发送端可发送的命令分别列在表\ref{tab:htrcmd} 和
-\ref{tab:htscmd} 中。 注意，HT 总线的原子操作命令以及 EOI (End of Interrupt, 自
-动中断结束) 未被支持。
+端可接收的命令，以及发送端可发送的命令分别列在表 \ref{tab:htcmd}。 注意，HT 总
+线的原子操作命令以及 EOI (End of Interrupt, 自动中断结束) 未被支持。
 
-Post Write： HyperTransport 协议中，这种写访问不需要 等待写完成响应，即在控制
-器向总线发出这个写访问之后就将对处理器进行写访问完成响应。 
+\begin{longtable}{|c|c|c|p{5cm}|p{5cm}|}
+  \caption{HyperTransport 命令列表} \label{tab:htcmd} \\
+  \hline 编码  & 通道 & 命令 & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
+  \endfirsthead
+  \caption{HyperTransport 命令列表（续）} \label{tab:htcmd} \\
+  \hline 编码  & 通道 & 命令 & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
+  \endhead
+  \hline \rmcol{5}{\tiny 未完待续} \endfoot
+  \hline \endlastfoot
 
-\begin{table}[htbp]
-  \centering
-  \caption{HyperTransport 接收端可接收的命令}\vspace{.2cm}
-  \begin{tabular}{|c|c|c|p{4cm}|p{4cm}|} \hline
-    编码   & 通道   & 命令         & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
-    000000 & ---    & NOP          & 空包或流控 & --- \\
-    000001 & NPC    & Flush        & 无操作     & --- \\
-    x01xxx & NPC/PC & Write        &
-    \ptabincell{l}{[5]: 0 -- Nonposted; 1 -- Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1:0]: 忽略} &
-    \ptabincell{l}{[5]: 必为 1，Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1]: 忽略； [0]: 必为 1} \\
-    01xxxx & NPC    & Read         &
-    \ptabincell{l}{ [3]: 忽略; \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1:0]: 忽略} &
-    \ptabincell{l}{ [3]: 忽略; \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1]: 忽略; [0]: 必为 1} \\
-    110000 & R      & RdResponse   & 读操作返回 & --- \\
-    110011 & R      & TgtDone      & 写操作返回 & --- \\
-    110100 & PC     & WrCoherent   & ---        & 写命令扩展 \\
-    110101 & PC     & WrAddr       & ---        & 写地址扩展 \\
-    111000 & R      & RespCoherent & ---        & 读响应扩展 \\
-    111001 & NPC    & RdCoherent   & ---        & 读命令扩展 \\
-    111010 & PC     & Broadcast    & 无操作     & --- \\
-    111011 & NPC    & RdAddr       & ---        & 读地址扩展 \\
-    111100 & PC     & Fence        & 保证序关系 & --- \\
-    111111 & ---    & Sync/Error   & Sync/Error & --- \\ \hline
-  \end{tabular}
-  \label{tab:htrcmd}
-\end{table}
-
-\begin{table}[htbp]
-  \centering
-  \caption{HyperTransport 发送端可发送的命令}\vspace{.2cm}
-  \begin{tabular}{|c|c|c|p{4cm}|p{4cm}|} \hline
-    编码   & 通道   & 命令         & \cellalign{c|}{标准模式} & \cellalign{c|}{扩展（一致性）} \\ \hhline
-    000000 &        & NOP          & 空包或流控 & -- \\
-    x01x0x & NPC/PC & Write        &
-    \ptabincell{l}{[5]: 0 -- Nonposted; 1 -- Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 0} &
-    \ptabincell{l}{[5]: 必为 1，Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 1} \\
-    010x0x & NPC    & Read         &
-    \ptabincell{l}{[2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 忽略} &
-    \ptabincell{l}{[2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 1} \\
-    110000 & R      & RdResponse   & 读操作返回 & --- \\
-    110011 & R      & TgtDone      & 写操作返回 & --- \\
-    110100 & PC     & WrCoherent   & ---        & 写命令扩展 \\
-    110101 & PC     & WrAddr       & ---        & 写地址扩展 \\
-    111000 & R      & RespCoherent & ---        & 读响应扩展 \\
-    111001 & NPC    & RdCoherent   & ---        & 读命令扩展 \\
-    111011 & NPC    & RdAddr       & ---        & 读地址扩展 \\
-    111111 & ---    & Sync/Error   & 只会转发   & -- \\ \hline
-  \end{tabular}
-  \label{tab:htscmd}
-\end{table}
+  \multicolumn{5}{|l|}{接收端命令} \\ \hline
+  000000 & ---    & NOP          & 空包或流控 & --- \\
+  000001 & NPC    & Flush        & 无操作     & --- \\
+  x01xxx & NPC/PC & Write        &
+  \ptabincell{l}{[5]: 0 -- Nonposted; 1 -- Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1:0]: 忽略} &
+  \ptabincell{l}{[5]: 必为 1，Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1]: 忽略； [0]: 必为 1} \\
+  01xxxx & NPC    & Read         &
+  \ptabincell{l}{ [3]: 忽略; \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1:0]: 忽略} &
+  \ptabincell{l}{ [3]: 忽略; \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [1]: 忽略; [0]: 必为 1} \\
+  110000 & R      & RdResponse   & 读操作返回 & --- \\
+  110011 & R      & TgtDone      & 写操作返回 & --- \\
+  110100 & PC     & WrCoherent   & ---        & 写命令扩展 \\
+  110101 & PC     & WrAddr       & ---        & 写地址扩展 \\
+  111000 & R      & RespCoherent & ---        & 读响应扩展 \\
+  111001 & NPC    & RdCoherent   & ---        & 读命令扩展 \\
+  111010 & PC     & Broadcast    & 无操作     & --- \\
+  111011 & NPC    & RdAddr       & ---        & 读地址扩展 \\
+  111100 & PC     & Fence        & 保证序关系 & --- \\
+  111111 & ---    & Sync/Error   & Sync/Error & --- \\ \hhline
+  \multicolumn{5}{|l|}{发送端命令} \\ \hline
+  000000 &        & NOP          & 空包或流控 & -- \\
+  x01x0x & NPC/PC & Write        &
+  \ptabincell{l}{[5]: 0 -- Nonposted; 1 -- Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 0} &
+  \ptabincell{l}{[5]: 必为 1，Posted \\[0pt] [2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 1} \\
+  010x0x & NPC    & Read         &
+  \ptabincell{l}{[2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 忽略} &
+  \ptabincell{l}{[2]: 0 -- 字节; 1 -- 双字 \\[0pt] [0]: 必为 1} \\
+  110000 & R      & RdResponse   & 读操作返回 & --- \\
+  110011 & R      & TgtDone      & 写操作返回 & --- \\
+  110100 & PC     & WrCoherent   & ---        & 写命令扩展 \\
+  110101 & PC     & WrAddr       & ---        & 写地址扩展 \\
+  111000 & R      & RespCoherent & ---        & 读响应扩展 \\
+  111001 & NPC    & RdCoherent   & ---        & 读命令扩展 \\
+  111011 & NPC    & RdAddr       & ---        & 读地址扩展 \\
+  111111 & ---    & Sync/Error   & 只会转发   & -- \\
+\end{longtable}
 
 HyperTransport 控制信号及初始化
 -------------------------------
@@ -647,6 +636,9 @@ WRITE 的命令格式发给 HT 总线。而不在本窗口的 写请求则以 NO
 的方式发送到 HT 总线，并等待 HT 总线响应后再返回 AXI
 总线。每个POST窗口都由两个寄存器（使能和基地址）控制。
 列在表\ref{tab:htPOSTRegAddr}中。
+
+Post Write： HyperTransport 协议中，这种写访问不需要 等待写完成响应，即在控制
+器向总线发出这个写访问之后就将对处理器进行写访问完成响应。 
 
 表\ref{tab:htPostReg}给出了它们的地址及每个窗口寄存器的具体解释。
 \begin{table}[ht]
