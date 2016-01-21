@@ -28,6 +28,8 @@
 \renewcommand{\topfraction}{0.8}
 \renewcommand{\bottomfraction}{0.8}
 \renewcommand{\floatpagefraction}{0.7}
+\setlength\abovecaptionskip{3pt}
+\setlength\belowcaptionskip{5pt}
 
 \usepackage[bookmarks,bookmarksnumbered=true,hyperindex,plainpages=false,
             colorlinks, citecolor=blue, linkcolor=blue]{hyperref}

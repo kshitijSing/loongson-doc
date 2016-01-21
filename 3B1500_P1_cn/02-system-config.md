@@ -35,7 +35,8 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
   NODE\_ID[1:0] & 多芯片一致性互连模式下处理器号 \newline
                   \hspace*{.5cm} 00: 主处理器; 10: 从处理器             \\[.1cm]
 
-  CLKSEL[15]    & HT 上电时钟控制 \newline
+  \hypertarget{clksel15}{CLKSEL[15]}
+               & HT 上电时钟控制 \newline
                   \hspace*{.5cm} 1: HT 上电时钟由 CLKSEL[14:10] 控制 \newline
                   \hspace*{.5cm} 0: 初始 1 倍频，软件可进行重新配置 \\[.1cm]
 
