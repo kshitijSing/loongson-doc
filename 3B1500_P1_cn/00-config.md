@@ -10,4 +10,5 @@ author:
 ...
 
 \newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\newcommand{\ftabincell}[2]{\begin{tabular}{#1}#2\end{tabular}}
 \newcommand{\ptabincell}[2]{\vtop{\vskip-\ht\strutbox\null\hbox{\tabincell{#1}{#2}}}}

@@ -73,7 +73,7 @@
 }{\hline \end{longtable}}
 
 \newenvironment{implongtable}[2]{
-    \begin{longtable}{|>{\centering}p{2.3cm}|>{\hspace{.2cm}}p{2.5cm}
+    \begin{longtable}[c]{|>{\centering}p{2.3cm}|>{\hspace{.2cm}}p{2.5cm}
         <{\hspace{.2cm}}|p{9.7cm}|}
         \caption{#1}\label{#2} \tabularnewline \hline
         指令 OpCode & \multicolumn{1}{c|}{描述} & \multicolumn{1}{c|}{GS464V 实现}
@@ -84,6 +84,18 @@
         \hline \multicolumn{3}{r}{\tiny 未完待续} \endfoot \endlastfoot
 
 }{\hline \end{longtable}}
+
+\newenvironment{iolongtable}[2]{
+  \begin{longtable}[c]{|>{\centering}p{1cm}|p{3cm}|>{\centering}p{1cm}|p{1.6cm}|p{8cm}|}
+  \caption{#1}\label{#2} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 & 说明\\ \hhline \endfirsthead
+  \caption{#1（续）} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 & 说明\\ \hhline \endhead
+  \hline \rmcol{5}{\tiny 未完待续} \endfoot
+  \endlastfoot
+}{
+  \end{longtable}
+}
 
 % Definitions for Chapter 3: overlay an image over a table
 \makeatletter
@@ -121,9 +133,9 @@
         \noindent\hspace*{\centeroffset}\makebox[0pt][l]{
             \begin{minipage}{\textwidth}
                 \flushright
-                {\Huge \bfseries $title$}
+                {\resizebox{\linewidth}{!}{\Huge \bfseries $title$}}
                 \noindent\rule[-1ex]{\textwidth}{5pt}\\[2.5ex]
-                {\huge \bfseries $subtitle$}
+                {\Huge \bfseries $subtitle$}
             \end{minipage}
         }
 
