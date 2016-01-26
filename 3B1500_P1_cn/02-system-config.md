@@ -18,10 +18,10 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
   DO\_TEST      & 功能模式设置位（上拉）\newline
                   \hspace*{.5cm} 1: 功能模式; 0: 测试模式               \\[.1cm]
 
-  ICCC\_EN      & 芯片一致性互连使能信号（下拉）\newline
+  ICCC\_EN      & 芯片一致性互联使能信号（下拉）\newline
                   \hspace*{.5cm} 1: 多芯片一致性互联模式; 0: 单芯片模式 \\[.1cm]
 
-  NODE\_ID[1:0] & 多芯片一致性互连模式下处理器号 \newline
+  NODE\_ID[1:0] & 多芯片一致性互联模式下处理器号 \newline
                   \hspace*{.5cm} 00: 主处理器; 10: 从处理器             \\[.1cm]
 
   \hypertarget{clksel15}{CLKSEL[15]}
@@ -400,7 +400,7 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
 
  - MEM CLOCK 配置对应内存控制器及总线时钟频率；
  - CORE CLOCK 对应处理器核时钟频率；
- - NODE CLOCK 对应片上互连网络及三级共享高速缓存频率；
+ - NODE CLOCK 对应片上互联网络及三级共享高速缓存频率；
  - HT CLOCK 对应 HT 控制器时钟频率。
 
 \noindent 每个时钟配置一般有三个参数：DIV_REFC、DIV_LOOPC、DIV_OUT。
@@ -429,7 +429,7 @@ HTx_DIV_HT_CORE）是可以软件配置的。其工作频率为 CLKSEL[12:10] �
   \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
   \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
 
-  \multicolumn{5}{|l|}{芯片结点和处理器核软件倍频设置寄存器（物理地址 0x1FE0\_01B0）} \\* \hline
+  \multicolumn{5}{|l|}{芯片节点和处理器核软件倍频设置寄存器（物理地址 0x1FE0\_01B0）} \\* \hline
     0   & SEL\_PLL\_NODE       & RW & 0x0  & Node 时钟非软件 bypass 整个 PLL \\
     1   & SEL\_PLL\_CORE       & RW & 0x0  & Core 时钟非软件 bypass 整个 PLL \\
     2   & SOFT\_SET\_PLL       & RW & 0x0  & 允许软件设置 PLL \\
