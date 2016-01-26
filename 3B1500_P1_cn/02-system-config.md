@@ -1,17 +1,6 @@
 系统配置与控制
 ==============
 
-芯片工作模式
-------------
-
-\noindent 龙芯 3B1500 芯片采用双节点 8 核配置，每个节点 4 个 GS464V 核。龙芯
-3B1500 有两种工作模式：
-
- - 单芯片模式：系统集成 1 片龙芯 3B1500，构成一个两节点的非均匀访存多处理器系统
-   （CC-NUMA）。
- - 多芯片互连模式：系统集成 2 片龙芯 3B1500。芯片通过 HT 端口连接，形成一个四节
-   点的非均匀访存多处理器系统（CC-NUMA）。
-
 控制引脚说明
 ------------
 
@@ -251,20 +240,20 @@ MASK 和 MMAP 实现：
 况下才会生效。也就是说，在没有对地址窗口进行配置前，所有的读写请求都会按照系统默
 认路由的设定进行。
 
-#### 一级交叉开关寄存器地址
+#### 一级交叉开关寄存器地址 {-}
 
-表 \ref{tab:X1MasterWinBases} 列出了一级交叉开关在*节点 0*的 8 个主端口的窗口寄
+表 \ref{tab:X1MasterWinBases} 列出了一级交叉开关在**节点 0**的 8 个主端口的窗口寄
 存器基地址，及其连接的设备。同时，表 \ref{tab:AXIWinOffset} 列出了每个端口的 8
 个地址窗口的配置寄存器相对基地址的偏移。 
 
 \begin{table}[htbp]
   \centering
   \caption{节点 0 一级交叉开关主端口窗口寄存器基地址}\vspace{.2cm}
-  \begin{tabular}{|cccc|cccc|} \toprule
+  \begin{tabular}{cccccccc} \toprule
     端口 & 端口名 & 端口设备   & 基地址       & 端口 & 端口名 & 端口设备 & 基地址       \\ \midrule
     0    & Core0  & 二级缓存 0 & 0x3FF0\_2000 & 4    & East   & 相邻节点 & 0x3FF0\_2400 \\
-    1    & Core1  & 二级缓存 1 & 0x3FF0\_2100 & 5    & South  & --保留-- & 0x3FF0\_2500 \\
-    2    & Core2  & 二级缓存 2 & 0x3FF0\_2200 & 6    & West   & --保留-- & 0x3FF0\_2600 \\
+    1    & Core1  & 二级缓存 1 & 0x3FF0\_2100 & 5    & South  & -- 保留-- & 0x3FF0\_2500 \\
+    2    & Core2  & 二级缓存 2 & 0x3FF0\_2200 & 6    & West   & -- 保留-- & 0x3FF0\_2600 \\
     3    & Core3  & 二级缓存 3 & 0x3FF0\_2300 & 7    & North  & HT 设备  & 0x3FF0\_2700 \\ \bottomrule
   \end{tabular}
   \label{tab:X1MasterWinBases}
@@ -331,8 +320,10 @@ PCI 地址空间共三个 IP 相关的地址空间，并提供 CPU 和 PCI 两�
 Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个内存控制器，这些模块
 的标号对应关系如表 \ref{tab:X2SlaveLabel} 所示。 二级交叉开关的系统默认路由是将
 所有的地址转送到系统配置寄存器模块，即从端口 3。
+
 \begin{table}[htbp]
   \centering
+  \caption{二级交叉开关：从端口设备编号}
   \begin{tabular}{|c|c|} \hline
     从端口 & 端口设备                \\ \hhline
     0      & 0 号 DDR2/3 控制器      \\ 
@@ -340,7 +331,6 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
     2      & 低速 I/O（PCI，LPC 等） \\ 
     3      & 配置寄存器模块          \\ \hline
   \end{tabular}
-  \caption{二级交叉开关：从端口设备编号}
   \label{tab:X2SlaveLabel}
 \end{table}
 
@@ -372,6 +362,7 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
 （其他寄存器缺省值皆为 0）。
 \begin{table}[htbp]
   \centering
+  \caption{二级交叉开关：缺省地址窗口配置值}
   \begin{tabular}{|c|l|c|} \hline
     寄存器          & \cellalign{c|}{寄存器含义} & 启动缺省值                 \\ \hhline
     CPU\_WIN0\_BASE & CPU 窗口 0 基地址   & {\tt 0x0000\_0000\_0000\_0000} \\ 
@@ -384,7 +375,6 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
     PCI\_WIN0\_MASK & PCI 窗口 0 掩码     & {\tt 0xFFFF\_FFFF\_8000\_0000} \\ 
     PCI\_WIN0\_MMAP & PCI 窗口 0 新基地址 & {\tt 0x0000\_0000\_0000\_00F0} \\ \hline
   \end{tabular}
-  \caption{二级交叉开关：缺省地址窗口配置值}
   \label{tab:X2DefAddrConfig}
 \end{table}
 
@@ -392,7 +382,7 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
 根据缺省的寄存器配置，芯片启动后，
 \begin{center}
   \begin{tabular}{|c|c|c|c|} \hline
-    主端口 & 主端口地址              & 目标从端口   & 从端口地址         \\ \hline
+    主端口 & 主端口地址              & 从端口   & 从端口地址         \\ \hline
     CPU    & \verb+0x0000_0000-0x0FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000-0x0FFF_FFFF+ \\ \hline
     CPU    & \verb+0x1000_0000-0x1FFF_FFFF+ & PCI          & \verb+0x1000_0000-0x1FFF_FFFF+ \\ \hline
     PCI    & \verb+0x8000_0000-0x8FFF_FFFF+ & 内存控制器 0 & \verb+0x0000_0000-0x0FFF_FFFF+ \\ \hline
@@ -583,18 +573,16 @@ PLL constrain 指括号内的值：L1：450M~1.58G L2: 850M~3.23G
 --------
 
 龙芯 3B1500 芯片内部提供了两个 64 位全局时钟供软件使用。全局时钟的运行频率与节
-点时钟（NODE CLOCK）相同，每个时钟周期自增 1。该时钟为只读 64 位，对该时钟的写
+点时钟（NODE CLOCK）相同，每个时钟周期自增 1。该时钟为只读，对该时钟的写
 不产生任何效果。
 
 全局时钟的物理地址沿袭[节点控制寄存器地址规则][]，如表 \ref{tab:gclk-phyaddr}
-所示，并且访问它们时必须使用 Uncache 地址。
+所示，并且访问它们时必须使用非缓存地址模式。
 
 Table: 全局时钟物理地址 \label{tab:gclk-phyaddr}
 
-| 节点 | 全局时钟地址     |
-| :--: | :--------------: |
-| 0    | 0x1000_3FF0_0408 |
-| 1    | 0x1000_3FF0_4408 |
-| 2    | 0x2000_3FF0_8408 |
-| 3    | 0x3000_3FF0_C408 |
+| 节点 | 全局时钟地址     | 节点 | 全局时钟地址     |
+| :--: | :--------------: | :--: | :--------------: |
+| 0    | 0x0000_3FF0_0408 | 2    | 0x2000_3FF0_8408 |
+| 1    | 0x1000_3FF0_4408 | 3    | 0x3000_3FF0_C408 |
 

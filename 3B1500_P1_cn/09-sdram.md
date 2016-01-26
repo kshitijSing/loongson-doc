@@ -15,150 +15,156 @@ DDR2/3 SDRAM 参数配置格式
 \newcommand{\forcol}[1]{\multicolumn{4}{c|}{#1}}
 
 \setlength{\tabcolsep}{2pt}
-\setlength\LTleft{-.5in}
-\setlength\LTright{-.5in}
-\begin{longtable}{@{\extracolsep}|>{\tt\scriptsize}c|*{8}{>{\tt\scriptsize}m{2cm}|}}
+\setlength\LTleft{-.6in}
+\setlength\LTright{-.6in}
+\begin{longtable}{@{\extracolsep}|>{\tt\scriptsize}c|*{8}{>{\tt\scriptsize}P{2.1cm}|}}
   \caption{DDR2/3 参数列表} \tabularnewline \hline
   & 63:56 & 55:48 & 47:40 & 39:32 & 31:24 & 23:16 & 15:8 & 7:0
   \tabularnewline\hhline \endfirsthead
   \caption{DDR2/3 参数列表（续）} \tabularnewline \hline
   & 63:56 & 55:48 & 47:40 & 39:32 & 31:24 & 23:16 & 15:8 & 7:0
   \tabularnewline\hhline \endhead
-  \hline \multicolumn{9}{r}{\tiny 未完待续} \endfoot \endlastfoot
-  0x000 & \twocol{Dll\_value\_0(R)} & \twocol{Dll\_value\_ck(R)} & \twocol{Dll\_init\_done(R)} & \twocol{Version(R)}       \\
-  0x008 & \twocol{Dll\_value\_4(R)} & \twocol{Dll\_value\_3(R)}  & \twocol{Dll\_value\_2(R)}   & \twocol{Dll\_value\_1(R)} \\
-  0x010 & \twocol{Dll\_value\_8(R)} & \twocol{Dll\_value\_7(R)}  & \twocol{Dll\_value\_6(R)}   & \twocol{Dll\_value\_5(R)} \\
-
-  0x018 & Dll\_ck\_3          & Dll\_ck\_2       & Dll\_ck\_1          & Dll\_ck\_0         & Dll\_increment      & Dll\_start\_point   & Dll\_bypass          & Init\_start         \\
-  0x020 & Dq\_oe\_end\_0      & Dq\_oe\_begin\_0 & Dq\_stop\_edge\_0   & Dq\_start\_edge\_0 & Rddata\_delay\_0    & Rddqs\_lt\_half\_0  & Wrdqs\_lt\_half\_0   & Wrdq\_lt\_half\_0   \\
-  0x028 & Rd\_oe\_end\_0      & Rd\_oe\_begin\_0 & Rd\_stop\_edge\_0   & Rd\_start\_edge\_0 & Dqs\_oe\_end\_0     & Dqs\_oe\_begin\_0   & Dqs\_stop\_edge\_0   & Dqs\_start\_edge\_0 \\
-  0x030 &                     &                  &                     & Wrdq\_clkdelay\_0  & Odt\_oe\_end\_0     & Odt\_oe\_begin\_0   & Odt\_stop\_edge\_0   & Odt\_start\_edge\_0 \\
-  0x038 &                     &                  &                     & Dll\_rddqs\_n\_0   & Dll\_rddqs\_p\_0    & Dll\_wrdqs\_0       & Dll\_wrdata\_0       & Dll\_gate\_0        \\
-  0x040 & Dq\_oe\_end\_1      & Dq\_oe\_begin\_1 & Dq\_stop\_edge\_1   & Dq\_start\_edge\_1 & Rddata\_delay\_1    & Rddqs\_lt\_half\_1  & Wrdqs\_lt\_half\_1   & Wrdq\_lt\_half\_1   \\
-  0x048 & Rd\_oe\_end\_1      & Rd\_oe\_begin\_1 & Rd\_stop\_edge\_1   & Rd\_start\_edge\_1 & Dqs\_oe\_end\_1     & Dqs\_oe\_begin\_1   & Dqs\_stop\_edge\_1   & Dqs\_start\_edge\_1 \\
-  0x050 &                     &                  &                     & Wrdq\_clkdelay\_1  & Odt\_oe\_end\_1     & Odt\_oe\_begin\_1   & Odt\_stop\_edge\_1   & Odt\_start\_edge\_1 \\
-  0x058 &                     &                  &                     & Dll\_rddqs\_n\_1   & Dll\_rddqs\_p\_1    & Dll\_wrdqs\_1       & Dll\_wrdata\_1       & Dll\_gate\_1        \\
-  0x060 & Dq\_oe\_end\_2      & Dq\_oe\_begin\_2 & Dq\_stop\_edge\_2   & Dq\_start\_edge\_2 & Rddata\_delay\_2    & Rddqs\_lt\_half\_2  & Wrdqs\_lt\_half\_2   & Wrdq\_lt\_half\_2   \\
-  0x068 & Rd\_oe\_end\_2      & Rd\_oe\_begin\_2 & Rd\_stop\_edge\_2   & Rd\_start\_edge\_2 & Dqs\_oe\_end\_2     & Dqs\_oe\_begin\_2   & Dqs\_stop\_edge\_2   & Dqs\_start\_edge\_2 \\
-  0x070 &                     &                  &                     & Wrdq\_clkdelay\_2  & Odt\_oe\_end\_2     & Odt\_oe\_begin\_2   & Odt\_stop\_edge\_2   & Odt\_start\_edge\_2 \\
-  0x078 &                     &                  &                     & Dll\_rddqs\_n\_2   & Dll\_rddqs\_p\_2    & Dll\_wrdqs\_2       & Dll\_wrdata\_2       & Dll\_gate\_2        \\
-  0x080 & Dq\_oe\_end\_3      & Dq\_oe\_begin\_3 & Dq\_stop\_edge\_3   & Dq\_start\_edge\_3 & Rddata\_delay\_3    & Rddqs\_lt\_half\_3  & Wrdqs\_lt\_half\_3   & Wrdq\_lt\_half\_3   \\
-  0x088 & Rd\_oe\_end\_3      & Rd\_oe\_begin\_3 & Rd\_stop\_edge\_3   & Rd\_start\_edge\_3 & Dqs\_oe\_end\_3     & Dqs\_oe\_begin\_3   & Dqs\_stop\_edge\_3   & Dqs\_start\_edge\_3 \\
-  0x090 &                     &                  &                     & Wrdq\_clkdelay\_3  & Odt\_oe\_end\_3     & Odt\_oe\_begin\_3   & Odt\_stop\_edge\_3   & Odt\_start\_edge\_3 \\
-  0x098 &                     &                  &                     & Dll\_rddqs\_n\_3   & Dll\_rddqs\_p\_3    & Dll\_wrdqs\_3       & Dll\_wrdata\_3       & Dll\_gate\_3        \\
-  0x0A0 & Dq\_oe\_end\_4      & Dq\_oe\_begin\_4 & Dq\_stop\_edge\_4   & Dq\_start\_edge\_4 & Rddata\_delay\_4    & Rddqs\_lt\_half\_4  & Wrdqs\_lt\_half\_4   & Wrdq\_lt\_half\_4   \\
-  0x0A8 & Rd\_oe\_end\_4      & Rd\_oe\_begin\_4 & Rd\_stop\_edge\_4   & Rd\_start\_edge\_4 & Dqs\_oe\_end\_4     & Dqs\_oe\_begin\_4   & Dqs\_stop\_edge\_4   & Dqs\_start\_edge\_4 \\
-  0x0B0 &                     &                  &                     & Wrdq\_clkdelay\_4  & Odt\_oe\_end\_4     & Odt\_oe\_begin\_4   & Odt\_stop\_edge\_4   & Odt\_start\_edge\_4 \\
-  0x0B8 &                     &                  &                     & Dll\_rddqs\_n\_4   & Dll\_rddqs\_p\_4    & Dll\_wrdqs\_4       & Dll\_wrdata\_4       & Dll\_gate\_4 \\
-  0x0C0 & Dq\_oe\_end\_5      & Dq\_oe\_begin\_5 & Dq\_stop\_edge\_5   & Dq\_start\_edge\_5 & Rddata\_delay\_5    & Rddqs\_lt\_half\_5  & Wrdqs\_lt\_half\_5   & Wrdq\_lt\_half\_5 \\
-  0x0C8 & Rd\_oe\_end\_5      & Rd\_oe\_begin\_5 & Rd\_stop\_edge\_5   & Rd\_start\_edge\_5 & Dqs\_oe\_end\_5     & Dqs\_oe\_begin\_5   & Dqs\_stop\_edge\_5   & Dqs\_start\_edge\_5 \\
-  0x0D0 &                     &                  &                     & Wrdq\_clkdelay\_5  & Odt\_oe\_end\_5     & Odt\_oe\_begin\_5   & Odt\_stop\_edge\_5   & Odt\_start\_edge\_5 \\
-  0x0D8 &                     &                  &                     & Dll\_rddqs\_n\_5   & Dll\_rddqs\_p\_5    & Dll\_wrdqs\_5       & Dll\_wrdata\_5       & Dll\_gate\_5 \\
-  0x0E0 & Dq\_oe\_end\_6      & Dq\_oe\_begin\_6 & Dq\_stop\_edge\_6   & Dq\_start\_edge\_6 & Rddata\_delay\_6    & Rddqs\_lt\_half\_6  & Wrdqs\_lt\_half\_6   & Wrdq\_lt\_half\_6 \\
-  0x0E8 & Rd\_oe\_end\_6      & Rd\_oe\_begin\_6 & Rd\_stop\_edge\_6   & Rd\_start\_edge\_6 & Dqs\_oe\_end\_6     & Dqs\_oe\_begin\_6   & Dqs\_stop\_edge\_6   & Dqs\_start\_edge\_6 \\
-  0x0F0 &                     &                  &                     & Wrdq\_clkdelay\_6  & Odt\_oe\_end\_6     & Odt\_oe\_begin\_6   & Odt\_stop\_edge\_6   & Odt\_start\_edge\_6 \\
-  0x0F8 &                     &                  &                     & Dll\_rddqs\_n\_6   & Dll\_rddqs\_p\_6    & Dll\_wrdqs\_6       & Dll\_wrdata\_6       & Dll\_gate\_6 \\
-  0x100 & Dq\_oe\_end\_7      & Dq\_oe\_begin\_7 & Dq\_stop\_edge\_7   & Dq\_start\_edge\_7 & Rddata\_delay\_7    & Rddqs\_lt\_half\_7  & Wrdqs\_lt\_half\_7   & Wrdq\_lt\_half\_7 \\
-  0x108 & Rd\_oe\_end\_7      & Rd\_oe\_begin\_7 & Rd\_stop\_edge\_7   & Rd\_start\_edge\_7 & Dqs\_oe\_end\_7     & Dqs\_oe\_begin\_7   & Dqs\_stop\_edge\_7   & Dqs\_start\_edge\_7 \\
-  0x110 &                     &                  &                     & Wrdq\_clkdelay\_7  & Odt\_oe\_end\_7     & Odt\_oe\_begin\_7   & Odt\_stop\_edge\_7   & Odt\_start\_edge\_7 \\
-  0x118 &                     &                  &                     & Dll\_rddqs\_n\_7   & Dll\_rddqs\_p\_7    & Dll\_wrdqs\_7       & Dll\_wrdata\_7       & Dll\_gate\_7 \\
-  0x120 & Dq\_oe\_end\_8      & Dq\_oe\_begin\_8 & Dq\_stop\_edge\_8   & Dq\_start\_edge\_8 & Rddata\_delay\_8    & Rddqs\_lt\_half\_8  & Wrdqs\_lt\_half\_8   & Wrdq\_lt\_half\_8 \\
-  0x128 & Rd\_oe\_end\_8      & Rd\_oe\_begin\_8 & Rd\_stop\_edge\_8   & Rd\_start\_edge\_8 & Dqs\_oe\_end\_8     & Dqs\_oe\_begin\_8   & Dqs\_stop\_edge\_8   & Dqs\_start\_edge\_8 \\
-  0x130 &                     &                  &                     & Wrdq\_clkdelay\_8  & Odt\_oe\_end\_8     & Odt\_oe\_begin\_8   & Odt\_stop\_edge\_8   & Odt\_start\_edge\_8 \\
-  0x138 &                     &                  &                     & Dll\_rddqs\_n\_8   & Dll\_rddqs\_p\_8    & Dll\_wrdqs\_8       & Dll\_wrdata\_8       & Dll\_gate\_8 \\
-  0x140 & Pad\_ocd\_clk       & Pad\_ocd\_ctl    & Pad\_ocd\_dqs       & Pad\_ocd\_dq       & Pad\_enzi           &                     & Pad\_en\_ctl         & Pad\_en\_clk \\
-  0x148 & Pad\_adj\_code\_dqs & Pad\_code\_dqs   & Pad\_adj\_code\_dq  & Pad\_code\_dq      &                     & Pad\_vref\_internal & Pad\_odt\_se         & Pad\_modezi1v8 \\
-  0x150 &                     &                  & Pad\_adj\_code\_clk & Pad\_code\_lk      & Pad\_adj\_code\_cmd & Pad\_code\_cmd      & Pad\_adj\_code\_addr & Pad\_code\_addr \\
-  0x158 &                     &                  & Pad\_comp\_okn      & Pad\_comp\_code\_o & Pad\_comp\_code\_i  & Pad\_comp\_mode     & Pad\_comp\_tm        & Pad\_comp\_pd \\
-  0x160 & Rdfifo\_empty(R)    &                  & Overflow(R)         &                    & Dram\_init(R)       & Rdfifo\_valid       & Cmd\_timming         & Ddr3\_mode \\
-  0x168 &                     & Addr\_mirror     & Cmd\_delay          & Burst\_length      & Bank                & Cs\_zq              & Cs\_mrs              & Cs\_enable \\
-  0x170 & Odt\_wr\_cs\_map    &                  & Odt\_wr\_length     & Odt\_wr\_delay     & Odt\_rd\_cs\_map    &                     & Odt\_rd\_length      & Odt\_rd\_delay \\
-  0x178 &                     &                  &                     &                    &                     &                     &                      & \\
-  0x180 & Lvl\_resp\_0(R)     & Lvl\_done(R)     & Lvl\_ready(R)       &                    & Lvl\_cs             & tLVL\_DELAY         & Lvl\_req(WR)         & Lvl\_mode \\
-  0x188 & Lvl\_resp\_8(R)     & Lvl\_resp\_7(R)  & Lvl\_resp\_6(R)     & Lvl\_resp\_5(R)    & Lvl\_resp\_4(R)     & Lvl\_resp\_3(R)     & Lvl\_resp\_2(R)      & Lvl\_resp\_1(R) \\
-  0x190 & Cmd\_a              &                  & Cmd\_ba             & Cmd\_cmd           & Cmd\_cs             & Status\_cmd(R)      & Cmd\_req(WR)         & Command\_mode \\
-  0x198 &                     &                  & Status\_sref(R)     & Srefresh\_req      & Pre\_all\_done(R)   & Pre\_all\_req(R)    & Mrs\_done(R)         & Mrs\_req(WR) \\
-  0x1A0 & Mr\_3\_cs\_0        &                  & Mr\_2\_cs\_0        &                    & Mr\_1\_cs\_0        &                     & Mr\_0\_cs\_0         & \\
-  0x1A8 & Mr\_3\_cs\_1        &                  & Mr\_2\_cs\_1        &                    & Mr\_1\_cs\_1        &                     & Mr\_0\_cs\_1         & \\
-  0x1B0 & Mr\_3\_cs\_2        &                  & Mr\_2\_cs\_2        &                    & Mr\_1\_cs\_2        &                     & Mr\_0\_cs\_2         & \\
-  0x1B8 & Mr\_3\_cs\_3        &                  & Mr\_2\_cs\_3        &                    & Mr\_1\_cs\_3        &                     & Mr\_0\_cs\_3         & \\
-  0x1C0 & tRESET              & tCKE             & tXPR                & tMOD               & tZQCL               & tZQ\_CMD            & tWLDQSEN             & tRDDATA \\
-  0x1C8 & tFAW                & tRRD             & tRCD                & tRP                & tREF                & tRFC                & tZQCS                & tZQperiod \\
-  0x1D0 & tODTL               & tXSRD            & tPHY\_RDLAT         & tPHY\_WRLAT        & tRAS\_max           &                     &                      & tRAS\_min \\
-  0x1D8 & tXPDLL              & tXP              & tWR                 & tRTP               & tRL                 & tWL                 & tCCD                 & tWTR \\
-  0x1E0 & tW2R\_diffCS        & tW2W\_diffCS     & tR2P\_sameBA        & tW2P\_sameBA       & tR2R\_sameBA        & tR2W\_sameBA        & tW2R\_sameBA         & tW2W\_sameBA \\
-  0x1E8 & tR2R\_diffCS        & tR2W\_diffCS     & tR2P\_sameCS        & tW2P\_sameCS       & tR2R\_sameCS        & tR2W\_sameCS        & tW2R\_sameCS         & tW2W\_sameCS \\
-  0x1F0 & Power\_up           & Age\_step        & tCPDED              & Cs\_map            & Bs\_config          & Nc                  & Pr\_r2w              & Placement\_en \\
-  0x1F8 & Hw\_pd\_3           & Hw\_pd\_2        & Hw\_pd\_1           & Hw\_pd\_0          & Credit\_16          & Credit\_32          & Credit\_64           & Selection\_en \\
-  0x200 & Cmdq\_age\_16       &                  & Cmdq\_age\_32       &                    & Cmdq\_age\_64       &                     & tCKESR               & tRDPDEN \\
-  0x208 & Wfifo\_age          &                  & Ffifo\_age          &                    & Power\_stat3        & Power\_stat2        & Power\_stat1         & Power\_stat0 \\
-  0x210 & Active\_age         &                  & Cs\_place\_0        & Addr\_win\_0       & Cs\_diff\_0         & Row\_diff\_0        & Ba\_diff\_0          & Col\_diff\_0 \\
-  0x218 & Fastpd\_age         &                  & Cs\_place\_1        & Addr\_win\_1       & Cs\_diff\_1         & Row\_diff\_1        & Ba\_diff\_1          & Col\_diff\_1 \\
-  0x220 & Slowpd\_age         &                  & Cs\_place\_2        & Addr\_win\_2       & Cs\_diff\_2         & Row\_diff\_2        & Ba\_diff\_2          & Col\_diff\_2 \\
-  0x228 & Selfref\_age        &                  & Cs\_place\_3        & Addr\_win\_3       & Cs\_diff\_3         & Row\_diff\_3        & Ba\_diff\_3          & Col\_diff\_3 \\
-  0x230 & Win\_mask\_0        &                  &                     &                    & Win\_base\_0        &                     &                      & \\
-  0x238 & Win\_mask\_1        &                  &                     &                    & Win\_base\_1        &                     &                      & \\
-  0x240 & Win\_mask\_2        &                  &                     &                    & Win\_base\_2        &                     &                      & \\
-  0x248 & Win\_mask\_3        &                  &                     &                    & Win\_base\_3        &                     &                      & \\
-  0x250 &                     & Cmd\_monitor     & Axi\_monitor        &                    & Ecc\_code(R)        & Ecc\_enable         & Int\_vector          & Int\_enable \\
-  0x258 &                     &                  &                     &                    &                     &                     &                      & \\
-  0x260 & Ecc\_addr(R)        &                  &                     &                    &                     &                     &                      & \\
-  0x268 & Ecc\_data(R)        &                  &                     &                    &                     &                     &                      & \\
-  0x270 & Lpbk\_ecc\_mask(R)  & Prbs\_init       &                     &                    & Lpbk\_error(R)      & Prbs\_23            & Lpbk\_start          & Lpbk\_en \\
-  0x278 & Lpbk\_ecc(R)        &                  & Lpbk\_data\_mask(R) &                    & Lpbk\_correct(R)    &                     & Lpbk\_counter(R)     & \\
-  0x280 & Lpbk\_data\_r(R)    &                  &                     &                    &                     &                     &                      & \\
-  0x288 & Lpbk\_data\_f(R)    &                  &                     &                    &                     &                     &                      & \\
-  0x290 & Axi0\_bandwidth\_w  &                  &                     &                    & Axi0\_bandwidth\_r  &                     &                      & \\
-  0x298 & Axi0\_latency\_w    &                  &                     &                    & Axi0\_latency\_r    &                     &                      & \\
-  0x2A0 & Axi1\_bandwidth\_w  &                  &                     &                    & Axi1\_bandwidth\_r  &                     &                      & \\
-  0x2A8 & Axi1\_latency\_w    &                  &                     &                    & Axi1\_latency\_r    &                     &                      & \\
-  0x2B0 & Axi2\_bandwidth\_w  &                  &                     &                    & Axi2\_bandwidth\_r  &                     &                      & \\
-  0x2B8 & Axi2\_latency\_w    &                  &                     &                    & Axi2\_latency\_r    &                     &                      & \\
-  0x2C0 & Axi3\_bandwidth\_w  &                  &                     &                    & Axi3\_bandwidth\_r  &                     &                      & \\
-  0x2C8 & Axi3\_latency\_w    &                  &                     &                    & Axi3\_latency\_r    &                     &                      & \\
-  0x2D0 & Axi4\_bandwidth\_w  &                  &                     &                    & Axi4\_bandwidth\_r  &                     &                      & \\
-  0x2D8 & \forcol{Axi4\_latency\_w}         &                        \forcol{Axi4\_latency\_r} \\
-  0x2E0 & \forcol{Cmdq0\_bandwidth\_w}      &                        \forcol{Cmdq0\_bandwidth\_r} \\
-  0x2E8 & \forcol{Cmdq0\_latency\_w}        &                        \forcol{Cmdq0\_latency\_r} \\
-  0x2F0 & \forcol{Cmdq1\_bandwidth\_w}      &                        \forcol{Cmdq1\_bandwidth\_r} \\
-  0x2F8 & \forcol{Cmdq1\_latency\_w}        &                        \forcol{Cmdq1\_latency\_r} \\
-  0x300 & \forcol{Cmdq2\_bandwidth\_w}      &                        \forcol{Cmdq2\_bandwidth\_r} \\
-  0x308 & \forcol{Cmdq2\_latency\_w}        &                        \forcol{Cmdq2\_latency\_r} \\
-  0x310 & \forcol{Cmdq3\_bandwidth\_w}      &                        \forcol{Cmdq3\_bandwidth\_r} \\
-  0x318 & \forcol{Cmdq3\_latency\_w}        &                        \forcol{Cmdq3\_latency\_r} \\ \hline
+  \multicolumn{9}{r}{\tiny 未完待续} \endfoot \endlastfoot
+  0x000 & \twocol{\tt\scriptsize Dll\_value\_0(R)} & \twocol{\tt\scriptsize Dll\_value\_ck(R)} & \twocol{\tt\scriptsize Dll\_init\_done(R)} & \twocol{\tt\scriptsize Version(R)}       \\ \hline
+  0x008 & \twocol{\tt\scriptsize Dll\_value\_4(R)} & \twocol{\tt\scriptsize Dll\_value\_3(R)}  & \twocol{\tt\scriptsize Dll\_value\_2(R)}   & \twocol{\tt\scriptsize Dll\_value\_1(R)} \\ \hline
+  0x010 & \twocol{\tt\scriptsize Dll\_value\_8(R)} & \twocol{\tt\scriptsize Dll\_value\_7(R)}  & \twocol{\tt\scriptsize Dll\_value\_6(R)}   & \twocol{\tt\scriptsize Dll\_value\_5(R)} \\ \hline
+  0x018 & Dll\_ck\_3          & Dll\_ck\_2       & Dll\_ck\_1          & Dll\_ck\_0         & Dll\_increment      & Dll\_start\_point   & Dll\_bypass          & Init\_start           \\ \hline
+  0x020 & Dq\_oe\_end\_0      & Dq\_oe\_begin\_0 & Dq\_stop\_edge\_0   & Dq\_start\_edge\_0 & Rddata\_delay\_0    & Rddqs\_lt\_half\_0  & Wrdqs\_lt\_half\_0   & Wrdq\_lt\_half\_0     \\ \hline
+  0x028 & Rd\_oe\_end\_0      & Rd\_oe\_begin\_0 & Rd\_stop\_edge\_0   & Rd\_start\_edge\_0 & Dqs\_oe\_end\_0     & Dqs\_oe\_begin\_0   & Dqs\_stop\_edge\_0   & Dqs\_start\_edge\_0   \\ \hline
+  0x030 &                     &                  &                     & Wrdq\_clkdelay\_0  & Odt\_oe\_end\_0     & Odt\_oe\_begin\_0   & Odt\_stop\_edge\_0   & Odt\_start\_edge\_0   \\ \hline
+  0x038 &                     &                  &                     & Dll\_rddqs\_n\_0   & Dll\_rddqs\_p\_0    & Dll\_wrdqs\_0       & Dll\_wrdata\_0       & Dll\_gate\_0          \\ \hline
+  0x040 & Dq\_oe\_end\_1      & Dq\_oe\_begin\_1 & Dq\_stop\_edge\_1   & Dq\_start\_edge\_1 & Rddata\_delay\_1    & Rddqs\_lt\_half\_1  & Wrdqs\_lt\_half\_1   & Wrdq\_lt\_half\_1     \\ \hline
+  0x048 & Rd\_oe\_end\_1      & Rd\_oe\_begin\_1 & Rd\_stop\_edge\_1   & Rd\_start\_edge\_1 & Dqs\_oe\_end\_1     & Dqs\_oe\_begin\_1   & Dqs\_stop\_edge\_1   & Dqs\_start\_edge\_1   \\ \hline
+  0x050 &                     &                  &                     & Wrdq\_clkdelay\_1  & Odt\_oe\_end\_1     & Odt\_oe\_begin\_1   & Odt\_stop\_edge\_1   & Odt\_start\_edge\_1   \\ \hline
+  0x058 &                     &                  &                     & Dll\_rddqs\_n\_1   & Dll\_rddqs\_p\_1    & Dll\_wrdqs\_1       & Dll\_wrdata\_1       & Dll\_gate\_1          \\ \hline
+  0x060 & Dq\_oe\_end\_2      & Dq\_oe\_begin\_2 & Dq\_stop\_edge\_2   & Dq\_start\_edge\_2 & Rddata\_delay\_2    & Rddqs\_lt\_half\_2  & Wrdqs\_lt\_half\_2   & Wrdq\_lt\_half\_2     \\ \hline
+  0x068 & Rd\_oe\_end\_2      & Rd\_oe\_begin\_2 & Rd\_stop\_edge\_2   & Rd\_start\_edge\_2 & Dqs\_oe\_end\_2     & Dqs\_oe\_begin\_2   & Dqs\_stop\_edge\_2   & Dqs\_start\_edge\_2   \\ \hline
+  0x070 &                     &                  &                     & Wrdq\_clkdelay\_2  & Odt\_oe\_end\_2     & Odt\_oe\_begin\_2   & Odt\_stop\_edge\_2   & Odt\_start\_edge\_2   \\ \hline
+  0x078 &                     &                  &                     & Dll\_rddqs\_n\_2   & Dll\_rddqs\_p\_2    & Dll\_wrdqs\_2       & Dll\_wrdata\_2       & Dll\_gate\_2          \\ \hline
+  0x080 & Dq\_oe\_end\_3      & Dq\_oe\_begin\_3 & Dq\_stop\_edge\_3   & Dq\_start\_edge\_3 & Rddata\_delay\_3    & Rddqs\_lt\_half\_3  & Wrdqs\_lt\_half\_3   & Wrdq\_lt\_half\_3     \\ \hline
+  0x088 & Rd\_oe\_end\_3      & Rd\_oe\_begin\_3 & Rd\_stop\_edge\_3   & Rd\_start\_edge\_3 & Dqs\_oe\_end\_3     & Dqs\_oe\_begin\_3   & Dqs\_stop\_edge\_3   & Dqs\_start\_edge\_3   \\ \hline
+  0x090 &                     &                  &                     & Wrdq\_clkdelay\_3  & Odt\_oe\_end\_3     & Odt\_oe\_begin\_3   & Odt\_stop\_edge\_3   & Odt\_start\_edge\_3   \\ \hline
+  0x098 &                     &                  &                     & Dll\_rddqs\_n\_3   & Dll\_rddqs\_p\_3    & Dll\_wrdqs\_3       & Dll\_wrdata\_3       & Dll\_gate\_3          \\ \hline
+  0x0A0 & Dq\_oe\_end\_4      & Dq\_oe\_begin\_4 & Dq\_stop\_edge\_4   & Dq\_start\_edge\_4 & Rddata\_delay\_4    & Rddqs\_lt\_half\_4  & Wrdqs\_lt\_half\_4   & Wrdq\_lt\_half\_4     \\ \hline
+  0x0A8 & Rd\_oe\_end\_4      & Rd\_oe\_begin\_4 & Rd\_stop\_edge\_4   & Rd\_start\_edge\_4 & Dqs\_oe\_end\_4     & Dqs\_oe\_begin\_4   & Dqs\_stop\_edge\_4   & Dqs\_start\_edge\_4   \\ \hline
+  0x0B0 &                     &                  &                     & Wrdq\_clkdelay\_4  & Odt\_oe\_end\_4     & Odt\_oe\_begin\_4   & Odt\_stop\_edge\_4   & Odt\_start\_edge\_4   \\ \hline
+  0x0B8 &                     &                  &                     & Dll\_rddqs\_n\_4   & Dll\_rddqs\_p\_4    & Dll\_wrdqs\_4       & Dll\_wrdata\_4       & Dll\_gate\_4          \\ \hline
+  0x0C0 & Dq\_oe\_end\_5      & Dq\_oe\_begin\_5 & Dq\_stop\_edge\_5   & Dq\_start\_edge\_5 & Rddata\_delay\_5    & Rddqs\_lt\_half\_5  & Wrdqs\_lt\_half\_5   & Wrdq\_lt\_half\_5     \\ \hline
+  0x0C8 & Rd\_oe\_end\_5      & Rd\_oe\_begin\_5 & Rd\_stop\_edge\_5   & Rd\_start\_edge\_5 & Dqs\_oe\_end\_5     & Dqs\_oe\_begin\_5   & Dqs\_stop\_edge\_5   & Dqs\_start\_edge\_5   \\ \hline
+  0x0D0 &                     &                  &                     & Wrdq\_clkdelay\_5  & Odt\_oe\_end\_5     & Odt\_oe\_begin\_5   & Odt\_stop\_edge\_5   & Odt\_start\_edge\_5   \\ \hline
+  0x0D8 &                     &                  &                     & Dll\_rddqs\_n\_5   & Dll\_rddqs\_p\_5    & Dll\_wrdqs\_5       & Dll\_wrdata\_5       & Dll\_gate\_5          \\ \hline
+  0x0E0 & Dq\_oe\_end\_6      & Dq\_oe\_begin\_6 & Dq\_stop\_edge\_6   & Dq\_start\_edge\_6 & Rddata\_delay\_6    & Rddqs\_lt\_half\_6  & Wrdqs\_lt\_half\_6   & Wrdq\_lt\_half\_6     \\ \hline
+  0x0E8 & Rd\_oe\_end\_6      & Rd\_oe\_begin\_6 & Rd\_stop\_edge\_6   & Rd\_start\_edge\_6 & Dqs\_oe\_end\_6     & Dqs\_oe\_begin\_6   & Dqs\_stop\_edge\_6   & Dqs\_start\_edge\_6   \\ \hline
+  0x0F0 &                     &                  &                     & Wrdq\_clkdelay\_6  & Odt\_oe\_end\_6     & Odt\_oe\_begin\_6   & Odt\_stop\_edge\_6   & Odt\_start\_edge\_6   \\ \hline
+  0x0F8 &                     &                  &                     & Dll\_rddqs\_n\_6   & Dll\_rddqs\_p\_6    & Dll\_wrdqs\_6       & Dll\_wrdata\_6       & Dll\_gate\_6          \\ \hline
+  0x100 & Dq\_oe\_end\_7      & Dq\_oe\_begin\_7 & Dq\_stop\_edge\_7   & Dq\_start\_edge\_7 & Rddata\_delay\_7    & Rddqs\_lt\_half\_7  & Wrdqs\_lt\_half\_7   & Wrdq\_lt\_half\_7     \\ \hline
+  0x108 & Rd\_oe\_end\_7      & Rd\_oe\_begin\_7 & Rd\_stop\_edge\_7   & Rd\_start\_edge\_7 & Dqs\_oe\_end\_7     & Dqs\_oe\_begin\_7   & Dqs\_stop\_edge\_7   & Dqs\_start\_edge\_7   \\ \hline
+  0x110 &                     &                  &                     & Wrdq\_clkdelay\_7  & Odt\_oe\_end\_7     & Odt\_oe\_begin\_7   & Odt\_stop\_edge\_7   & Odt\_start\_edge\_7   \\ \hline
+  0x118 &                     &                  &                     & Dll\_rddqs\_n\_7   & Dll\_rddqs\_p\_7    & Dll\_wrdqs\_7       & Dll\_wrdata\_7       & Dll\_gate\_7          \\ \hline
+  0x120 & Dq\_oe\_end\_8      & Dq\_oe\_begin\_8 & Dq\_stop\_edge\_8   & Dq\_start\_edge\_8 & Rddata\_delay\_8    & Rddqs\_lt\_half\_8  & Wrdqs\_lt\_half\_8   & Wrdq\_lt\_half\_8     \\ \hline
+  0x128 & Rd\_oe\_end\_8      & Rd\_oe\_begin\_8 & Rd\_stop\_edge\_8   & Rd\_start\_edge\_8 & Dqs\_oe\_end\_8     & Dqs\_oe\_begin\_8   & Dqs\_stop\_edge\_8   & Dqs\_start\_edge\_8   \\ \hline
+  0x130 &                     &                  &                     & Wrdq\_clkdelay\_8  & Odt\_oe\_end\_8     & Odt\_oe\_begin\_8   & Odt\_stop\_edge\_8   & Odt\_start\_edge\_8   \\ \hline
+  0x138 &                     &                  &                     & Dll\_rddqs\_n\_8   & Dll\_rddqs\_p\_8    & Dll\_wrdqs\_8       & Dll\_wrdata\_8       & Dll\_gate\_8          \\ \hline
+  0x140 & Pad\_ocd\_clk       & Pad\_ocd\_ctl    & Pad\_ocd\_dqs       & Pad\_ocd\_dq       & Pad\_enzi           &                     & Pad\_en\_ctl         & Pad\_en\_clk          \\ \hline
+  0x148 & Pad\_adj\_code\_dqs & Pad\_code\_dqs   & Pad\_adj\_code\_dq  & Pad\_code\_dq      &                     & Pad\_vref\_internal & Pad\_odt\_se         & Pad\_modezi1v8        \\ \hline
+  0x150 &                     &                  & Pad\_adj\_code\_clk & Pad\_code\_lk      & Pad\_adj\_code\_cmd & Pad\_code\_cmd      & Pad\_adj\_code\_addr & Pad\_code\_addr       \\ \hline
+  0x158 &                     &                  & Pad\_comp\_okn      & Pad\_comp\_code\_o & Pad\_comp\_code\_i  & Pad\_comp\_mode     & Pad\_comp\_tm        & Pad\_comp\_pd         \\ \hline
+  0x160 & Rdfifo\_empty(R)    &                  & Overflow(R)         &                    & Dram\_init(R)       & Rdfifo\_valid       & Cmd\_timming         & Ddr3\_mode            \\ \hline
+  0x168 &                     & Addr\_mirror     & Cmd\_delay          & Burst\_length      & Bank                & Cs\_zq              & Cs\_mrs              & Cs\_enable            \\ \hline
+  0x170 & Odt\_wr\_cs\_map    &                  & Odt\_wr\_length     & Odt\_wr\_delay     & Odt\_rd\_cs\_map    &                     & Odt\_rd\_length      & Odt\_rd\_delay        \\ \hline
+  0x178 &                     &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x180 & Lvl\_resp\_0(R)     & Lvl\_done(R)     & Lvl\_ready(R)       &                    & Lvl\_cs             & tLVL\_DELAY         & Lvl\_req(WR)         & Lvl\_mode             \\ \hline
+  0x188 & Lvl\_resp\_8(R)     & Lvl\_resp\_7(R)  & Lvl\_resp\_6(R)     & Lvl\_resp\_5(R)    & Lvl\_resp\_4(R)     & Lvl\_resp\_3(R)     & Lvl\_resp\_2(R)      & Lvl\_resp\_1(R)       \\ \hline
+  0x190 & Cmd\_a              &                  & Cmd\_ba             & Cmd\_cmd           & Cmd\_cs             & Status\_cmd(R)      & Cmd\_req(WR)         & Command\_mode         \\ \hline
+  0x198 &                     &                  & Status\_sref(R)     & Srefresh\_req      & Pre\_all\_done(R)   & Pre\_all\_req(R)    & Mrs\_done(R)         & Mrs\_req(WR)          \\ \hline
+  0x1A0 & Mr\_3\_cs\_0        &                  & Mr\_2\_cs\_0        &                    & Mr\_1\_cs\_0        &                     & Mr\_0\_cs\_0         &                       \\ \hline
+  0x1A8 & Mr\_3\_cs\_1        &                  & Mr\_2\_cs\_1        &                    & Mr\_1\_cs\_1        &                     & Mr\_0\_cs\_1         &                       \\ \hline
+  0x1B0 & Mr\_3\_cs\_2        &                  & Mr\_2\_cs\_2        &                    & Mr\_1\_cs\_2        &                     & Mr\_0\_cs\_2         &                       \\ \hline
+  0x1B8 & Mr\_3\_cs\_3        &                  & Mr\_2\_cs\_3        &                    & Mr\_1\_cs\_3        &                     & Mr\_0\_cs\_3         &                       \\ \hline
+  0x1C0 & tRESET              & tCKE             & tXPR                & tMOD               & tZQCL               & tZQ\_CMD            & tWLDQSEN             & tRDDATA               \\ \hline
+  0x1C8 & tFAW                & tRRD             & tRCD                & tRP                & tREF                & tRFC                & tZQCS                & tZQperiod             \\ \hline
+  0x1D0 & tODTL               & tXSRD            & tPHY\_RDLAT         & tPHY\_WRLAT        & tRAS\_max           &                     &                      & tRAS\_min             \\ \hline
+  0x1D8 & tXPDLL              & tXP              & tWR                 & tRTP               & tRL                 & tWL                 & tCCD                 & tWTR                  \\ \hline
+  0x1E0 & tW2R\_diffCS        & tW2W\_diffCS     & tR2P\_sameBA        & tW2P\_sameBA       & tR2R\_sameBA        & tR2W\_sameBA        & tW2R\_sameBA         & tW2W\_sameBA          \\ \hline
+  0x1E8 & tR2R\_diffCS        & tR2W\_diffCS     & tR2P\_sameCS        & tW2P\_sameCS       & tR2R\_sameCS        & tR2W\_sameCS        & tW2R\_sameCS         & tW2W\_sameCS          \\ \hline
+  0x1F0 & Power\_up           & Age\_step        & tCPDED              & Cs\_map            & Bs\_config          & Nc                  & Pr\_r2w              & Placement\_en         \\ \hline
+  0x1F8 & Hw\_pd\_3           & Hw\_pd\_2        & Hw\_pd\_1           & Hw\_pd\_0          & Credit\_16          & Credit\_32          & Credit\_64           & Selection\_en         \\ \hline
+  0x200 & Cmdq\_age\_16       &                  & Cmdq\_age\_32       &                    & Cmdq\_age\_64       &                     & tCKESR               & tRDPDEN               \\ \hline
+  0x208 & Wfifo\_age          &                  & Ffifo\_age          &                    & Power\_stat3        & Power\_stat2        & Power\_stat1         & Power\_stat0          \\ \hline
+  0x210 & Active\_age         &                  & Cs\_place\_0        & Addr\_win\_0       & Cs\_diff\_0         & Row\_diff\_0        & Ba\_diff\_0          & Col\_diff\_0          \\ \hline
+  0x218 & Fastpd\_age         &                  & Cs\_place\_1        & Addr\_win\_1       & Cs\_diff\_1         & Row\_diff\_1        & Ba\_diff\_1          & Col\_diff\_1          \\ \hline
+  0x220 & Slowpd\_age         &                  & Cs\_place\_2        & Addr\_win\_2       & Cs\_diff\_2         & Row\_diff\_2        & Ba\_diff\_2          & Col\_diff\_2          \\ \hline
+  0x228 & Selfref\_age        &                  & Cs\_place\_3        & Addr\_win\_3       & Cs\_diff\_3         & Row\_diff\_3        & Ba\_diff\_3          & Col\_diff\_3          \\ \hline
+  0x230 & Win\_mask\_0        &                  &                     &                    & Win\_base\_0        &                     &                      &                       \\ \hline
+  0x238 & Win\_mask\_1        &                  &                     &                    & Win\_base\_1        &                     &                      &                       \\ \hline
+  0x240 & Win\_mask\_2        &                  &                     &                    & Win\_base\_2        &                     &                      &                       \\ \hline
+  0x248 & Win\_mask\_3        &                  &                     &                    & Win\_base\_3        &                     &                      &                       \\ \hline
+  0x250 &                     & Cmd\_monitor     & Axi\_monitor        &                    & Ecc\_code(R)        & Ecc\_enable         & Int\_vector          & Int\_enable           \\ \hline
+  0x258 &                     &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x260 & Ecc\_addr(R)        &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x268 & Ecc\_data(R)        &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x270 & Lpbk\_ecc\_mask(R)  & Prbs\_init       &                     &                    & Lpbk\_error(R)      & Prbs\_23            & Lpbk\_start          & Lpbk\_en              \\ \hline
+  0x278 & Lpbk\_ecc(R)        &                  & Lpbk\_data\_mask(R) &                    & Lpbk\_correct(R)    &                     & Lpbk\_counter(R)     &                       \\ \hline
+  0x280 & Lpbk\_data\_r(R)    &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x288 & Lpbk\_data\_f(R)    &                  &                     &                    &                     &                     &                      &                       \\ \hline
+  0x290 & Axi0\_bandwidth\_w  &                  &                     &                    & Axi0\_bandwidth\_r  &                     &                      &                       \\ \hline
+  0x298 & Axi0\_latency\_w    &                  &                     &                    & Axi0\_latency\_r    &                     &                      &                       \\ \hline
+  0x2A0 & Axi1\_bandwidth\_w  &                  &                     &                    & Axi1\_bandwidth\_r  &                     &                      &                       \\ \hline
+  0x2A8 & Axi1\_latency\_w    &                  &                     &                    & Axi1\_latency\_r    &                     &                      &                       \\ \hline
+  0x2B0 & Axi2\_bandwidth\_w  &                  &                     &                    & Axi2\_bandwidth\_r  &                     &                      &                       \\ \hline
+  0x2B8 & Axi2\_latency\_w    &                  &                     &                    & Axi2\_latency\_r    &                     &                      &                       \\ \hline
+  0x2C0 & Axi3\_bandwidth\_w  &                  &                     &                    & Axi3\_bandwidth\_r  &                     &                      &                       \\ \hline
+  0x2C8 & Axi3\_latency\_w    &                  &                     &                    & Axi3\_latency\_r    &                     &                      &                       \\ \hline
+  0x2D0 & Axi4\_bandwidth\_w  &                  &                     &                    & Axi4\_bandwidth\_r  &                     &                      &                       \\ \hline
+  0x2D8 & \forcol{\tt\scriptsize Axi4\_latency\_w}         &                        \forcol{\tt\scriptsize Axi4\_latency\_r}                                                           \\ \hline
+  0x2E0 & \forcol{\tt\scriptsize Cmdq0\_bandwidth\_w}      &                        \forcol{\tt\scriptsize Cmdq0\_bandwidth\_r}                                                        \\ \hline
+  0x2E8 & \forcol{\tt\scriptsize Cmdq0\_latency\_w}        &                        \forcol{\tt\scriptsize Cmdq0\_latency\_r}                                                          \\ \hline
+  0x2F0 & \forcol{\tt\scriptsize Cmdq1\_bandwidth\_w}      &                        \forcol{\tt\scriptsize Cmdq1\_bandwidth\_r}                                                        \\ \hline
+  0x2F8 & \forcol{\tt\scriptsize Cmdq1\_latency\_w}        &                        \forcol{\tt\scriptsize Cmdq1\_latency\_r}                                                          \\ \hline
+  0x300 & \forcol{\tt\scriptsize Cmdq2\_bandwidth\_w}      &                        \forcol{\tt\scriptsize Cmdq2\_bandwidth\_r}                                                        \\ \hline
+  0x308 & \forcol{\tt\scriptsize Cmdq2\_latency\_w}        &                        \forcol{\tt\scriptsize Cmdq2\_latency\_r}                                                          \\ \hline
+  0x310 & \forcol{\tt\scriptsize Cmdq3\_bandwidth\_w}      &                        \forcol{\tt\scriptsize Cmdq3\_bandwidth\_r}                                                        \\ \hline
+  0x318 & \forcol{\tt\scriptsize Cmdq3\_latency\_w}        &                        \forcol{\tt\scriptsize Cmdq3\_latency\_r}                                                          \\ \hline
 \end{longtable}
 \setlength\LTleft{0in}
 \setlength\LTright{0in}
+\setlength{\tabcolsep}{3pt}
 
-详细说明列表：
-表 9-2 DDR2 SDRAM 配置参数寄存器格式
+DDR2/3 SDRAM 配置参数寄存器格式
+-------------------------------
 
-\begin{longtable}{|>{\tt}p{3.3cm}|>{\tt}p{1cm}|>{\centering}p{1cm}|>{\tt}p{1.5cm}|p{9cm}|}
+\begin{longtable}{|>{\tt}p{3.2cm}|>{\tt}P{1cm}|>{\centering}p{1cm}|>{\tt}P{1.3cm}|p{9cm}|}
   \caption{DDR2/3 SDRAM 配置寄存器格式} \tabularnewline \hline
-  参数 & 位域 & 读写 & 缺省值 & 说明
+  \multicolumn{1}{|c|}{参数} & \multicolumn{1}{c|}{位域} & 读写 &
+  \multicolumn{1}{c|}{缺省值} & \multicolumn{1}{c|}{说明}
   \tabularnewline\hhline \endfirsthead
   \caption{DDR2/3 SDRAM 配置寄存器格式（续）} \tabularnewline \hline
-  参数 & 位域 & 读写 & 缺省值 & 说明
+  \multicolumn{1}{|c|}{参数} & \multicolumn{1}{c|}{位域} & 读写 &
+  \multicolumn{1}{c|}{缺省值} & \multicolumn{1}{c|}{说明}
   \tabularnewline\hhline \endhead
   \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
-  \multicolumn{5}{l}{0x000} \\ \hhline
+
+  \multicolumn{5}{|l|}{0x000} \\ \hline
   Dll\_value\_0   &      56:48  & 只读  & 0x0 &   第 0 组数据 DLL 锁定值 \\
   Dll\_value\_ck  &      40:32  & 只读  & 0x0 &   时钟组 DLL 锁定值 \\
   Dll\_init\_done &      25:16  & 只读  & 0x0 &   控制器内部 DLL 锁定信号
                                               [25:17]：对应 9 组数据的 DLL 锁定信号
                                               [16:16]：对应时钟组 DLL 锁定信号 \\
-  Version       &      15:0   & 只读  & 0x1 &   控制器版本号 \\
-  \multicolumn{5}{l}{0x008} \\ \hhline
+  Version       &      15:0   & 只读  & 0x1 &   控制器版本号 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x008} \\ \hline
      Dll\_value\_4 &        56:48  & 只读  & 0x0  &  第 4 组数据 DLL 锁定值 \\
      Dll\_value\_3 &        40:32  & 只读  & 0x0  &  第 3 组数据 DLL 锁定值 \\
      Dll\_value\_2 &        24:16  & 只读  & 0x0  &  第 2 组数据 DLL 锁定值 \\
-     Dll\_value\_1 &        8:0    & 只读  & 0x0  &  第 1 组数据 DLL 锁定值 \\
-     0x010                                        \\
+     Dll\_value\_1 &        8:0    & 只读  & 0x0  &  第 1 组数据 DLL 锁定值 \\ \hline
+
+  \multicolumn{5}{|l|}{0x010} \\ \hline
      Dll\_value\_8 &        56:48  & 只读  & 0x0  &  第 8 组数据 DLL 锁定值 \\
      Dll\_value\_7 &        40:32  & 只读  & 0x0  &  第 7 组数据 DLL 锁定值 \\
      Dll\_value\_6 &        24:16  & 只读  & 0x0  &  第 6 组数据 DLL 锁定值 \\
-     Dll\_value\_5 &        8:0    & 只读  & 0x0  &  第 5 组数据 DLL 锁定值 \\
-  \multicolumn{5}{l}{0x018} \\ \hhline
+     Dll\_value\_5 &        8:0    & 只读  & 0x0  &  第 5 组数据 DLL 锁定值 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x018} \\ \hline
      Dll\_ck\_3    &        63:56  & 读写  & 0x0  &  时钟 3 延迟值
                                               [63:63]：bypass 控制
                                               [62:56]：当 bypass = 0 时，表示 n/128 个时钟周期
@@ -187,14 +193,15 @@ Init\_start      & 0:0    & 读写  & 0x0 &   控制器初始化开始。
                                       只有当其它的所有相关参数设置好了之后才可以将
                                       该位置位，使控制器进行初始化，并向内存发起初始
                                       化。只有这个操作完成后内存空间才可以被访问，否
-                                      则内存空间不可被外部访问。 \\
-  \multicolumn{5}{l}{0x020} \\ \hhline
+                                      则内存空间不可被外部访问。 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x020} \\ \hline
 Dq\_oe\_end\_0    &  59:56  & 读写 &  0x2&    第 0 组数据输出有效时期的结束时间，不可小于 \\
                                          Dq\_oe\_begin\_0
 Dq\_oe\_begin\_0  &  51:48  & 读写 &  0x2&    第 0 组数据输出有效时期的开始时间，不可大于 \\
                                          Dq\_oe\_end\_0
 Dq\_stop\_edge\_0 &  41:40  & 读写 &  0x0&    第 0 组数据输出有效时期的结束相位，其与
-                                         Dq\_oe\_end\_0 组 合 得 到 的 时 钟 边 沿 不 可 早 于
+                                         Dq\_oe\_end\_0 组合得到的时钟边沿不可早于
                                          Dq\_start\_edge\_0 与 Dq\_oe\_begin\_0 组合得到的时钟边
                                          沿
                                         0 – 比为 1 时提前 1/4 周期
@@ -213,8 +220,9 @@ Rddata\_delay\_0 &  24:24  & 读写 &  0x1&   读返回数据在 FIFO 中延迟�
 Rddqs\_lt\_half\_0&  16:16  & 读写 &  0x0&   当读返回 DQS 信号(延时后)相比内部时钟的延迟小
                                         于半周期时需要设为 1 \\
 Wrdqs\_lt\_half\_0&  8:8    & 读写 &  0x0&   当 Dll\_wrdqs\_0 的设置小于 0x40 时需要设为 1 \\
-Wrdq\_lt\_half\_0 &  0:0    & 读写 &  0x0&   当 Dll\_wrdata\_0 的设置小于 0x40 时需要设为 1 \\
-  \multicolumn{5}{l}{0x028} \\ \hhline
+Wrdq\_lt\_half\_0 &  0:0    & 读写 &  0x0&   当 Dll\_wrdata\_0 的设置小于 0x40 时需要设为 1 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x028} \\ \hline
 Rd\_oe\_end\_0    &  59:56  & 读写 &  0x1&   第 0 组数据读采样有效时期的结束时间，不可小于
                                         Rd\_oe\_begin\_0 \\
 Rd\_oe\_begin\_0  &  51:48  & 读写 &  0x1&   第 0 组数据读采样有效时期的开始时间，不可大于 \\
@@ -254,8 +262,9 @@ Dqs\_start\_edge\_0 & 1:0    & 读写  & 0x1&   第 0 组数据写 DQS 有效时
                                          0 – 比为 1 时提前 1/4 周期
                                          1 – 对应于 wrdqs\_0（第 0 组写 DQS）的上升沿
                                          2 – 比为 1 时推后 1/4 周期
-                                         3 – 比为 1 时推后 1/2 周期 \\
-  \multicolumn{5}{l}{0x030} \\ \hhline
+                                         3 – 比为 1 时推后 1/2 周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x030} \\ \hline
 Wrdq\_clkdelay\_0  & 32:32  & 读写  & 0x0& 第 0 组数据写 DQ 延迟控制信号在
                                          Wrdq\_lt\_half\_0 = 0 的时候将本组数据延迟增加一 拍 \\
 Odt\_oe\_end\_0     & 27:24  & 读写  & 0x2&   第 0 组数据读 ODT（控制器内部）有效时期的结束
@@ -277,8 +286,9 @@ Odt\_start\_edge\_0 & 1:0    & 读写  & 0x0&    第 0 组数据读 ODT（控制
                                        0 – 比为 1 时提前 1/4 周期
                                        1 – 对应于 wrdqs\_0（第 0 组写 DQS）的上升沿
                                        2 – 比为 1 时推后 1/4 周期
-                                       3 – 比为 1 时推后 1/2 周期 \\
-  \multicolumn{5}{l}{0x038} \\ \hhline
+                                       3 – 比为 1 时推后 1/2 周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x038} \\ \hline
 Dll\_rddqs\_n\_0    & 39:32  & 读写 &  0x20&   读 DQSn 采样延迟值
                                           [39:39]：bypass 控制
                                           [38:32]：当 bypass = 0 时，表示 n/128 个时钟周期
@@ -298,10 +308,11 @@ Dll\_wrdata\_0     & 15:8   & 读写 &  0x60&   写数据延迟值（应该比 D
 Dll\_gate\_0       & 7:0    & 读写 &  0x0 &   读 DQS 采样有效时期控制延迟值
                                           [7:7]：bypass 控制
                                           [6:0]：当 bypass = 0 时，表示 n/128 个时钟周期
-                                               当 bypass = 1 时，表示 n 个延迟单元 \\
-  \multicolumn{5}{l}{0x040： 从40 到 138 还没有内容} \\ \hhline
-  \multicolumn{5}{l}{0x138} \\ \hhline
-  \multicolumn{5}{l}{0x140} \\ \hhline
+                                               当 bypass = 1 时，表示 n 个延迟单元 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x040： 从40 到 138 还没有内容} \\ \hhline
+  \multicolumn{5}{|l|}{0x138} \\ \hline
+  \multicolumn{5}{|l|}{0x140} \\ \hline
 Pad\_ocd\_clk      & 58:56  & 读写 &  0x0 &  时钟引脚输出阻抗控制
                                          000 – 40 欧姆
                                          001 – 30 欧姆
@@ -328,8 +339,9 @@ Pad\_en\_ctl       & 8:8    & 读写 &  0x0 &  控制引脚输出使能
                                          0 – 高阻 \\
 Pad\_en\_clk       & 7:0    & 读写 &  0x0 &  时钟引脚输出使能
                                          1 – 使能
-                                         0 – 高阻 \\
-  \multicolumn{5}{l}{0x148} \\ \hhline
+                                         0 – 高阻 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x148} \\ \hline
 Pad\_adj\_code\_dqs & 63:56  & 读写 &  0x0 &  设置当 Pad\_code\_dqs[0]有效时 DQS 信号附加 CODE
                                           [7:4] N\_CODE：1 使能，0 关闭
                                           [3:0] P\_CODE：0 关闭，1 使能 \\
@@ -352,8 +364,9 @@ Pad\_odt\_se       &  8:8   &  读写&   0x0&   引脚匹配电阻值控制
                                           1 – 120 欧姆 \\
 Pad\_modezi1v8    &  0:0   &  读写&   0x0&   PAD MODE ZI 1v8
                                           1 – 使用 PAD 的 ZITEST 输入
-                                          0 – 使用 PAD 的 ZI 输入 \\
-  \multicolumn{5}{l}{0x150} \\ \hhline
+                                          0 – 使用 PAD 的 ZI 输入 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x150} \\ \hline
 Pad\_adj\_code\_clk &  47:40 &  读写&   0x0&   设置当 Pad\_code\_clk[0]有效时 CLK 信号附加 CODE
                                           [7:4] N\_CODE：1 使能，0 关闭
                                           [3:0] P\_CODE：0 关闭，1 使能 \\
@@ -376,8 +389,9 @@ Pad\_adj\_code\_addr&  15:8  &  读写&   0x0&    设置 当 Pad\_code\_addr[0]�
 Pad\_code\_addr    &  2:0   &  读写&   0x0&    ADDR 信号附加 CODE 使能设置
                                            Bit 2：0 有效，表示附加码作用于输出及 ODT
                                            Bit 1：0 有效，表示附加码作用于 SLEWRATE
-                                           Bit 0：附加 CODE 符号位，0 为正，1 为负 \\
-  \multicolumn{5}{l}{0x158} \\ \hhline
+                                           Bit 0：附加 CODE 符号位，0 为正，1 为负 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x158} \\ \hline
 Pad\_comp\_okn     &  40:40 &  只读&   0x0&    引脚补偿单元自动调节完成标志 \\
 Pad\_comp\_code\_o  &  39:32 &  只读&   0x0&    引脚补偿单元自动调节调整值 \\
 Pad\_comp\_code\_i  &  31:24 &  读写&  0xF0&   引脚补偿单元手动设置值
@@ -391,8 +405,9 @@ Pad\_comp\_tm      &  8:8   &  读写&   0x0&    外部引脚测试模块使能
                                            0 – 使用引脚 COMP\_REXT 连接电阻 \\
 Pad\_comp\_pd      &  0:0   &  读写&   0x1&    引脚补偿单元 Power Down
                                            1 – Power Down
-                                           0 – 正常工作 \\
-  \multicolumn{5}{l}{0x160} \\ \hhline
+                                           0 – 正常工作 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x160} \\ \hline
 Rdfifo\_empty     &  56:48 &  只读&   0x0&    PHY 中收集每个 SLICE 的读 FIFO 错误读出标志，当
                                         对应的 FIFO 为空时发生出队列操作时有效。可以用
                                         于判断 Rdfifo\_valid 无效时，tPHY\_RDLAT 的值是否
@@ -411,8 +426,9 @@ Cmd\_timming  & 9:8   &  读写 &  0x0 &  控制线 2T/3T 功能使能
                                      tRDDATA - Cmd\_delay - Cmd\_timing = CASLAT – 3
                                      tPHY\_WRLAT – Cmd\_delay – Cmd\_timing = WRLAT
                                      -4 \\
-Ddr3\_mode    & 0:0   &  读写 &  0x1 &  使用 DDR3 模式时将该位设为 1 \\
-  \multicolumn{5}{l}{0x168} \\ \hhline
+Ddr3\_mode    & 0:0   &  读写 &  0x1 &  使用 DDR3 模式时将该位设为 1 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x168} \\ \hline
 Addr\_mirror  & 51:48 &  读写 &  0x0 &  表示该 CS 对应的地址需要进行地址镜像 \\
 Cmd\_delay    & 41:40 &  读写 &  0x0 &  表示命令总线需要的附加延迟
                                      有效值为 0/1/2
@@ -432,8 +448,9 @@ Bank         & 27:24 &  读写 &  0x7 &  表示每个片选上的 Bank 数量
                                           需设置 Ba\_diff = 0 , Addr\_win[3:2] = 2’b11 \\
 Cs\_zq        & 19:16 &  读写 &  0x1 &  使能对应片选信号的 ZQ 请求 \\
 Cs\_mrs       & 11:8  &  读写 &  0x1 &  使能对应片选信号的 MRS 请求 \\
-Cs\_enable    &  3:0  &   读写&  0x1 &     使能对应片选信号 \\
-  \multicolumn{5}{l}{0x170} \\ \hhline
+Cs\_enable    &  3:0  &   读写&  0x1 &     使能对应片选信号 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x170} \\ \hline
 Odt\_wr\_cs\_map&  63:48&   读写&0x8421&   对应 CS 发送写命令时，使能的 ODT 信号
                                          Bit [15:12]：CS3 发读时对应 ODTx 是否有效，x=3..0
                                          Bit [11: 8]：CS2 发读时对应 ODTx 是否有效，x=3..0
@@ -447,9 +464,10 @@ Odt\_rd\_cs\_map&  31:16&   读写&0x4812&   对应 CS 发送读命令时，使�
                                          Bit [ 7: 4]：CS1 发读时对应 ODTx 是否有效，x=3..0
                                          Bit [ 3: 0]：CS0 发读时对应 ODTx 是否有效，x=3..0 \\
 Odt\_rd\_length&  11:8 &   读写&  0x5 &     发送读命令时，ODT 信号有效周期数 \\
-Odt\_rd\_delay &  3:0  &   读写&  0x1 &     发送读命令时，ODT 信号与读命令的起始间隔 \\
-  \multicolumn{5}{l}{0x178} \\ \hhline
-  \multicolumn{5}{l}{0x180} \\ \hhline
+Odt\_rd\_delay &  3:0  &   读写&  0x1 &     发送读命令时，ODT 信号与读命令的起始间隔 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x178} \\ \hline
+  \multicolumn{5}{|l|}{0x180} \\ \hline
 Lvl\_resp\_0   &  63:56&   只读&   0x0&      Leveling 操作时，第 0 数据组的反馈信号 \\
 Lvl\_done     &  48:48&   只读&   0x0&      Leveling 操作时，表示 Lvl\_resp\_\*有效信号 \\
 Lvl\_ready    &  40:40&   只读&   0x0&      Leveling 操作时，表示当前控制器已经进入 Leveling
@@ -464,8 +482,9 @@ Lvl\_req      &  8:8  &   只写&   0x0&      Leveling 操作时，向外发起 
 Lvl\_mode     &  1:0  &   读写&   0x0&      Leveling 模式使能
                                          00 – 正常功能模式
                                          01 – Write Leveling 模式
-                                         10 – Gate Leveling 模式 \\
-  \multicolumn{5}{l}{0x188} \\ \hhline
+                                         10 – Gate Leveling 模式 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x188} \\ \hline
 Lvl\_resp\_8   & 63:56 &  只读 &  0x0 &  Leveling 操作时，第 8 数据组的反馈信号
                                      当 Lvl\_mode == 1 时，为数据线上的反馈
                                      当 Lvl\_mode == 2 时
@@ -481,8 +500,9 @@ Lvl\_resp\_5   & 39:32 &  只读 &  0x0 &  Leveling 操作时，第 5 数据组�
 Lvl\_resp\_4   & 31:24 &  只读 &  0x0 &  Leveling 操作时，第 4 数据组的反馈信号 \\
 Lvl\_resp\_3   & 23:16 &  只读 &  0x0 &  Leveling 操作时，第 3 数据组的反馈信号 \\
 Lvl\_resp\_2   & 15:8  &  只读 &  0x0 &  Leveling 操作时，第 2 数据组的反馈信号 \\
-Lvl\_resp\_1   & 7:0   &  只读 &  0x0 &  Leveling 操作时，第 1 数据组的反馈信号 \\
-  \multicolumn{5}{l}{0x190} \\ \hhline
+Lvl\_resp\_1   & 7:0   &  只读 &  0x0 &  Leveling 操作时，第 1 数据组的反馈信号 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x190} \\ \hline
 Cmd\_a        & 63:48 &  读写 &  0x0 &  命令发送模式下，对 DRAM 发出的地址线信号 （最高位 bit[15]保留，cmd\_a[15]==0）\\
 Cmd\_ba       & 42:40 &  读写 &  0x0 &  命令发送模式下，对 DRAM 发出的 ba 线信号 \\
 Cmd\_cmd      & 34:32 &  读写 &  0x0 &  命令发送模式下，对 DRAM 发出的控制信号
@@ -493,36 +513,42 @@ Cmd\_cs       & 27:24 &  读写 &  0x0 &  命令发送模式下，对 DRAM 发�
 Status\_cmd   & 16:16 &  只读 &  0x0 &  表示控制器进入命令发送模式，在 command\_mode
                                      设置之后才会生效 \\
 Cmd\_req      & 8:8   &  只写 &  0x0 &  命令发送模式下，对 DRAM 发出一次控制命令 \\
-Command\_mode & 0:0   &  读写 &  0x0 &  使控制器进入命令发送模式 \\
-  \multicolumn{5}{l}{0x198} \\ \hhline
+Command\_mode & 0:0   &  读写 &  0x0 &  使控制器进入命令发送模式 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x198} \\ \hline
 Status\_sref  & 43:40 &  只读 &  0x0 &  已经进入自刷新模式，每位分别对应一个片选 \\
 Srefresh\_req & 35:32 &  读写 &  0x0 &  自刷新控制信号，设 1 进入自刷新，设 0 退出自刷新 \\
 Pre\_all\_done & 27:24 &  只读 &  0x0 &  Precharge All 操作完成 \\
 Pre\_all\_req  &19:16  & 只写  & 0x0  &    请求发出 Precharge All 命令，每位分别对应一个片选 \\
 Mrs\_done     &8:8    & 只读  & 0x0  &    命令模式下，表示 MRS 命令发送完毕 \\
 Mrs\_req      &0:0    & 只写  & 0x0  &    命令模式下，向 DRAM 发出一次 MRS 命令，发送的
-                                       命令序列为 MRS2、MRS3、MRS1、MRS0 \\
-  \multicolumn{5}{l}{0x1A0} \\ \hhline
+                                       命令序列为 MRS2、MRS3、MRS1、MRS0 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1A0} \\ \hline
 Mr\_3\_cs\_0    &63:48  & 读写  &0x0000&   向 DRAM CS 0 发送 MRS 3 命令时对应的值 \\
 Mr\_2\_cs\_0    &47:32  & 读写  &0x0018&   向 DRAM CS 0 发送 MRS 2 命令时对应的值 \\
 Mr\_1\_cs\_0    &31:16  & 读写  &0x0004&   向 DRAM CS 0 发送 MRS 1 命令时对应的值 \\
-Mr\_0\_cs\_0    &15:0   & 读写  &0x0d60&   向 DRAM CS 0 发送 MRS 0 命令时对应的值 \\
-  \multicolumn{5}{l}{0x1A8} \\ \hhline
+Mr\_0\_cs\_0    &15:0   & 读写  &0x0d60&   向 DRAM CS 0 发送 MRS 0 命令时对应的值 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1A8} \\ \hline
 Mr\_3\_cs\_1    &63:48  & 读写  &0x0000&   向 DRAM CS 1 发送 MRS 3 命令时对应的值 \\
 Mr\_2\_cs\_1    &47:32  & 读写  &0x0018&   向 DRAM CS 1 发送 MRS 2 命令时对应的值 \\
 Mr\_1\_cs\_1    &31:16  & 读写  &0x0004&   向 DRAM CS 1 发送 MRS 1 命令时对应的值 \\
-Mr\_0\_cs\_1    &15:0   & 读写  &0x0d60&   向 DRAM CS 1 发送 MRS 0 命令时对应的值 \\
-  \multicolumn{5}{l}{0x1B0} \\ \hhline
+Mr\_0\_cs\_1    &15:0   & 读写  &0x0d60&   向 DRAM CS 1 发送 MRS 0 命令时对应的值 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1B0} \\ \hline
 Mr\_3\_cs\_2    &63:48  & 读写  &0x0000&   向 DRAM CS 2 发送 MRS 3 命令时对应的值 \\
 Mr\_2\_cs\_2    &47:32  & 读写  &0x0018&   向 DRAM CS 2 发送 MRS 2 命令时对应的值 \\
 Mr\_1\_cs\_2    &31:16  & 读写  &0x0004&   向 DRAM CS 2 发送 MRS 1 命令时对应的值 \\
-Mr\_0\_cs\_2    &15:0   & 读写  &0x0d60&   向 DRAM CS 2 发送 MRS 0 命令时对应的值 \\
-  \multicolumn{5}{l}{0x1B8} \\ \hhline
+Mr\_0\_cs\_2    &15:0   & 读写  &0x0d60&   向 DRAM CS 2 发送 MRS 0 命令时对应的值 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1B8} \\ \hline
 Mr\_3\_cs\_3    &63:48  & 读写  &0x0000&   向 DRAM CS 3 发送 MRS 3 命令时对应的值 \\
 Mr\_2\_cs\_3    &47:32  & 读写  &0x0018&   向 DRAM CS 3 发送 MRS 2 命令时对应的值 \\
 Mr\_1\_cs\_3    &31:16  & 读写  &0x0004&   向 DRAM CS 3 发送 MRS 1 命令时对应的值 \\
-Mr\_0\_cs\_3    &15:0   & 读写  &0x0D60&   向 DRAM CS 3 发送 MRS 0 命令时对应的值 \\
-  \multicolumn{5}{l}{0x1C0} \\ \hhline
+Mr\_0\_cs\_3    &15:0   & 读写  &0x0D60&   向 DRAM CS 3 发送 MRS 0 命令时对应的值 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1C0} \\ \hline
 tRESET       &63:56  & 读写  & 0x28 &    DRAM 初始化前的复位时间单位为 4096 个时钟周期 \\
 tCKE         &55:48  & 读写  & 0x70 &    DRAM 初始化从复位释放到 CKE 有效时间
                                        单位为 4096 个时钟周期 \\
@@ -540,8 +566,9 @@ tRDDATA      &7:0    & 读写  & 0x07 &  从发送读命令到发送读数据有
                                      单位为时钟周期
                                      与其他几个参数需要满足关系式：
                                      tRDDATA - Cmd\_delay - Cmd\_timing = CASLAT – 3
-                                     该参数最小设置值为 2\\
-  \multicolumn{5}{l}{0x1C8} \\ \hhline
+                                     该参数最小设置值为 2\\ \hhline
+
+  \multicolumn{5}{|l|}{0x1C8} \\ \hline
 tFAW         &61:56  & 读写  & 0x30 &  连续打开 4 个 Bank 的最小允许时间
                                      单位为时钟周期 \\
 tRRD         &50:48  & 读写  & 0x06 &  打开两个行之间的最小间隔时间
@@ -557,8 +584,9 @@ tRFC         &23:16  & 读写  & 0x85 &  刷新操作需要时间
 tZQCS        &15:8   & 读写  & 0x40 &  ZQCS 操作需要时间
                                      单位为时钟周期 \\
 tZQperiod    &7:0    & 读写  & 0x04 &  同一片选 ZQCS 操作之间的时间间隔
-                                     单位为 tREF（刷新操作之间的时间间隔） \\
-  \multicolumn{5}{l}{0x1D0} \\ \hhline
+                                     单位为 tREF（刷新操作之间的时间间隔） \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1D0} \\ \hline
 tODTL        &59:56  & 读写  & 0x0A &  Write Leveling 中从 ODT 无效到 MRS 命令时间间隔
                                      单位为时钟周期 \\
 tXSRD        &55:48  & 读写  & 0x02 &  从自刷新模式恢复到第一条访问的最小时间间隔
@@ -577,8 +605,9 @@ tPHY\_WRLAT   &36:32  & 读写  & 0x04 &     从发送写命令到发送写数�
                                        该参数最小设置值为 2 \\
 tRAS\_max     &25:8   & 读写 &0x20000&   行打开的最长有效时间 
                                        单位为时钟周期\\
-tRAS\_min     &5:0    & 读写  & 0x1C &     行打开的最短有效时间单位为时钟周期 \\
-  \multicolumn{5}{l}{0x1D8} \\ \hhline
+tRAS\_min     &5:0    & 读写  & 0x1C &     行打开的最短有效时间单位为时钟周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1D8} \\ \hline
 tXPDLL       &63:56  & 读写  & 0x14 &     从离开 Power down （DLL 关闭）状态到下一个命令
                                        的间隔时间
                                        单位为始终周期 \\
@@ -598,8 +627,9 @@ tWL          &19:16  & 读写  & 0x08 &     写操作延迟，相当于 WRLAT
 tCCD         &11:8   & 读写  & 0x04 &     两个读写操作之间的最小间隔时间
                                        单位为时钟周期 \\
 tWTR         &3:0    & 读写  & 0x06 &  写操作到读操作之间的最小间隔时间
-                                        单位为时钟周期 \\
-  \multicolumn{5}{l}{0x1E0} \\ \hhline
+                                        单位为时钟周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1E0} \\ \hline
 tW2R\_diffCS      &  61:56&   读写&   0x03&   不同 CS 上的写操作到读操作之间间隔时间减 1 单位为时钟周期，最小值等于 tCCD+tWL-tRL. \\
 tW2W\_diffCS      &  53:48&   读写&   0x0 &   不同 CS 上的写操作到写操作之间的附加间隔时间单位为时钟周期，最小值等于 tCCD-1 \\
 tR2P\_sameBA      &  45:40&   读写&   0x0 &   相同 Bank 上的读操作到 Precharge 之间附加间隔时间单位为时钟周期 \\
@@ -607,8 +637,9 @@ tW2P\_sameBA      &  37:32&   读写&   0x0 &   相同 Bank 上的写操作到 P
 tR2R\_sameBA      &  29:24&   读写&   0x0 &   相同 Bank 上的读操作到读操作之间的附加间隔时间单位为时钟周期 \\
 tR2W\_sameBA      &  21:16&   读写&   0x0 &   相同 Bank 上的读操作到写操作之间的附加间隔时间单位为时钟周期 \\
 tW2R\_sameBA      &  13:8 &   读写&   0x0 &   相同 Bank 上的写操作到读操作之间的附加间隔时间单位为时钟周期 \\
-tW2W\_sameBA      &  5:0  &   读写&   0x0 &   相同 Bank 上的写操作到写操作之间的附加间隔时间单位为时钟周期 \\
-  \multicolumn{5}{l}{0x1E8} \\ \hhline
+tW2W\_sameBA      &  5:0  &   读写&   0x0 &   相同 Bank 上的写操作到写操作之间的附加间隔时间单位为时钟周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1E8} \\ \hline
 tR2R\_diffCS      &  61:56&   读写&   0x0 &   不同 CS 上的读操作到读操作之间的附加间隔时间单位为时钟周期，最小值等于 tCCD-1 \\
 tR2W\_diffCS      &  53:48&   读写&   0x05&   不同 CS 上的读操作到写操作之间间隔时间减 1 单位为时钟周期，最小值等于 tCCD+tRL(+1)-tWL. \\
 tR2P\_sameCS      &  45:40&   读写&   0x0 &   相同 CS 上的读操作到 Precharge 之间的间隔时间减去 1 的值单位为时钟周期 \\
@@ -616,8 +647,9 @@ tW2P\_sameCS      &  37:32&   读写&   0x0 &   相同 CS 上的写操作到 Pre
 tR2R\_sameCS      &  29:24&   读写&   0x0 &   相同 CS 上的读操作到读操作之间的附加间隔时间单位为时钟周期 \\
 tR2W\_sameCS      &  21:16&   读写&   0x0 &   相同 CS 上的读操作到写操作之间的附加间隔时间单位为时钟周期 \\
 tW2R\_sameCS      &13:8   & 读写  & 0x0   & 相同 CS 上的写操作到读操作之间的附加间隔时间单位为时钟周期 \\
-tW2W\_sameCS      &5:0    & 读写  & 0x0   & 相同 CS 上的写操作到写操作之间的附加间隔时间单位为时钟周期 \\
-  \multicolumn{5}{l}{0x1F0} \\ \hhline
+tW2W\_sameCS      &5:0    & 读写  & 0x0   & 相同 CS 上的写操作到写操作之间的附加间隔时间单位为时钟周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1F0} \\ \hline
 Power\_up         &59:56  & 读写  & 0x0   & 分别对应四个 CS。设为 1 时，可以使对应的 CS 离开或者不进入 Power down 状态。 \\
 Age\_step         &55:48  & 读写  & 0x08  & Power down 计数器步长。 \\
 tCPDED           &47:40  & 读写  & 0x01  & CKE 为 0 后，命令和地址总线失效时间单位为时钟周期 \\
@@ -640,8 +672,9 @@ Nc               &18:16  & 读写  & 0x0   &     多通道模式使能
                                              101 – 普通 32 位模式
                                              其它 – 保留 \\
 Pr\_r2w           &11:8   & 读写  & 0x1   &     读操作优先级是否高于写操作 \\
-Placement\_en     &0:0    & 读写  & 0x1   &     使能读写命令重排逻辑 \\
-  \multicolumn{5}{l}{0x1F8} \\ \hhline
+Placement\_en     &0:0    & 读写  & 0x1   &     使能读写命令重排逻辑 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x1F8} \\ \hline
 Hw\_pd\_3          &59:56  & 读写  & 0x0   &     从低到高分别对应 Active Standby，Fast Power Down，
                                             Slow Power Down 和 Self Refresh。设为 1 表示允许CS3 进入对应的低功耗状态。 \\
 Hw\_pd\_2          & 51:48 &  读写 &  0x0  &    设为 1 表示允许 CS2 进入对应的低功耗状态。 \\
@@ -650,22 +683,25 @@ Hw\_pd\_0          & 35:32 &  读写 &  0x0  &    设为 1 表示允许 CS0 进�
 Credit\_16        & 29:24 &  读写 &  0x4  &    16 位通道优先级设置 \\
 Credit\_32        & 21:16 &  读写 &  0x8  &    32 位通道优先级设置 \\
 Credit\_64        & 13:8  &  读写 &  0x10 &    64 位通道优先级设置 \\
-Selection\_en     & 0:0   &  读写 &  0x1  &    不同通道优先级调度使能 \\
-  \multicolumn{5}{l}{0x200} \\ \hhline
+Selection\_en     & 0:0   &  读写 &  0x1  &    不同通道优先级调度使能 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x200} \\ \hline
 Cmdq\_age\_16      & 59:48 &  读写 &  0xC00&    16 位通道调度初始年龄。0xFFF 为超时。 \\
 Cmdq\_age\_32      & 43:32 &  读写 &  0xC00&    32 位通道调度初始年龄。0xFFF 为超时。 \\
 Cmdq\_age\_64      & 27:16 &  读写 &  0xC00&    64 位通道调度初始年龄。0xFFF 为超时。 \\
 tCKESR           & 15:8  &  读写 &  0x07 &    进入自刷新时，CKE 为低的最短时间单位为时钟周期 \\
-tRDPDEN          & 7:0   &  读写 &  0x0C &    从发出 RD/RDA 命令到进入低功耗状态的时间间隔单位为时钟周期 \\
-  \multicolumn{5}{l}{0x208} \\ \hhline
+tRDPDEN          & 7:0   &  读写 &  0x0C &    从发出 RD/RDA 命令到进入低功耗状态的时间间隔单位为时钟周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x208} \\ \hline
 Wfifo\_age        & 59:48 &  读写 &  0xC00&    写队列中命令初始年龄。0xFFF 为超时。 \\
 Rfifo\_age        & 43:32 &  读写 &  0xC00&    读队列中命令初始年龄。0xFFF 为超时。 \\
 Power\_stat3      & 27:24 &  只读 &  0x0  &    从低到高分别对应 Active Standby，Fast Power Down，
                                             Slow Power Down 和 Self Refresh。设为 1 表示 CS3 处于对应的低功耗状态。 \\
 Power\_stat2      & 19:16 &  只读 &  0x0  &    设为 1 表示 CS2 处于对应的低功耗状态。 \\
 Power\_stat1      & 11:8  &  只读 &  0x0  &    设为 1 表示 CS1 处于对应的低功耗状态。 \\
-Power\_stat0      & 3:0   &  只读 &  0x0  &    设为 1 表示 CS0 处于对应的低功耗状态。 \\
-  \multicolumn{5}{l}{0x210} \\ \hhline
+Power\_stat0      & 3:0   &  只读 &  0x0  &    设为 1 表示 CS0 处于对应的低功耗状态。 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x210} \\ \hline
 Active\_age       & 63:48 &  读写 &0x0008 &  Active Standby 低功耗状态计数器 \\
 Cs\_place\_0       & 40:40 &  读写 &  0x0  &    普通模式或窗口 0 译码时 CS 在地址中的位置
                                             0 – 译码方式为{CS、ROW、BA、COL}
@@ -682,8 +718,9 @@ Cs\_diff\_0        &27:24  & 读写  & 0x0   &   普通模式或窗口 0 实际�
                                            对于 16 位窗口，应该为 0 \\
 Row\_diff\_0       &19:16  & 读写  & 0x2   &   普通模式或窗口 0 实际使用的行地址线个数与 16 之差这个值等于 16 – 实际使用的行地址线个数 \\
 Ba\_diff\_0        &9:8    & 读写  & 0x0   &   普通模式或窗口 0 实际使用的 BA 线个数与 3 之差这个值等于 3 – 实际使用的 BA 线个数 \\
-Col\_diff\_0       &3:0    & 读写  & 0x6   &   普通模式或窗口 0 实际使用的列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\
-  \multicolumn{5}{l}{0x218} \\ \hhline
+Col\_diff\_0       &3:0    & 读写  & 0x6   &   普通模式或窗口 0 实际使用的列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x218} \\ \hline
 Fastpd\_age       &63:48  & 读写  & 0x0008&   Fast Powerdown 低功耗状态计数器 \\
 Cs\_place\_1       &40:40  & 读写  & 0x0   &   普通模式或窗口 1 译码时 CS 在地址中的位置
                                            0 – 译码方式为{CS、ROW、BA、COL}
@@ -700,8 +737,9 @@ Cs\_diff\_1        &27:24  & 读写  & 0x0   &   普通模式或窗口 1 实际�
                                            对于 16 位窗口，应该为 0 \\
 Row\_diff\_1       &19:16  & 读写  & 0x2   &   普通模式或窗口 1 实际使用行地址线个数与 16 之差这个值等于 16 – 实际使用的行地址线个数 \\
 Ba\_diff\_1        &9:8    & 读写  & 0x0   &   普通模式或窗口 1 实际使用的 BA 线个数与 3 之差这个值等于 3 – 实际使用的 BA 线个数 \\
-Col\_diff\_1       & 3:0   &  读写 &  0x6  &    普通模式或窗口 1 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\
-  \multicolumn{5}{l}{0x220} \\ \hhline
+Col\_diff\_1       & 3:0   &  读写 &  0x6  &    普通模式或窗口 1 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x220} \\ \hline
 Slowpd\_age       & 63:48 &  读写 & 0x0008&   Slow Powerdown 低功耗状态计数器 \\
 Cs\_place\_2       & 40:40 &  读写 &  0x0  &    普通模式或窗口 2 译码时 CS 在地址中的位置
                                             0 – 译码方式为{CS、ROW、BA、COL}
@@ -718,8 +756,9 @@ Cs\_diff\_2        & 27:24 &  读写 &  0x0  &    普通模式或窗口 2 实际
                                             对于 16 位窗口，应该为 0 \\
 Row\_diff\_2       & 19:16 &  读写 &  0x2  &    普通模式或窗口 2 实际使用行地址线个数与 16 之差这个值等于 16 – 实际使用的行地址线个数 \\
 Ba\_diff\_2        & 9:8   &  读写 &  0x0  &    普通模式或窗口 2 实际使用的 BA 线个数与 3 之差这个值等于 3 – 实际使用的 BA 线个数 \\
-Col\_diff\_2       & 3:0   &  读写 &  0x6  &    普通模式或窗口 2 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\
-  \multicolumn{5}{l}{0x228}                                      \\
+Col\_diff\_2       & 3:0   &  读写 &  0x6  &    普通模式或窗口 2 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x228}                                      \\ \hline
 Selfref\_age      & 63:48 &  读写 &0x0008 &  Selfrefresh 低功耗状态计数器 \\
 Cs\_place\_3       & 40:40 &  读写 &  0x0  &    普通模式或窗口 3 译码时 CS 在地址中的位置
                                             0 – 译码方式为{CS、ROW、BA、COL}
@@ -736,20 +775,25 @@ Cs\_diff\_3        & 27:24 &  读写 &  0x0  &     普通模式或窗口 3 实�
                                              对于 16 位窗口，应该为 0 \\
 Row\_diff\_3       & 19:16 &  读写 &  0x2  &     普通模式或窗口 3 实际使用行地址线个数与 16 之差这个值等于 16 – 实际使用的行地址线个数 \\
 Ba\_diff\_3        & 9:8   &  读写 &  0x0  &     普通模式或窗口 3 实际使用的 BA 线个数与 3 之差这个值等于 3 – 实际使用的 BA 线个数 \\
-Col\_diff\_3       & 3:0   &  读写 &  0x6  &     普通模式或窗口 3 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\
-  \multicolumn{5}{l}{0x230}                                      \\
+Col\_diff\_3       & 3:0   &  读写 &  0x6  &     普通模式或窗口 3 实际使用列地址线个数与 16 之差这个值等于 16 – 实际使用的列地址线个数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x230}                                      \\ \hline
 Win\_mask\_0    & 59:32 &  读写 &\small 0xFFFFF00 &   0 号窗口 MASK，对应地址[47:20] \\
-Win\_base\_0    & 27:0  &  读写 &\small0x0000000 &  0 号窗口 BASE，对应地址[47:20] \\
-  \multicolumn{5}{l}{0x238}                                      \\
+Win\_base\_0    & 27:0  &  读写 &\small0x0000000 &  0 号窗口 BASE，对应地址[47:20] \\ \hhline
+
+  \multicolumn{5}{|l|}{0x238}                                      \\ \hline
 Win\_mask\_1    & 59:32 &  读写 &\small 0xFFFFF00 &   1 号窗口 MASK，对应地址[47:20] \\
-Win\_base\_1    & 27:0  &  读写 &\small 0x0000100 &  1 号窗口 BASE，对应地址[47:20] \\
-  \multicolumn{5}{l}{0x240}                                       \\
+Win\_base\_1    & 27:0  &  读写 &\small 0x0000100 &  1 号窗口 BASE，对应地址[47:20] \\ \hhline
+
+  \multicolumn{5}{|l|}{0x240}                                       \\ \hline
 Win\_mask\_2    & 59:32 &  读写 &\small 0xFFFFF00 &   2 号窗口 MASK，对应地址[47:20] \\
-Win\_base\_2    & 27:0  &  读写 &\small 0x0000200 &  2 号窗口 BASE，对应地址[47:20] \\
-  \multicolumn{5}{l}{0x248}                                       \\
+Win\_base\_2    & 27:0  &  读写 &\small 0x0000200 &  2 号窗口 BASE，对应地址[47:20] \\ \hhline
+
+  \multicolumn{5}{|l|}{0x248}                                       \\ \hline
 Win\_mask\_3    & 59:32 &  读写 &\small 0xFFFFF00 &   3 号窗口 MASK，对应地址[47:20] \\
-Win\_base\_3    & 27:0  &  读写 &\small 0x0000300 &  3 号窗口 BASE，对应地址[47:20] \\
-  \multicolumn{5}{l}{0x250}                                      \\
+Win\_base\_3    & 27:0  &  读写 &\small 0x0000300 &  3 号窗口 BASE，对应地址[47:20] \\ \hhline
+
+  \multicolumn{5}{|l|}{0x250}                                      \\ \hline
 Cmd\_monitor      & 55:48 &  读写 &  0x0  &     Bit 7：使能命令队列 3 监控功能
                                                 Bit 6：复位命令队列 3 性能计数值
                                             Bit 5：使能命令队列 2 监控功能
@@ -775,19 +819,21 @@ Int\_vector       & 9:8   &  读写 &  0x0  &    中断向量寄存器
                                             对这个寄存器的“写 1”操作将清除对应的位 \\
 Int\_enable       & 1:0   &  读写 &  0x0  &    中断使能寄存器
                                             Bit-1：ECC 两位较验错中断使能
-                                            Bit-0：ECC 较验错中断使能（包括一位错与两位错） \\
-  \multicolumn{5}{l}{0x258}                                      \\
-  \multicolumn{5}{l}{0x260}                                      \\
+                                            Bit-0：ECC 较验错中断使能（包括一位错与两位错） \\ \hhline
+
+  \multicolumn{5}{|l|}{0x258}                                      \\ \hline
+  \multicolumn{5}{|l|}{0x260}                                      \\ \hline
 Ecc\_addr         & 63:0  &  只读 &  0x0  &    第一次发生 ECC 错误时向内存读的出错地址
                                             记 录 的 出 错 信 息 的 时 机 由 Int\_vector[0] 或
                                             Int\_vector[1]由 0 变 1 时触发，使用 Ecc\_enable[3]进
-                                            行配置 \\
-  \multicolumn{5}{l}{0x268}                                      \\
+                                            行配置 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x268}                                      \\ \hline
 Ecc\_data         & 63:0  &  只读 &  0x0  &     第一次发生 ECC 错误时从内存读出的数据
                                                 记 录 的 出 错 信 息 的 时 机 由 Int\_vector[0] 或
                                                 Int\_vector[1]由 0 变 1 时触发，使用 Ecc\_enable[3]进
-                                                行配置 \\
-  \multicolumn{5}{l}{0x270}                                      \\
+                                                行配置 \\ \hhline
+  \multicolumn{5}{|l|}{0x270}                                      \\ \hline
 Lpbk\_ecc\_mask    &58:57  & 只读  & 0x0   &    自循环测试第一次出错时的 ECC MASK 值
                                             Bit 1：对应于 ECC MASK 的上升沿数据
                                             Bit 0：对应于 ECC MASK 的下降沿数据 \\
@@ -795,8 +841,9 @@ Prbs\_init        &54:32  & 只写  & 0x10  &    自循环测试时使用的 PRB
 Lpbk\_error       &25:25  & 只读  & 0x0   &    自循环测试出错 \\
 Prbs\_23          &16:16  & 读写  & 0x0   &    自循环测试时使用的编码方式 1 – PRBS 23 0 – PRBS 7 \\
 Lpbk\_start       &8:8    & 读写  & 0x0   &    自循环测试开始 \\
-Lpbk\_en          &0:0    & 读写  & 0x0   &    自循环测试模式使能 \\
-  \multicolumn{5}{l}{0x278}                                      \\
+Lpbk\_en          &0:0    & 读写  & 0x0   &    自循环测试模式使能 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x278}                                      \\ \hline
 Lpbk\_ecc         &63:49  & 只读  & 0x0   &    自循环测试第一次出错时的 ECC 值
                                             Bit [63:57]：对应于 ECC 的上升沿数据的低 15 位
                                             Bit [56:49]：对应于 ECC 的下降沿数据 \\
@@ -806,65 +853,83 @@ Lpbk\_data\_mask   &48:33  & 只读  & 0x0   &    自循环测试第一次出错
 Lpbk\_correct     &32:17  & 只读  & 0x0   &    自循环测试第一次出错时的 PRBS 编码
                                             Bit [32:25]：对应于上升沿数据
                                             Bit [24:17]：对应于下降沿数据 \\
-Lpbk\_counter     &16:1   & 只读  & 0x0   & 自循环测试第一次出错时的计数周期 \\
-  \multicolumn{5}{l}{0x280}                                      \\
+Lpbk\_counter     &16:1   & 只读  & 0x0   & 自循环测试第一次出错时的计数周期 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x280}                                      \\ \hline
 Lpbk\_data\_r      &63:0   & 只读  & 0x0   & 自循环测试第一次出错时的 DQ 上升沿数据 \\
-  \multicolumn{5}{l}{0x288}                                      \\
+  \multicolumn{5}{|l|}{0x288}                                      \\ \hline
 Lpbk\_data\_f      &63:0   & 只读  & 0x0   & 自循环测试第一次出错时的 DQ 下降沿数据 \\
-  \multicolumn{5}{l}{0x290}                                      \\
+  \multicolumn{5}{|l|}{0x290}                                      \\ \hline
 Axi0\_bw\_w        &63:32  & 只读  & 0x0   & AXI0 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Axi0\_bw\_r        &31:0   & 只读  & 0x0   & AXI0 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x298}                                      \\
+Axi0\_bw\_r        &31:0   & 只读  & 0x0   & AXI0 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x298}                                      \\ \hline
 Axi0\_latency\_w   &63:32  & 只读  & 0x0   & AXI0 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Axi0\_latency\_r   &31:0   & 只读  & 0x0   & AXI0 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2A0}                                      \\
+Axi0\_latency\_r   &31:0   & 只读  & 0x0   & AXI0 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2A0}                                      \\ \hline
 Axi1\_bw\_w        &63:32  & 只读  & 0x0   & AXI1 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Axi1\_bw\_r        &31:0   & 只读  & 0x0   & AXI1 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2A8}                                      \\
+Axi1\_bw\_r        &31:0   & 只读  & 0x0   & AXI1 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2A8}                                      \\ \hline
 Axi1\_latency\_w   &63:32  & 只读  & 0x0   & AXI1 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Axi1\_latency\_r   &31:0   & 只读  & 0x0   & AXI1 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2B0}                                      \\
+Axi1\_latency\_r   &31:0   & 只读  & 0x0   & AXI1 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2B0}                                      \\ \hline
 Axi2\_bw\_w        &63:32  & 只读  & 0x0   & AXI2 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Axi2\_bw\_r        &31:0   & 只读  & 0x0   & AXI2 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2B8}                                      \\
+Axi2\_bw\_r        &31:0   & 只读  & 0x0   & AXI2 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2B8}                                      \\ \hline
 Axi2\_latency\_w   &63:32  & 只读  & 0x0   & AXI2 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Axi2\_latency\_r   &31:0   & 只读  & 0x0   & AXI2 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2C0}                                      \\
+Axi2\_latency\_r   &31:0   & 只读  & 0x0   & AXI2 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2C0}                                      \\ \hline
 Axi3\_bw\_w        &63:32  & 只读  & 0x0   & AXI3 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Axi3\_bw\_r        &31:0   & 只读  & 0x0   & AXI3 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2C8}                                      \\
+Axi3\_bw\_r        &31:0   & 只读  & 0x0   & AXI3 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2C8}                                      \\ \hline
 Axi3\_latency\_w   &63:32  & 只读  & 0x0   & AXI3 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Axi3\_latency\_r   & 31:0  &  只读 &  0x0  & AXI3 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2D0}                                      \\
+Axi3\_latency\_r   & 31:0  &  只读 &  0x0  & AXI3 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2D0}                                      \\ \hline
 Axi4\_bw\_w        & 63:32 &  只读 &  0x0  & AXI4 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Axi4\_bw\_r        & 31:0  &  只读 &  0x0  & AXI4 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2D8}                                      \\
+Axi4\_bw\_r        & 31:0  &  只读 &  0x0  & AXI4 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2D8}                                      \\ \hline
 Axi4\_latency\_w   & 63:32 &  只读 &  0x0  & AXI4 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Axi4\_latency\_r   & 31:0  &  只读 &  0x0  & AXI4 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2E0}                                      \\
+Axi4\_latency\_r   & 31:0  &  只读 &  0x0  & AXI4 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2E0}                                      \\ \hline
 Cmdq0\_bw\_w       & 63:32 &  只读 &  0x0  & 命令队列 0 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Cmdq0\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 0 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2E8}                                      \\
+Cmdq0\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 0 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2E8}                                      \\ \hline
 Cmdq0\_latency\_w  & 63:32 &  只读 &  0x0  & 命令队列 0 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Cmdq0\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 0 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x2f0}                                      \\
+Cmdq0\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 0 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2f0}                                      \\ \hline
 Cmdq1\_bw\_w       & 63:32 &  只读 &  0x0  & 命令队列 1 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Cmdq1\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 1 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x2f8}                                      \\
+Cmdq1\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 1 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x2f8}                                      \\ \hline
 Cmdq1\_latency\_w  & 63:32 &  只读 &  0x0  & 命令队列 1 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Cmdq1\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 1 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x300}                                      \\
+Cmdq1\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 1 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x300}                                      \\ \hline
 Cmdq2\_bw\_w       & 63:32 &  只读 &  0x0  & 命令队列 2 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Cmdq2\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 2 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x308}                                      \\
+Cmdq2\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 2 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x308}                                      \\ \hline
 Cmdq2\_latency\_w  & 63:32 &  只读 &  0x0  & 命令队列 2 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Cmdq2\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 2 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-  \multicolumn{5}{l}{0x310}                                      \\
+Cmdq2\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 2 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x310}                                      \\ \hline
 Cmdq3\_bw\_w       & 63:32 &  只读 &  0x0  & 命令队列 3 写带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-Cmdq3\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 3 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\
-  \multicolumn{5}{l}{0x318}                                      \\
+Cmdq3\_bw\_r       & 31:0  &  只读 &  0x0  & 命令队列 3 读带宽性能计数值表示 64K 个时钟周期里总线数据有效的周期数 \\ \hhline
+
+  \multicolumn{5}{|l|}{0x318}                                      \\ \hline
 Cmdq3\_latency\_w  & 63:32 &  只读 &  0x0  & 命令队列 3 写延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
-Cmdq3\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 3 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\
+Cmdq3\_latency\_r  & 31:0  &  只读 &  0x0  & 命令队列 3 读延迟性能计数值这个值表示 64K 个访问的总延迟周期之和 \\ \hline
 \end{longtable}
 
 DDR2/3 SDRAM 软件编程指南
@@ -876,8 +941,8 @@ DDR2/3 SDRAM 软件编程指南
 信号之 前，必须将其它所有寄存器设置为正确的值。 软硬件协同的 DRAM
 初始化过程如下：
 
- 1. 软件向所有的寄存器写入正确的配置值，但是 Init_start（0x018）在这一过程中必
-    须保持为 0；
+ 1. 软件向所有的寄存器写入正确的配置值，但是 Init_start 在这一过程中必 须保持为
+    0；
  1. 软件将 Init_start（0x018）设置为 1，这将导致硬件初始化的开始；
  1. PHY 内部开始初始化操作，DLL 将尝试进行锁定操作。如果锁定成功，则可以从
     Dll_init_done（0x000）读出对应状态，并可以从 Dll_value_ck（0x000）读写当前
@@ -894,70 +959,74 @@ Leveling 操作是在 DDR3 中，用于智能配置内存控制器读写操作�
 ，只实现了 Write Leveling 与 Gate Leveling，Read Leveling 没有实现，软件需要通
 过判断读写的正确性来实现 Read Leveling 所完成的功能。除了在 Leveling 过程中操作
 的 DQS 相位、 GATE 相位之外，还可以根据这些最后确认的相位来计算出写 DQ 相位、读
-DQ 相位的配置方法。 Write Leveling
+DQ 相位的配置方法。
 
-Write Leveling 用于配置写 DQS 与时钟之间的相位关系，软件编程需要参照如下步骤。
+#### Write Leveling {-}
 
-    (1) 完成控制器初始化，参见上一小节内容；
-    (2) 将 Dll_wrdqs_x（x = 0…8）设置为 0；
-    (3) 设置 Lvl_mode（0x180）为 2’b01；
-    (4) 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Write Leveling 请求；
-    (5) 设置 Lvl_req（0x180）为 1；
-    (6) 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Write Leveling 请求完成；
-    (7) 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0 则跳至步骤(8)。否则(采
-        样 Lvl_resp_x 结果为 1)，将对应的 Dll_wrdqs_x[6:0]增加 1，并重复执行
-        5-7 直至采样 Lvl_resp_x 结果为 0；
-    (8) 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0，则将对应的 Dll_wrdqs_x[6:0]
-        增加 1，并重复执行步骤 5，6，8 直至采样 Lvl_resp_x 结果为 1；
-    (9) 此时 Dll_wrdqs_x 的值就应该是正确的设置值。至此 Write Leveling 操作结束。
-    (10) 接着根据 Dll_wrdqs_x 的值是否小于 0x40 来设置 Wrdqs_lt_half_x；
-    (11) 根据 Dll_wrdqs_x 的值是否小于 0x20 来设置 Dll_wrdata_x。如果
-         Dll_wrdqs_x > 0x20，Dll_wrdata_x = Dll_wrdqs_x – 0x20，否则
-         Dll_wrdata_x = Dll_wrdqs_x + 0x60；
-    (12) 根据 Dll_wrdata_x 的值是否小于 0x40 来设置 Wrdata_lt_half_x；
-    (13) 接下来需要根据 DIMM 类型进行不同的操作
-         对于 UDIMM，Slice0-7 的 Dll_wrdata 的值依次增大(当跨越 0x7F 边界时也视
-         为依次增大)。如果所有 Wrdq_lt_half_x 都为 1，即所有 Dll_wrdata_x 都小
-         于 0x40，则将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果有的 Wrdq_lt_half_x
-         为 1，有的 Wrdq_lt_half_x 为 0，即 Dll_wrdata_x 的值有跨越 0x40 边界的
-         情况，则将 0x40 边界右边(不一定是大于 0x40，因为有可能有的
-         Dll_wrdata_x 的值跨越 0x7F 边界)的 Slice 对应的 Wrdq_clkdelay_x 设为 1
-         ，然后将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果所有 Wrdq_lt_half_x 都为
-         0，即所有 Dll_wrdata_x 都大于等于 0x40，不做任何处理。
-         对于 RDIMM，tPHY_WRDATA 与 tRDDATA 的默认配置值需要在 UDIMM 的基础上增
-         加 1 。然后分别对于 Slice8,3,2,1,0 和 Slice4,5,6,7 作同 UDIMM 的处理。
-    (14) 将 Lvl_mode（0x180）设置为 2’b00，退出 Write Leveling 模式；
+用于配置写 DQS 与时钟之间的相位关系，软件编程需要参照如下步骤。
 
-Gate Leveling
+  1. 完成控制器初始化，参见上一小节内容；
+  1. 将 Dll_wrdqs_x（x = 0…8）设置为 0；
+  1. 设置 Lvl_mode（0x180）为 2’b01；
+  1. 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Write Leveling 请求；
+  1. 设置 Lvl_req（0x180）为 1；
+  1. 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Write Leveling 请求完成；
+  1. 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0 则跳至步骤(8)。否则(采
+     样 Lvl_resp_x 结果为 1)，将对应的 Dll_wrdqs_x[6:0]增加 1，并重复执行
+     5-7 直至采样 Lvl_resp_x 结果为 0；
+  1. 采样 Lvl_resp_x（0x180、0x188）寄存器，如果为 0，则将对应的 Dll_wrdqs_x[6:0]
+     增加 1，并重复执行步骤 5，6，8 直至采样 Lvl_resp_x 结果为 1；
+  1. 此时 Dll_wrdqs_x 的值就应该是正确的设置值。至此 Write Leveling 操作结束。
+  1. 接着根据 Dll_wrdqs_x 的值是否小于 0x40 来设置 Wrdqs_lt_half_x；
+  1. 根据 Dll_wrdqs_x 的值是否小于 0x20 来设置 Dll_wrdata_x。如果
+     Dll_wrdqs_x > 0x20，Dll_wrdata_x = Dll_wrdqs_x – 0x20，否则
+     Dll_wrdata_x = Dll_wrdqs_x + 0x60；
+  1. 根据 Dll_wrdata_x 的值是否小于 0x40 来设置 Wrdata_lt_half_x；
+  1. 接下来需要根据 DIMM 类型进行不同的操作
+     对于 UDIMM，Slice0-7 的 Dll_wrdata 的值依次增大(当跨越 0x7F 边界时也视
+     为依次增大)。如果所有 Wrdq_lt_half_x 都为 1，即所有 Dll_wrdata_x 都小
+     于 0x40，则将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果有的 Wrdq_lt_half_x
+     为 1，有的 Wrdq_lt_half_x 为 0，即 Dll_wrdata_x 的值有跨越 0x40 边界的
+     情况，则将 0x40 边界右边(不一定是大于 0x40，因为有可能有的
+     Dll_wrdata_x 的值跨越 0x7F 边界)的 Slice 对应的 Wrdq_clkdelay_x 设为 1
+     ，然后将 tPHY_WRDATA 与 tRDDATA 的值减 1；如果所有 Wrdq_lt_half_x 都为
+     0，即所有 Dll_wrdata_x 都大于等于 0x40，不做任何处理。
+     对于 RDIMM，tPHY_WRDATA 与 tRDDATA 的默认配置值需要在 UDIMM 的基础上增
+     加 1 。然后分别对于 Slice8,3,2,1,0 和 Slice4,5,6,7 作同 UDIMM 的处理。
+  1. 将 Lvl_mode（0x180）设置为 2’b00，退出 Write Leveling 模式；
+
+#### Gate Leveling {-}
 
 Gate Leveling 用于配置控制器内使能采样读 DQS 窗口的时机，软件编程参照如下步骤。
 
-(1) 完成控制器初始化，参见上一小节内容；
-    (2) 完成 Write Leveling，参见上一小节内容；
-    (3) 将 Dll_gate_x（x = 0…8）设置为 0；
-    (4) 设置 Lvl_mode（0x180）为 2’b10；
-    (5) 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Gate Leveling 请求；
-    (6) 设置 Lvl_req（0x180）为 1；
-    (7) 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Gate Leveling 请求完成；
-    (8) 采样 Lvl_resp_x[0]（0x180、0x188）寄存器。如果第一次采样发现 Lvl_resp_x[0]为
-1，则将对应的 Dll_gate_x[6:0]增加 1，并重复执行 6-8，直至采样结果为 0，否则进行下一
-步。在这个过程中如果 Dll_gate_x[6:0]的值增加到 0x7F 还没采样到 Lvl_resp_x[0]为 0，则将
-对应的 Rd_oe_begin_x 和 Rd_oe_end_x 增加 1；
-    (9) 采样 Lvl_resp_x[0]（0x180、0x188）寄存器，如果采样结果为 0，则将对应的
-Dll_gate_x[6:0]增加 1，并重复执行 6、7、9，直至采样结果 1，则表示 Gate Leveling 操作已
-经成功；
-    至此 Gate Leveling 操作结束，此时 Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和实际上就是
-读 DQS 相对于 PHY 内部时钟的相位关系。下面根据 Leveling 的结果对各个参数进行调整。
-    (10) 如果 Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和小于 0x20 或者大于 0x60，那么
-Dll_rddqs_lt_halt 设置为 1。因为 rddqs 的相位关系实际上等于在输入的读 DQS 基础上再延
-迟 1/4。
-    (11) 此时如果 Dll_gate_x 的值大于 0x20，则将 Dll_gate_x 的值减去 0x20；否则将其设
-为 0 即可。
-    (12) 调整完毕后，再分别进行两次 Lvl_req 操作，观察 Lvl_resp_x[7:5]与 Lvl_resp_x[4:2]
-的值变化，如果各增加为 Burst_length/2，则继续进行第 13 步操作；如果不为 Burst_length/2，
-可能需要对 Rd_oe_begin_x 进行加一或减一操作，如果大于 Burst_length/2，很可能需要对
-Dll_gate_x 的值进行一些微调
-    (13) 将 Lvl_mode（0x180）设置为 2’b00，退出 Gate Leveling 模式；
+ 1. 完成控制器初始化，参见上一小节内容；
+ 1. 完成 Write Leveling，参见上一小节内容；
+ 1. 将 Dll_gate_x（x = 0…8）设置为 0；
+ 1. 设置 Lvl_mode（0x180）为 2’b10；
+ 1. 采样 Lvl_ready（0x180）寄存器，如果为 1，表示可以开始 Gate Leveling 请求；
+ 1. 设置 Lvl_req（0x180）为 1；
+ 1. 采样 Lvl_done（0x180）寄存器，如果为 1，表示一次 Gate Leveling 请求完成；
+ 1. 采样 Lvl_resp_x[0]（0x180、0x188）寄存器。如果第一次采样发现
+    Lvl_resp_x[0]为 1，则将对应的 Dll_gate_x[6:0]增加 1，并重复执行
+    6-8，直至采样结果为 0，否则进行下一 步。在这个过程中如果
+    Dll_gate_x[6:0]的值增加到 0x7F 还没采样到 Lvl_resp_x[0]为 0，则将 对应的
+    Rd_oe_begin_x 和 Rd_oe_end_x 增加 1；
+ 1. 采样 Lvl_resp_x[0]（0x180、0x188）寄存器，如果采样结果为 0，则将对应的
+    Dll_gate_x[6:0]增加 1，并重复执行 6、7、9，直至采样结果 1，则表示 Gate
+    Leveling 操作已 经成功； 至此 Gate Leveling 操作结束，此时
+    Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和实际上就是 读 DQS 相对于 PHY
+    内部时钟的相位关系。下面根据 Leveling 的结果对各个参数进行调整。
+ 1. 如果 Dll_gate_x[6:0]与 Dll_wrdata_x[6:0]的和小于 0x20 或者大于 0x60，那么
+    Dll_rddqs_lt_halt 设置为 1。因为 rddqs 的相位关系实际上等于在输入的读 DQS
+    基础上再延 迟 1/4。
+ 1. 此时如果 Dll_gate_x 的值大于 0x20，则将 Dll_gate_x 的值减去
+    0x20；否则将其设 为 0 即可。
+ 1. 调整完毕后，再分别进行两次 Lvl_req 操作，观察 Lvl_resp_x[7:5]与
+    Lvl_resp_x[4:2] 的值变化，如果各增加为 Burst_length/2，则继续进行第 13
+    步操作；如果不为 Burst_length/2， 可能需要对 Rd_oe_begin_x
+    进行加一或减一操作，如果大于 Burst_length/2，很可能需要对 Dll_gate_x
+    的值进行一些微调
+ 1. 将 Lvl_mode（0x180）设置为 2’b00，退出 Gate Leveling 模式；
 
 ### 单独发起 MRS 命令
 
@@ -972,26 +1041,26 @@ Dll_gate_x 的值进行一些微调
 选的位有效，才会真正向 DRAM 发出这个 MRS 命令。对应的每个 MR 的值由寄存器
 Mr\*\_cs\* 决定。这些值同时也用于初始化内存时的 MRS 命令。具体操作如下：
 
-  (1) 将寄存器 Cs_mrs（0x168）、Mr\*\_cs\*（0x190 – 0x1B8）设置为正确的值；
-  (2) 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
-  (3) 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
-      进行下一步操作，如果为 0，则需要继续等待；
-  (4) 写 Mrs_req（0x198）为 1，向 DRAM 发送 MRS 命令；
-  (5) 采样 Mrs_done（0x198），如果为 1，则表示 MRS 命令已经发送完毕，可以退出，
-      如果为 0，则需要继续等待；
-  (6) 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
+ 1. 将寄存器 Cs_mrs（0x168）、Mr\*\_cs\*（0x190 – 0x1B8）设置为正确的值；
+ 1. 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
+ 1. 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
+    进行下一步操作，如果为 0，则需要继续等待；
+ 1. 写 Mrs_req（0x198）为 1，向 DRAM 发送 MRS 命令；
+ 1. 采样 Mrs_done（0x198），如果为 1，则表示 MRS 命令已经发送完毕，可以退出，
+    如果为 0，则需要继续等待；
+ 1. 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
 
 ### 任意操作控制总线
 
 内存控制器可以通过命令发送模式向 DRAM 发出任意的命令组合，软件可以设置 Cmd_cs、
 Cmd_cmd、Cmd_ba、Cmd_a（0x190），在命令发送模式下向 DRAM 发出。具体操作如下：
 
-  (1) 将寄存器 Cmd_cs、Cmd_cmd、Cmd_ba、Cmd_a（0x190）设置为正确的值；
-  (2) 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
-  (3) 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
-      进行下一步操作，如果为 0，则需要继续等待；
-  (4) 写 Cmd_req（0x190）为 1，向 DRAM 发送命令；
-  (5) 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
+ 1. 将寄存器 Cmd_cs、Cmd_cmd、Cmd_ba、Cmd_a（0x190）设置为正确的值；
+ 1. 设置 Command_mode（0x190）为 1，使控制器进入命令发送模式；
+ 1. 采样 Status_cmd（0x190），如果为 1，则表示控制器已进入命令发送模式，可以
+    进行下一步操作，如果为 0，则需要继续等待；
+ 1. 写 Cmd_req（0x190）为 1，向 DRAM 发送命令；
+ 1. 设置 Command_mode（0x190）为 0，使控制器退出命令发送模式。
 
 ### 自循环测试模式控制
 
@@ -1007,20 +1076,20 @@ test_\* 端口进行控制，此时的自测试完全由硬件控制；当 test_
 这两套接口从控制的参数来说基本一致，仅仅是接入点不同，在此介绍软件编程时的控制
 方法。具体操作如下：
 
-  (1) 将内存控制器所有的参数全部正确设置。需要注意的是， Dqs_oe_begin_\*
-      、 Dqs_oe_end_\* 应该设为 0，Rd_oe_begin_\*、Rd_oe_end_\* 应该设为 1 或 2
-      ，否则可能会导致测试出错；
-  (2) 将寄存器 Lpbk_en（0x270）设为 1；
-  (3) 将寄存器 Init_start（0x018）设为 1；
-  (4) 采样寄存器 Dll_init_done（0x000），如果这个值为 1，表示 DLL 已经锁定，可
-      以进行下一步操作；如果这个值为 0，则需要继续等待；（当使用测试端口进行控
-      制的时候，因为看不到这个寄存器的输出，所以不需要采样这个寄存器，而只需要
-      在此处等待一定的时间，以确保 DLL 锁定完成，再进行下一步操作）；
-  (5) 将寄存器 Lpbk_start（0x270）设为 1；此时自循环测试正式开始。到此为止自循
-      环测试已经开始，软件需要经常检测是否有错误发生，具体操作如下：
-  (6) 采样寄存器 Lpbk_error（0x270），如果这个值为 1，表示有错误发生，此时可以通
-      过 Lpbk_\*等观测用寄存器（0x270、0x278、0x280、0x288）来观测第一个出错时
-      的错误数据和正确数据；如果这个值为 0，表示还没有出现过数据错误。
+ 1. 将内存控制器所有的参数全部正确设置。需要注意的是， Dqs_oe_begin_\*
+    、 Dqs_oe_end_\* 应该设为 0，Rd_oe_begin_\*、Rd_oe_end_\* 应该设为 1 或 2
+    ，否则可能会导致测试出错；
+ 1. 将寄存器 Lpbk_en（0x270）设为 1；
+ 1. 将寄存器 Init_start（0x018）设为 1；
+ 1. 采样寄存器 Dll_init_done（0x000），如果这个值为 1，表示 DLL 已经锁定，可
+    以进行下一步操作；如果这个值为 0，则需要继续等待；（当使用测试端口进行控
+    制的时候，因为看不到这个寄存器的输出，所以不需要采样这个寄存器，而只需要
+    在此处等待一定的时间，以确保 DLL 锁定完成，再进行下一步操作）；
+ 1. 将寄存器 Lpbk_start（0x270）设为 1；此时自循环测试正式开始。到此为止自循
+    环测试已经开始，软件需要经常检测是否有错误发生，具体操作如下：
+ 1. 采样寄存器 Lpbk_error（0x270），如果这个值为 1，表示有错误发生，此时可以通
+    过 Lpbk_\*等观测用寄存器（0x270、0x278、0x280、0x288）来观测第一个出错时
+    的错误数据和正确数据；如果这个值为 0，表示还没有出现过数据错误。
 
 ### 细粒度多通道模式控制
 
