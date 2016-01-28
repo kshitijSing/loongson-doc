@@ -8,11 +8,13 @@
 CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
 \ref{tab:sysPinControl}。
 
-\begin{longtable}{cp{11cm}}
+\begin{longtable}[c]{>{\tt}lp{10cm}}
   \caption{控制引脚说明}\label{tab:sysPinControl} \tabularnewline \toprule
-  引脚信号 & \multicolumn{1}{c}{描述} \tabularnewline \midrule \endfirsthead
+  \multicolumn{1}{c}{引脚信号} & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endfirsthead
   \caption{控制引脚说明（续）} \tabularnewline \toprule
-  引脚信号 & \multicolumn{1}{c}{描述} \tabularnewline \midrule \endhead
+  \multicolumn{1}{c}{引脚信号} & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endhead
   \hline \multicolumn{2}{r}{\tiny 未完待续} \endfoot \bottomrule \endlastfoot
 
   DO\_TEST      & 功能模式设置位（上拉）\newline
@@ -49,7 +51,7 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
                   1101     &     12    &    1100    &     24     \\ \hline
                   1011     &     11    &    1010    &     22     \\ \hline
                   1001     &     10    &    1000    &     20     \\ \hline
-                  0xxx     & \multicolumn{3}{c|}{初始倍频为 1 倍频，可由软件进行重新配置}
+                  0xxx     & \multicolumn{3}{c|}{初始 1 倍频，软件可重新配置}
                   \\ \hline
                   \end{tabular} \vspace{.1cm} \\
 
@@ -57,21 +59,21 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
                   \hspace*{.5cm} 
                   \begin{tabular}{|c|c|c|c|}\hline
                   CLKSEL[5:0] & 倍频系数 & CLKSEL[5:0] & 倍频系数 \\ \hline
-                  110xx0  & 36   &   6’b1xx100  & 36 \\ \hline
-                  101xx0  & 32   &   6’b1xx010  & 32 \\ \hline
-                  100xx0  & 24   &   6’b1xx000  & 24 \\ \hline
-                  110xx1  & 18   &   6’b1xx101  & 18 \\ \hline
-                  101xx1  & 16   &   6’b1xx011  & 16 \\ \hline
-                  100xx1  & 12   &   6’b1xx001  & 12 \\ \hline
-                  111xx0  &  2   &   6’b1xx110  & 2  \\ \hline
-                  111xx1  &  1   &   6’b1xx111  & 1  \\ \hline
-                  0xxxxx  & \multicolumn{3}{c|}{初始倍频为 1 倍频，可由软件进行重新配置}
+                  110xx0  & 36   &   1xx100  & 36 \\ \hline
+                  101xx0  & 32   &   1xx010  & 32 \\ \hline
+                  100xx0  & 24   &   1xx000  & 24 \\ \hline
+                  110xx1  & 18   &   1xx101  & 18 \\ \hline
+                  101xx1  & 16   &   1xx011  & 16 \\ \hline
+                  100xx1  & 12   &   1xx001  & 12 \\ \hline
+                  111xx0  &  2   &   1xx110  & 2  \\ \hline
+                  111xx1  &  1   &   1xx111  & 1  \\ \hline
+                  0xxxxx  & \multicolumn{3}{c|}{初始为 1 倍频，软件可重新配置}
                   \\ \hline
                   \end{tabular} \vspace{.1cm} \\[.1cm]
 
   PCI\_CONFIG[7] & 输入时钟 \newline
-                   \hspace*{.5cm} 1’b1 普通输入时钟 100MHz（HTCLK），\newline
-                   \hspace*{.5cm} 1’b0 差分输入时钟 200MHz（HTnCLKp/n）\\[.1cm]
+                   \hspace*{.5cm} 1：普通输入时钟 100MHz（HTCLK），\newline
+                   \hspace*{.5cm} 0：差分输入时钟 200MHz（HTnCLKp/n）\\[.1cm]
 
   PCI\_CONFIG[6:5] & PCIX 总线速度选择 \\[.1cm]
 
@@ -148,7 +150,7 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
 
 如表 \ref{tab:nodeAddr} 所示，在每个节点的内部，该节点拥有的 44 位地址又通过地址
 的高 3 位 [43:41]，均匀分配到节点内可能连接的 8 个设备上。其中低 43 位地址由四个
-二级 Cache 模块所拥有，而高 43 位地址则按地址的 [42:41] 位分布给连接在东南西北 4
+SCache 模块所拥有，而高 43 位地址则按地址的 [42:41] 位分布给连接在东南西北 4
 个方向端口的设备上。如果某端口上没有连接从设备，则其对应地址空间为保留地
 址空间，不允许访问。
 
@@ -157,7 +159,7 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
   \caption{节点内地址分布}
   \begin{tabular}{|c|c|c|c|} \hline
     设备       & 地址[43:41]位  & 节点内起始地址    & 节点结束地址 \\ \hhline
-    二级 Cache & 0,1,2,3        & 0x000\_0000\_0000 & 0x7FF\_FFFF\_FFFF \\ \hline
+    SCache & 0,1,2,3        & 0x000\_0000\_0000 & 0x7FF\_FFFF\_FFFF \\ \hline
     东         & 4              & 0x800\_0000\_0000 & 0x9FF\_FFFF\_FFFF \\ \hline
     南         & 5              & 0xA00\_0000\_0000 & 0xBFF\_FFFF\_FFFF \\ \hline
     西         & 6              & 0xC00\_0000\_0000 & 0xDFF\_FFFF\_FFFF \\ \hline
@@ -171,17 +173,18 @@ CLKSEL[15:0]、PCI\_CONFIG 和 GPIO[1:0]。 它们的设置及位域含义见表
 类推。每个芯片节点上集成的 DDR 内存控制器、 HT 总线、 PCI 总线等
 将分享该节点分到的 44 位地址空间。各设备的具体地址分布请参见后续相关章节。
 
-#### 二级 Cache 的交叉寻址 {-}
+#### SCache 的交叉寻址 {-}
 
-龙芯 3B1500 的四个二级 Cache 模块分享了一个 43 位的地址空间。为了平衡对每个
-Cache 模块的访问以提高性能， 在龙芯 3B1500 上，可以根据实际应用的访问特性，通过
-设置 SCID\_SEL 寄存器决定二级 Cache 的交叉寻址方式。这种交
-叉寻址方式根据地址的某"特定两位"来确定被映射的二级 Cache 模块。也就是说，地址块
-将会被轮流交错地对应到四个二级 Cache 模块中去。表 \ref{tab:scidsel} 列出了
-SCID\_SEL 寄存器值与地址选择位的对应关系。
+龙芯 3B1500 每个节点的四个 SCache 模块分享了一个 43 位的地址空间。为了平衡对每
+个 Cache 模块的访问以提高性能， 在龙芯 3B1500 上，可以根据实际应用的访问特性，
+通过设置 SCID_SEL 寄存器决定 SCache 的交叉寻址方式。这种交叉寻址方式根据地址的
+某"特定两位"来确定被映射的 SCache 模块。也就是说，地址块将会被轮流交错地对应到
+四个 SCache 模块中去。表 \ref{tab:scidsel} 列出了 SCID_SEL 寄存器值与地址选择
+位的对应关系。
 
 \begin{table}[htbp]
   \centering
+  \caption{节点内地址地址选择位设置}
   \begin{tabular}{|c|c||c|c|} \hline
     SCID\_SEL & 地址位选择 & SCID\_SEL & 地址位选择 \\ \hhline
     0x0       & 6:5        & 0x8       & 23:22      \\ \hline
@@ -193,18 +196,22 @@ SCID\_SEL 寄存器值与地址选择位的对应关系。
     0x6       & 19:18      & 0xE       & 35:34      \\ \hline
     0x7       & 21:20      & 0xF       & 37:36      \\ \hline
   \end{tabular}
-  \caption{节点内地址地址选择位设置}
   \label{tab:scidsel}
 \end{table}
 
-这种设定可以通过软件进行动态配置修改。缺省情况下，寄存器值为 0，即地址的 [6:5]
-两位决定对应的二级 Cache 编号。 交叉寻址寄存器 SCID\_SEL 的物理地址遵循
-[节点控制寄存器地址规则][]：
+这种设定可以通过软件进行动态配置修改。缺省情况下，寄存器值为 0，即地址的
+`[6:5]` 两位决定对应的SCache 编号。 表 \ref{tab:scid_sel-phyaddr} 列出了所有可
+能全局时钟的物理地址，其中节点，其中节点 2 和 3 当且仅当系统为双芯片互联时存在
+。同时，交叉寻址寄存器 `SCID_SEL` 的物理地址遵循 [节点控制寄存器地址规则][]。
 
-         节点 0 的物理地址： 0x0000_3FF0_0400
-         节点 1 的物理地址： 0x1000_3FF0_4400
+Table: SCID_SEL 的物理地址 \label{tab:scid_sel-phyaddr}
 
-\noindent 其他节点以此类推。每个节点上的散列方式可以分别配置。
+| 节点 | `SCID_SEL` 物理地址  | 节点  | `SCID_SEL` 物理地址  |
+| :--: | :------------------: | :--:  | :------------------: |
+| 0    | `0x0000_3FF0_0400`   | 2^\*^ | `0x2000_3FF0_8400`   |
+| 1    | `0x1000_3FF0_4400`   | 3^\*^ | `0x3000_3FF0_C400`   |
+
+\noindent 每个节点上的散列方式可以分别配置。
 
 地址路由配置 \label{sec:htAddrRoute}
 ------------
@@ -231,9 +238,9 @@ MASK 和 MMAP 实现：
 
         窗口命中: IN_ADDR & MASK == BASE
 
-\noindent 注意，一级交叉开关只有路由，而没有地址转换的功能。这是因为二级 Cache
+\noindent 注意，一级交叉开关只有路由，而没有地址转换的功能。这是因为SCache
 连接在 X1 上：如果一级交叉开关对 Cache 一致性的请求了进行地址转换，将有可能造成
-二级 Cache 与一级 Cache 的地址冲突，从而导致 Cache 一致性的维护错误。
+SCache 与一级 Cache 的地址冲突，从而导致 Cache 一致性的维护错误。
 
 除了这 8 个地址窗口外， 龙芯 3B1500 还对每个主端口提供了“系统默认路由”设置。系统
 默认路由有最低的优先级，所以默认配置路由只有在所有 8 个配置窗口都没有对命中的情
@@ -251,10 +258,10 @@ MASK 和 MMAP 实现：
   \caption{节点 0 一级交叉开关主端口窗口寄存器基地址}\vspace{.2cm}
   \begin{tabular}{cccccccc} \toprule
     端口 & 端口名 & 端口设备   & 基地址       & 端口 & 端口名 & 端口设备 & 基地址       \\ \midrule
-    0    & Core0  & 二级缓存 0 & 0x3FF0\_2000 & 4    & East   & 相邻节点 & 0x3FF0\_2400 \\
-    1    & Core1  & 二级缓存 1 & 0x3FF0\_2100 & 5    & South  & -- 保留-- & 0x3FF0\_2500 \\
-    2    & Core2  & 二级缓存 2 & 0x3FF0\_2200 & 6    & West   & -- 保留-- & 0x3FF0\_2600 \\
-    3    & Core3  & 二级缓存 3 & 0x3FF0\_2300 & 7    & North  & HT 设备  & 0x3FF0\_2700 \\ \bottomrule
+    0    & Core0  & SCache 0 & 0x3FF0\_2000 & 4    & East   & 相邻节点 & 0x3FF0\_2400 \\
+    1    & Core1  & SCache 1 & 0x3FF0\_2100 & 5    & South  & -- 保留-- & 0x3FF0\_2500 \\
+    2    & Core2  & SCache 2 & 0x3FF0\_2200 & 6    & West   & -- 保留-- & 0x3FF0\_2600 \\
+    3    & Core3  & SCache 3 & 0x3FF0\_2300 & 7    & North  & HT 设备  & 0x3FF0\_2700 \\ \bottomrule
   \end{tabular}
   \label{tab:X1MasterWinBases}
 \end{table}
@@ -287,14 +294,14 @@ MASK 和 MMAP 实现：
 
 表 \ref{tab:X1defaultAddrWin} 列出了一级交叉开关的系统默认路由配置。简单说来，
 一级交叉开关的系统默认路由就是直接将主端口地址映射到对应的从端口，地址值不变。
-同时，系统默认路由映射到二级 Cache 的地址也同样受到 SCID\_SEL 寄存器的影响。
+同时，系统默认路由映射到SCache 的地址也同样受到 SCID\_SEL 寄存器的影响。
 
 \begin{table}[htbp]
   \centering
   \caption{一级交叉开关：系统默认路由配置} \vspace{.2cm}
   \begin{tabular}{|c|c|c|} \hline
   起始地址 & 结束地址 & 目标 \\ \hline
-  0x0000\_0000\_0000 & 0x07FF\_FFFF\_FFFF & 二级Cache \\ \hline
+  0x0000\_0000\_0000 & 0x07FF\_FFFF\_FFFF & SCache \\ \hline
   0x0C00\_0000\_0000 & 0x0DFF\_FFFF\_FFFF & HyperTransport 0 \\ \hline
   0x0E00\_0000\_0000 & 0x0FFF\_FFFF\_FFFF & HyperTransport 1 \\ \hline
   \end{tabular}
@@ -304,7 +311,7 @@ MASK 和 MMAP 实现：
 \noindent 注意，在进行一级交叉开关的主端口窗口设置时，
 
  - MMAP[4] 与 MMAP[5] 必须为 1；
- - 如果使用一级交叉开关对二级 Cache 地址进行映射，映射后的地址
+ - 如果使用一级交叉开关对SCache 地址进行映射，映射后的地址
     （即“从端口地址”）必须与映射前地址（即“主端口地址”）保持一致： 这是维护
     Cache 一致性的需要。 而映射到 HyperTransport 地址的配置不受这个约束限制。
 
@@ -392,6 +399,61 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
 此外，当出现由于 CPU 猜测执行引起对非法地址的读访问，所有地址窗口都不命中时，由
 访存模块将返回全 0 的数据给 CPU，以防止 CPU 无限等待。
 
+芯片配置及采样寄存器
+--------------------
+
+龙芯 3B1500 的芯片配置寄存器（`Chip_Config`）及芯片采样寄存器（`Chip_Sample`）
+提供了对芯片的配置进行读写的机制。这两个寄存器的长度都为 16 字节；表
+\ref{tab:chipConfigSample} 列出了芯片配置及采样寄存器的所有位域及其说明。
+
+\remark{双芯片互联模式时，寄存器地址是如何的呢？}
+
+\begin{longtable}{|c|>{\tt}c|c|c|p{6.5cm}|}
+  \caption{芯片配置寄存器}\label{tab:chipConfigSample} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endfirsthead
+  \caption{芯片配置寄存器（续）} \\
+  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
+  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
+
+  \multicolumn{5}{|l|}{芯片配置寄存器（地址 0x1FE0\_0180）}                        \\ \hline
+  其它   &                               & R  &        & 保留                      \\
+  127:96 & Pad1v8\_ctrl                  & RW & 6'h780 & 1v8 pad 控制              \\
+  95:64  &                               &    &        & 保留                      \\
+  63:56  & Cpu\_version                  & R  & 2'h35  & CPU 版本                  \\
+   47    & -                             & RW & 1'b1   &                           \\
+  46:44  & Node1\_freq\_ ctrl            & RW & 3'b111 & 节点 1 分频               \\
+   43    & -                             & RW & 1'b1   &                           \\
+  42:40  & Node0\_freq\_ ctrl            & RW & 3'b111 & 节点 0 分频               \\
+   31    & HT1\_clken                    & RW & 1'b1   & 是否使能 HT1              \\
+  30:28  & HT1\_freq\_scale\_ctrl        & RW & 3'b111 & HT 控制器 1 分频          \\
+   27    & HT0\_clken                    & RW & 1'b1   & 是否使能 HT0              \\
+  26:24  & HT0\_freq\_scale\_ctrl        & RW & 3'b111 & HT 控制器 0 分频          \\
+   13    & MC1\_clken                    & RW & 1'b1   & 是否使能 MC1              \\
+   12    & MC1\_ddr2\_resetn             & RW & 1'b1   & MC1 软件复位（低有效）    \\
+   11    & -                             & RW & 1'b0   & 保留                      \\
+   10    & -                             & RW & 1'b0   & 保留                      \\
+    9    & MC1\_disable\_ddr2\_confspace & RW & 1'b0   & 是否禁用 MC1 DDR 配置空间 \\
+    8    & MC0\_clken                    & RW & 1'b1   & 是否使能 MC0              \\
+    7    & MC0\_ddr2\_resetn             & RW & 1'b1   & MC0 软件复位（低有效）    \\
+    6    & -                             & RW & 1'b0   & 保留                      \\
+    5    & -                             & RW & 1'b0   & 保留                      \\
+    4    & MC0\_disable\_ddr2\_confspace & RW & 1'b0   & 是否禁用 MC0 DDR 配置空间 \\
+  3:0    & -                             & RW & 4'b7  & 保 留                      \\ \hhline
+
+  \multicolumn{5}{|l|}{芯片采样寄存器（地址 0x1FE0\_0190）}                                                    \\ \hline
+   其它   &                   & R &  & 保留                                                                    \\
+  111:104 & Thsens1\_out      & R &  & 温度传感器 1 摄氏温度 结点温度=Thens0\_out1 -100 温度范围：-40 – 125 度 \\
+  103:96  & Thsens0\_out      & R &  & 温度传感器 0 摄氏温度 结点温度=Thens0\_out0 -100 温度范围：-40 – 125 度 \\
+    89    & Thsens1\_overflow & R &  & 温度传感器 1 上溢（超过 125℃）                                          \\
+    88    & Thsens0\_overflow & R &  & 温度传感器 0 上溢（超过 125℃）                                          \\
+   83:80  & Compcode\_ok      & R &  &                                                                         \\
+   61:60  & Bad\_IP\_HT       & R &  & 2 个 HT 控制器是否坏                                                    \\
+   57:56  & Bad\_IP\_DDR      & R &  & 2 个 DDR 控制器是否坏                                                   \\
+   55:48  & Bad\_IP\_Core     & R &  & Core7-Core0 是否坏                                                      \\
+   47:32  & Sys\_clkseli      & R &  & 板上倍频设置                                                            \\
+   31:0   & Compcode\_core    & R &  &                                                                         \\ \hline
+\end{longtable}
+
 倍频设置寄存器
 --------------
 
@@ -403,186 +465,143 @@ Xconf）共三个 IP 相关的地址空间。 3B1500 的实现中使用了两个
  - NODE CLOCK 对应片上互联网络及三级共享高速缓存频率；
  - HT CLOCK 对应 HT 控制器时钟频率。
 
-\noindent 每个时钟配置一般有三个参数：DIV_REFC、DIV_LOOPC、DIV_OUT。
+\noindent 每个时钟配置一般由三个参数：DIV_REFC、DIV_LOOPC、DIV_OUT决定：
 
         最终的时钟频率 =  参考时钟 * DIV_LOOPC / (DIV_REFC * DIV_OUT)。
 
-\noindent 软件控制模式下，默认对应的时钟频率为外部参考时钟的频率（对于 CORE
-CLOCK 与 NODE CLOCK，都为引脚 SYS_CLK 的对应频率；对于 MEM CLOCK，为引脚
-MEM_CLK 对应频率），需要在处理器启动过程中对时钟进行软件设置。各个时钟设置的过
-程应该按照以下方式：
-
- 1. 设置寄存器中除了 SEL_PLL_\* 及 SOFT_SET_PLL 之外的其它寄存器，也即这两个寄
-    存器在设置的过程中写为 0；
- 1. 其它寄存器值不变，将 SOFT_SET_PLL 设为 1；
- 1. 等待寄存器中的锁定信号 LOCKED_ 为 1；
- 1. 将 SEL_PLL_\* 设为 1，此时对应的时钟频率将切换为软件设置的频率
-
-对于 HT CLOCK 来说，前两个参数是由引脚配置决定的，无法更改，只有 DIV_OUT （
-HTx_DIV_HT_CORE）是可以软件配置的。其工作频率为 CLKSEL[12:10] 配置的 PHY 时钟频
-率 / DIV_OUT。
+\noindent 对于 HT CLOCK 来说，前两个参数是由引脚配置决定的，无法更改，只有
+DIV_OUT （HTx_DIV_HT_CORE）是可以软件配置的。其工作频率为 CLKSEL[12:10] 配置的
+PHY 时钟频率 / DIV_OUT。
 
 \begin{longtable}{|c|c|c|c|p{7cm}|}
-  \caption{芯片配置寄存器}\label{tab:chipConfigSample} \\
+  \caption{倍频设置寄存器}\label{tab:chipConfigSample} \\
   \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endfirsthead
-  \caption{芯片配置寄存器（续）} \\
+  \caption{倍频配置寄存器（续）} \\
   \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
   \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
 
-  \multicolumn{5}{|l|}{芯片节点和处理器核软件倍频设置寄存器（物理地址 0x1FE0\_01B0）} \\* \hline
-    0   & SEL\_PLL\_NODE       & RW & 0x0  & Node 时钟非软件 bypass 整个 PLL \\
-    1   & SEL\_PLL\_CORE       & RW & 0x0  & Core 时钟非软件 bypass 整个 PLL \\
-    2   & SOFT\_SET\_PLL       & RW & 0x0  & 允许软件设置 PLL \\
-    3   & BYPASS\_L1           & RW & 0x0  & 忽略 L1 PLL \\
-    4   & BYPASS\_L2\_NODE     & RW & 0x0  & 忽略 L2 Node PLL \\
-    5   & BYPASS\_L2\_CORE     & RW & 0x0  & 忽略 L2 Core PLL \\
-    6   & BYPASS\_REFIN\_L2    & RW & 0x0  & L2 的输入是否 忽略 L1 PLL \\
-    7   & LOCKEN\_L1           & RW & 0x0  & 允许锁定 L1 PLL \\
-    8   & LOCKEN\_L2\_NODE     & RW & 0x0  & 允许锁定 L2 Node PLL \\
-    9   & LOCKEN\_L2\_CORE     & RW & 0x0  & 允许锁定 L2 Core PLL \\
-  11:10 & LOCKC\_L1            & RW & 0x0  & 判定 L1 PLL 是否锁定使用的相位的精度 \\
-  13:12 & LOCKC\_L2\_NODE      & RW & 0x0  & 判定 L2 Node PLL 是否锁定相位精度 \\
-  15:14 & LOCKC\_L2\_CORE      & RW & 0x0  & 判定 L2 Core PLL 是否锁定相位精度 \\
-   16   & LOCKED\_L1           & R  & 0x0  & L1 PLL 是否锁定 \\
-   17   & LOCKED\_L2\_NODE     & R  & 0x0  & L2 Node PLL 是否锁定 \\
-   18   & LOCKED\_L2\_CORE     & R  & 0x0  & L2 Core PLL 是否锁定 \\
-  31:26 & L1\_DIV\_REFC        & RW & 0x1  & L1 PLL 输入参数 \\
-  41:32 & L1\_DIV\_LOOPC       & RW & 0x1  & L1 PLL 输入参数 \\
-  47:42 & L1\_DIV\_OUT         & RW & 0x1  & L1 PLL 输入参数 \\
-  53:48 & L2\_DIV\_REFC\_NODE  & RW & 0x1  & L2 Node PLL 输入参数 \\
-  63:54 & L2\_DIV\_LOOPC\_NODE & RW & 0x1  & L2 Node PLL 输入参数 \\
-  69:64 & L2\_DIV\_OUT\_NODE   & RW & 0x1  & L2 Node PLL 输入参数 \\
-  75:70 & L2\_DIV\_REFC\_CORE  & RW & 0x5  & L2 Core PLL 输入参数 \\
-  85:76 & L2\_DIV\_LOOPC\_CORE & RW & 0x0  & L2 Core PLL 输入参数 \\
-  91:86 & L2\_DIV\_OUT\_CORE   & RW & 0x1  & L2 Core PLL 输入参数 \\
-  其它  & ---                  & RW & 保留 & 保留 \\ \hline
-  \multicolumn{5}{|l|}{内存和 HT 时钟软件倍频设置寄存器（物理地址 0x1FE0\_01C0）} \\* \hline
- 0    & SEL\_MEM\_PLL        & RW & 0x0  & MEM 时钟非软件 bypass 整个 PLL \\
- 1    & SOFT\_SET\_MEM\_PLL  & RW & 0x0  & 允许软件设置 MEM PLL \\
- 2    & BYPASS\_MEM\_PLL     & RW & 0x0  & 忽略 MEM\_PLL \\
- 3    & LOCKEN\_MEM\_PLL     & RW & 0x0  & 允许锁定 MEM\_PLL \\
- 5:4  & LOCKC\_ MEM\_PLL     & RW & 0x0  & 判定 MEM PLL 是否锁定相位精度 \\
- 6    & LOCKED\_MEM\_PLL     & R  & 0x0  & MEM\_PLL 是否锁定 \\
-13:8  & MEM\_PLL\_DIV\_REFC  & RW & 0x1  & MEM PLL 输入参数 \\
-23:14 & MEM\_PLL\_DIV\_LOOPC & RW & 0x41 & MEM PLL 输入参数 \\
-29:24 & MEM\_PLL\_DIV\_OUT   & RW & 0x0  & MEM PLL 输入参数 \\
- 32   & SEL\_HT0\_PLL        & RW & 0x0  & HT0 非软件 bypass PLL \\
- 33   & SOFT\_SET\_HT0\_PLL  & RW & 0x0  & 允许软件设置 HT0 PLL \\
- 34   & BYPASS\_HT0\_PLL     & RW & 0x0  & 忽略 HT0\_PLL \\
- 35   & LOCKEN\_HT0\_PLL     & RW & 0x0  & 允许锁定 HT0 PLL \\
-37:36 & LOCKC\_HT0\_PLL      & RW & 0x0  & 判定 HT0 PLL 是否锁定相位精度 \\
- 38   & LOCKED\_HT0\_PLL     & R  & 0x0  & HT0\_PLL 是否锁定 \\
-45:40 & HT0\_DIV\_HTCORE     & RW & 0x1  & HT0 Core PLL 输入参数 \\
- 48   & SEL\_HT1\_PLL        & RW & 0x0  & HT1 非软件 bypass PLL \\
- 49   & SOFT\_SET\_HT1\_PLL  & RW & 0x0  & 允许软件设置 HT1 PLL \\
- 50   & BYPASS\_HT1\_PLL     & RW & 0x0  & 忽略 HT1\_PLL \\
- 51   & LOCKEN\_HT1\_PLL     & RW & 0x0  & 允许锁定 HT1 PLL \\
-53:52 & LOCKC\_HT1\_PLL      & RW & 0x0  & 判定 HT1 PLL 是否锁定相位精度 \\
- 54   & LOCKED\_HT1\_PLL     & R  & 0x0  & HT1\_PLL 是否锁定 \\
-61:56 & HT1\_DIV\_HTCORE     & RW & 0x1  & HT1 Core PLL 输入参数 \\
-其它  &                      & RW &      & 保留 \\ \hline
-  \multicolumn{5}{|l|}{芯片处理器核软件分频设置寄存器（物理地址 0x1FE0\_01D0）} \\* \hline
- 2:0  & Core0\_freqctrl     & RW & 0x7   & 核 0 分频控制值 \\
- 3    & Core0\_en           & RW & 0x1   & 核 0 时钟使能 \\
- 6:4  & Core1\_freqctrl     & RW & 0x7   & 核 1 分频控制值 \\
- 7    & Core1\_en           & RW & 0x1   & 核 1 时钟使能 \\
-10:8  & Core2\_freqctrl     & RW & 0x7   & 核 2 分频控制值 \\
- 11   & Core2\_en           & RW & 0x1   & 核 2 时钟使能 \\
-14:12 & Core3\_freqctrl     & RW & 0x7   & 核 3 分频控制值 \\
- 15   & Core3\_en           & RW & 0x1   & 核 3 时钟使能 \\
-18:16 & Core4\_freqctrl     & RW & 0x7   & 核 4 分频控制值 \\
- 19   & Core4\_en           & RW & 0x1   & 核 4 时钟使能 \\
-22:20 & Core5\_freqctrl     & RW & 0x7   & 核 5 分频控制值 \\
- 23   & Core5\_en           & RW & 0x1   & 核 5 时钟使能 \\
-26:24 & Core6\_freqctrl     & RW & 0x7   & 核 6 分频控制值 \\
- 27   & Core6\_en           & RW & 0x1   & 核 6 时钟使能 \\
-30:28 & Core7\_freqctrl     & RW & 0x7   & 核 7 分频控制值 \\
- 31   & Core7\_en           & RW & 0x1   & 核 7 时钟使能 \\
-63:32 & Reserved            & RW & 32b'0 & 保留 \\
- 64   & Core0\_pre\_resetn  & RW & 0x1   & 核 0 的预复位控制 \\
- 65   & Core0\_soft\_resetn & RW & 0x1   & 核 0 的软件复位控制 \\
- 66   & Core1\_pre\_resetn  & RW & 0x1   & 核 1 的预复位控制 \\
- 67   & Core1\_soft\_resetn & RW & 0x1   & 核 1 的软件复位控制 \\
- 68   & Core2\_pre\_resetn  & RW & 0x1   & 核 2 的预复位控制 \\
- 69   & Core2\_soft\_resetn & RW & 0x1   & 核 2 的软件复位控制 \\
- 70   & Core3\_pre\_resetn  & RW & 0x1   & 核 3 的预复位控制 \\
- 71   & Core3\_soft\_resetn & RW & 0x1   & 核 3 的软件复位控制 \\
- 72   & Core4\_pre\_resetn  & RW & 0x1   & 核 4 的预复位控制 \\
- 73   & Core4\_soft\_resetn & RW & 0x1   & 核 4 的软件复位控制 \\
- 74   & Core5\_pre\_resetn  & RW & 0x1   & 核 5 的预复位控制 \\
- 75   & Core5\_soft\_resetn & RW & 0x1   & 核 5 的软件复位控制 \\
- 76   & Core6\_pre\_resetn  & RW & 0x1   & 核 6 的预复位控制 \\
- 77   & Core6\_soft\_resetn & RW & 0x1   & 核 6 的软件复位控制 \\
- 78   & Core7\_pre\_resetn  & RW & 0x1   & 核 7 的预复位控制 \\
- 79   & Core7\_soft\_resetn & RW & 0x1   & 核 7 的软件复位控制 \\ \hline
+  \multicolumn{5}{|l|}{芯片节点和处理器核软件倍频设置寄存器（物理地址 0x1FE0\_01B0）} \\ \hline
+  其它  & ---                  & RW & 保留 & 保留                                     \\
+  91:86 & L2\_DIV\_OUT\_CORE   & RW & 0x1  & L2 Core PLL 输入参数                     \\
+  85:76 & L2\_DIV\_LOOPC\_CORE & RW & 0x0  & L2 Core PLL 输入参数                     \\
+  75:70 & L2\_DIV\_REFC\_CORE  & RW & 0x5  & L2 Core PLL 输入参数                     \\
+  69:64 & L2\_DIV\_OUT\_NODE   & RW & 0x1  & L2 Node PLL 输入参数                     \\
+  63:54 & L2\_DIV\_LOOPC\_NODE & RW & 0x1  & L2 Node PLL 输入参数                     \\
+  53:48 & L2\_DIV\_REFC\_NODE  & RW & 0x1  & L2 Node PLL 输入参数                     \\
+  47:42 & L1\_DIV\_OUT         & RW & 0x1  & L1 PLL 输入参数                          \\
+  41:32 & L1\_DIV\_LOOPC       & RW & 0x1  & L1 PLL 输入参数                          \\
+  31:26 & L1\_DIV\_REFC        & RW & 0x1  & L1 PLL 输入参数                          \\
+   18   & LOCKED\_L2\_CORE     & R  & 0x0  & L2 Core PLL 是否锁定                     \\
+   17   & LOCKED\_L2\_NODE     & R  & 0x0  & L2 Node PLL 是否锁定                     \\
+   16   & LOCKED\_L1           & R  & 0x0  & L1 PLL 是否锁定                          \\
+  15:14 & LOCKC\_L2\_CORE      & RW & 0x0  & 判定 L2 Core PLL 是否锁定相位精度        \\
+  13:12 & LOCKC\_L2\_NODE      & RW & 0x0  & 判定 L2 Node PLL 是否锁定相位精度        \\
+  11:10 & LOCKC\_L1            & RW & 0x0  & 判定 L1 PLL 是否锁定使用的相位的精度     \\
+    9   & LOCKEN\_L2\_CORE     & RW & 0x0  & 允许锁定 L2 Core PLL                     \\
+    8   & LOCKEN\_L2\_NODE     & RW & 0x0  & 允许锁定 L2 Node PLL                     \\
+    7   & LOCKEN\_L1           & RW & 0x0  & 允许锁定 L1 PLL                          \\
+    6   & BYPASS\_REFIN\_L2    & RW & 0x0  & L2 的输入是否 忽略 L1 PLL                \\
+    5   & BYPASS\_L2\_CORE     & RW & 0x0  & 忽略 L2 Core PLL                         \\
+    4   & BYPASS\_L2\_NODE     & RW & 0x0  & 忽略 L2 Node PLL                         \\
+    3   & BYPASS\_L1           & RW & 0x0  & 忽略 L1 PLL                              \\
+    2   & SOFT\_SET\_PLL       & RW & 0x0  & 允许软件设置 PLL                         \\
+    1   & SEL\_PLL\_CORE       & RW & 0x0  & Core 时钟非软件 bypass 整个 PLL          \\
+    0   & SEL\_PLL\_NODE       & RW & 0x0  & Node 时钟非软件 bypass 整个 PLL          \\ \hhline
+
+  \multicolumn{5}{|l|}{内存和 HT 时钟软件倍频设置寄存器（物理地址 0x1FE0\_01C0）} \\ \hline
+  其它  &                      & RW &      & 保留                                 \\
+  61:56 & HT1\_DIV\_HTCORE     & RW & 0x1  & HT1 Core PLL 输入参数                \\
+   54   & LOCKED\_HT1\_PLL     & R  & 0x0  & HT1\_PLL 是否锁定                    \\
+  53:52 & LOCKC\_HT1\_PLL      & RW & 0x0  & 判定 HT1 PLL 是否锁定相位精度        \\
+   51   & LOCKEN\_HT1\_PLL     & RW & 0x0  & 允许锁定 HT1 PLL                     \\
+   50   & BYPASS\_HT1\_PLL     & RW & 0x0  & 忽略 HT1\_PLL                        \\
+   49   & SOFT\_SET\_HT1\_PLL  & RW & 0x0  & 允许软件设置 HT1 PLL                 \\
+   48   & SEL\_HT1\_PLL        & RW & 0x0  & HT1 非软件 bypass PLL                \\
+  45:40 & HT0\_DIV\_HTCORE     & RW & 0x1  & HT0 Core PLL 输入参数                \\
+   38   & LOCKED\_HT0\_PLL     & R  & 0x0  & HT0\_PLL 是否锁定                    \\
+  37:36 & LOCKC\_HT0\_PLL      & RW & 0x0  & 判定 HT0 PLL 是否锁定相位精度        \\
+   35   & LOCKEN\_HT0\_PLL     & RW & 0x0  & 允许锁定 HT0 PLL                     \\
+   34   & BYPASS\_HT0\_PLL     & RW & 0x0  & 忽略 HT0\_PLL                        \\
+   33   & SOFT\_SET\_HT0\_PLL  & RW & 0x0  & 允许软件设置 HT0 PLL                 \\
+   32   & SEL\_HT0\_PLL        & RW & 0x0  & HT0 非软件 bypass PLL                \\
+  29:24 & MEM\_PLL\_DIV\_OUT   & RW & 0x0  & MEM PLL 输入参数                     \\
+  23:14 & MEM\_PLL\_DIV\_LOOPC & RW & 0x41 & MEM PLL 输入参数                     \\
+  13:8  & MEM\_PLL\_DIV\_REFC  & RW & 0x1  & MEM PLL 输入参数                     \\
+   6    & LOCKED\_MEM\_PLL     & R  & 0x0  & MEM\_PLL 是否锁定                    \\
+   5:4  & LOCKC\_ MEM\_PLL     & RW & 0x0  & 判定 MEM PLL 是否锁定相位精度        \\
+   3    & LOCKEN\_MEM\_PLL     & RW & 0x0  & 允许锁定 MEM\_PLL                    \\
+   2    & BYPASS\_MEM\_PLL     & RW & 0x0  & 忽略 MEM\_PLL                        \\
+   1    & SOFT\_SET\_MEM\_PLL  & RW & 0x0  & 允许软件设置 MEM PLL                 \\
+   0    & SEL\_MEM\_PLL        & RW & 0x0  & MEM 时钟非软件 bypass 整个 PLL       \\ \hhline
+
+  \multicolumn{5}{|l|}{芯片处理器核软件分频设置寄存器（物理地址 0x1FE0\_01D0）} \\ \hline
+   79   & Core7\_Soft\_resetn & RW & 0x1   & 核 7 的软件复位控制                \\
+   78   & Core7\_Pre\_resetn  & RW & 0x1   & 核 7 的预复位控制                  \\
+   77   & Core6\_Soft\_resetn & RW & 0x1   & 核 6 的软件复位控制                \\
+   76   & Core6\_Pre\_resetn  & RW & 0x1   & 核 6 的预复位控制                  \\
+   75   & Core5\_Soft\_resetn & RW & 0x1   & 核 5 的软件复位控制                \\
+   74   & Core5\_Pre\_resetn  & RW & 0x1   & 核 5 的预复位控制                  \\
+   73   & Core4\_Soft\_resetn & RW & 0x1   & 核 4 的软件复位控制                \\
+   72   & Core4\_Pre\_resetn  & RW & 0x1   & 核 4 的预复位控制                  \\
+   71   & Core3\_Soft\_resetn & RW & 0x1   & 核 3 的软件复位控制                \\
+   70   & Core3\_Pre\_resetn  & RW & 0x1   & 核 3 的预复位控制                  \\
+   69   & Core2\_Soft\_resetn & RW & 0x1   & 核 2 的软件复位控制                \\
+   68   & Core2\_Pre\_resetn  & RW & 0x1   & 核 2 的预复位控制                  \\
+   67   & Core1\_Soft\_resetn & RW & 0x1   & 核 1 的软件复位控制                \\
+   66   & Core1\_Pre\_resetn  & RW & 0x1   & 核 1 的预复位控制                  \\
+   65   & Core0\_Soft\_resetn & RW & 0x1   & 核 0 的软件复位控制                \\
+   64   & Core0\_Pre\_resetn  & RW & 0x1   & 核 0 的预复位控制                  \\
+  63:32 & Reserved            & RW & 32b'0 & 保留                               \\
+   31   & Core7\_En           & RW & 0x1   & 核 7 时钟使能                      \\
+  30:28 & Core7\_FreqCtrl     & RW & 0x7   & 核 7 分频控制值                    \\
+   27   & Core6\_En           & RW & 0x1   & 核 6 时钟使能                      \\
+  26:24 & Core6\_FreqCtrl     & RW & 0x7   & 核 6 分频控制值                    \\
+   23   & Core5\_En           & RW & 0x1   & 核 5 时钟使能                      \\
+  22:20 & Core5\_FreqCtrl     & RW & 0x7   & 核 5 分频控制值                    \\
+   19   & Core4\_En           & RW & 0x1   & 核 4 时钟使能                      \\
+  18:16 & Core4\_FreqCtrl     & RW & 0x7   & 核 4 分频控制值                    \\
+   15   & Core3\_En           & RW & 0x1   & 核 3 时钟使能                      \\
+  14:12 & Core3\_FreqCtrl     & RW & 0x7   & 核 3 分频控制值                    \\
+   11   & Core2\_En           & RW & 0x1   & 核 2 时钟使能                      \\
+  10:8  & Core2\_FreqCtrl     & RW & 0x7   & 核 2 分频控制值                    \\
+   7    & Core1\_En           & RW & 0x1   & 核 1 时钟使能                      \\
+   6:4  & Core1\_FreqCtrl     & RW & 0x7   & 核 1 分频控制值                    \\
+   3    & Core0\_En           & RW & 0x1   & 核 0 时钟使能                      \\
+   2:0  & Core0\_FreqCtrl     & RW & 0x7   & 核 0 分频控制值                    \\ \hline
 \end{longtable}
 
-注：PLL ouput = （clk_ref / div_refc * div_loopc）/ div_out。
-PLL constrain 指括号内的值：L1：450M~1.58G L2: 850M~3.23G
-内存时钟约束同 L1，HT 时钟约束同 L2。
+### 软件时钟设置
 
-注:       软件分频后的时钟频率值等于原来的（分频控制值+1）/8
+软件控制模式下，默认对应的时钟频率为外部参考时钟的频率（对于 CORE CLOCK 与 NODE
+CLOCK，都为引脚 SYS_CLK 的对应频率；对于 MEM CLOCK，为引脚 MEM_CLK 对应频率），
+需要在处理器启动过程中对时钟进行软件设置。各个时钟设置的过程应该按照以下方式：
 
-芯片配置及采样寄存器
---------------------
+ 1. 设置寄存器中除了 `SEL_PLL_*` 及 `SOFT_SET_PLL` 之外的其它寄存器，也即这两个
+    寄存器在设置的过程中写为 0；
+ 1. 其它寄存器值不变，将 `SOFT_SET_PLL` 设为 1；
+ 1. 等待寄存器中的相应锁定信号 `LOCKED_*_PLL` 为 1；
+ 1. 将 `SEL_PLL_*` 设为 1，此时对应的时钟频率将切换为软件设置的频率。
 
-龙芯 3B1500 中的芯片配置寄存器(Chip\_config)及芯片采样寄存器(chip\_sample)
-提供了对芯片的配置进行读写的机制。
+PLL 的约束：L1：450M~1.58G L2: 850M~3.23G 内存时钟约束同 L1，HT
+时钟约束同 L2。
 
-\begin{longtable}{|c|c|c|c|p{6.5cm}|}
-  \caption{芯片配置寄存器}\label{tab:chipConfigSample} \\
-  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endfirsthead
-  \caption{芯片配置寄存器（续）} \\
-  \hline 位域 & 字段名 & 访问 & 复位值 &  描述 \\ \hhline \endhead
-  \hline \multicolumn{5}{r}{\tiny 未完待续} \endfoot \endlastfoot
-
-  \multicolumn{5}{|l|}{芯片配置寄存器（地址 0x1fe00180）} \\* \hline
-    其它    & ---                      & R  &       & 保留                                                        \\ \hline
-    34:32   & HT\_freq\_scale\_ctrl0   & RW & 111   & HT 控制器 1 分频                                            \\ \hline
-    31:29   & HT\_freq\_scale\_ctrl0   & RW & 111   & HT 控制器 0 分频                                            \\ \hline
-    28:24   & DDR\_Clksel              & RW & 11111 & 软件配置 DDR 时钟倍频关系
-                                                      \footnote{当 DDR\_Clksel\_en 为 1 时有效。} \\ \hline
-    19      & DDR\_reset1              & RW & 1     & 软件 reset DDR 控制器1                                      \\ \hline
-    18      & DDR\_reset0              & RW & 1     & 软件 reset DDR 控制器0                                      \\ \hline
-    17      & Mc1\_en                  & RW & 1     & 是否启用 DDR 控制器1                                        \\ \hline
-    16      & Mc0\_en                  & RW & 1     & 是否启用 DDR 控制器0                                        \\ \hline
-    15      & Core3\_en                & RW & 1     & 是否启用处理器核 3                                          \\ \hline
-    14      & Core2\_en                & RW & 1     & 是否启用处理器核 2                                          \\ \hline
-    13      & Core1\_en                & RW & 1     & 是否启用处理器核 1                                          \\ \hline
-    12      & Core0\_en                & RW & 1     & 是否启用处理器核 0                                          \\ \hline
-    9       & DDR\_buffer\_cpu         & RW & 0     & 是否打开 DDR 读访问缓冲                                     \\ \hline
-    8       & Disable\_ddr2\_confspace & RW & 0     & 是否禁用 DDR 配置空间                                       \\ \hline
-    3       & DDR\_Clksel\_en          & RW & 0     & 是否使用软件配置 DDR 倍频                                   \\ \hline
-    2:0     & Freq\_scale\_ctrl        & RW & 111   & 处理器核分频                                                \\* \hhline
-    \multicolumn{5}{|l|}{芯片采样寄存器（地址 0x1fe00190）} \\* \hline
-    其它    &                          & R  &          & 保留                                                        \\ \hline
-    111     & Thsens1\_overflow        & R  &          & 温度传感器 1 温度上溢（超过 128 度）                        \\ \hline
-    110:104 & Thsens1\_out             & R  &          & 温度传感器 1 温度                                           \\ \hline
-    103     & Thsens0\_overflow        & R  &          & 温度传感器 0 温度上溢（超过 128 度）                        \\ \hline
-    102:96  & Thsens0\_out             & R  &          & 温度传感器 0 温度                                           \\ \hline
-    57:56   & Bad\_ip\_ht              & R  &          & 2 个 HT 控制器是否坏                                        \\ \hline
-    53:52   & Bad\_ip\_ddr             & R  &          & 2 个 DDR 控制器是否坏                                       \\ \hline
-    51:48   & Bad\_ip\_core            & R  &          & 4 个处理器核是否坏                                          \\ \hline
-    47:32   & Sys\_clksel              & R  &          & 板上倍频设置                                                \\ \hline
-    31:16   & Pad3v3\_ctrl             & RW & 16'h780  & 3v3pad 控制                                                 \\ \hline
-    15:0    & Pad2v5\_ctrl             & RW & 16'h780  & 2v5pad 控制                                                 \\ \hline
-\end{longtable}
-
+当设置为分頻时钟时，软件分频后的时钟频率值等于原来的（分频控制值+1）/8。
 
 全局时钟
 --------
 
 龙芯 3B1500 芯片内部提供了两个 64 位全局时钟供软件使用。全局时钟的运行频率与节
-点时钟（NODE CLOCK）相同，每个时钟周期自增 1。该时钟为只读，对该时钟的写
-不产生任何效果。
+点时钟（NODE CLOCK）相同，每个时钟周期增加 1。所有全局时钟都为只读，
+而且必须使用非缓存地址模式访问它们。对全局时钟的写不产生任何效果。
 
-全局时钟的物理地址沿袭[节点控制寄存器地址规则][]，如表 \ref{tab:gclk-phyaddr}
-所示，并且访问它们时必须使用非缓存地址模式。
+表 \ref{tab:gclk-phyaddr} 列出了所有可能全局时钟的物理地址，其中节点
+2 和 3 当且仅当系统为双芯片互联时存在。 同时，这些地址也都遵守
+[节点控制寄存器地址规则][]。
 
 Table: 全局时钟物理地址 \label{tab:gclk-phyaddr}
 
-| 节点 | 全局时钟地址     | 节点 | 全局时钟地址     |
-| :--: | :--------------: | :--: | :--------------: |
-| 0    | 0x0000_3FF0_0408 | 2    | 0x2000_3FF0_8408 |
-| 1    | 0x1000_3FF0_4408 | 3    | 0x3000_3FF0_C408 |
+| 节点 | 全局时钟地址       | 节点  | 全局时钟地址       |
+| :--: | :--------------:   | :--:  | :--------------:   |
+| 0    | `0x0000_3FF0_0408` | 2^\*^ | `0x2000_3FF0_8408` |
+| 1    | `0x1000_3FF0_4408` | 3^\*^ | `0x3000_3FF0_C408` |
 
