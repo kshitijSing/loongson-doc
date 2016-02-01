@@ -10,19 +10,18 @@
   \centering
   \caption{低速 I/O 设备地址空间}
   \begin{tabular}[h]{|c|c|c|} \hline
-    地址名称           &   地址范围                   & 大小 \\ \hhline
+    地址名称           &   地址范围                  & 大小     \\ \hhline
     LPC Memory         & 0x1C00\_0000 – 0x1DFF\_FFFF & 32 MByte \\ \hline
-    LPC Boot           & 0x1FC0\_0000 – 0x1FCF\_FFFF & 1 MByte \\ \hline
-    PCI I/O 空间       & 0x1FD0\_0000 – 0x1FDF\_FFFF & 1 MByte \\ \hline
+    LPC Boot           & 0x1FC0\_0000 – 0x1FCF\_FFFF & 1 MByte  \\ \hline
+    PCI I/O 空间       & 0x1FD0\_0000 – 0x1FDF\_FFFF & 1 MByte  \\ \hline
     PCI 控制器配置空间 & 0x1FE0\_0000 – 0x1FE0\_00FF & 256 Byte \\ \hline
     IO 控制器配置空间  & 0x1FE0\_0100 – 0x1FE0\_01DF & 256 Byte \\ \hline
-    UART0 配置空间     & 0x1FE0\_01E0 – 0x1FE0\_01E7 & 8 Byte \\ \hline
-    UART1 配置空间     & 0x1FE0\_01E8 – 0x1FE0\_01EF & 8 Byte \\ \hline
-    SPI 配置空间       & 0x1FE0\_01F0 – 0x1FE0\_01FF & 16 Byte \\ \hline
-    LPC 配置空间       & 0x1FE0\_0200 – 0x1FE0\_02FF & 256 Byte \\ \hline
+    UART0 配置空间     & 0x1FE0\_01E0 – 0x1FE0\_01E7 & 8 Byte   \\ \hline
+    UART1 配置空间     & 0x1FE0\_01E8 – 0x1FE0\_01EF & 8 Byte   \\ \hline
+    LPC 配置空间       & 0x1FE0\_0200 – 0x1FE0\_021F & 32 Byte  \\ \hline
+    SPI 配置空间       & 0x1FE0\_0220 – 0x1FE0\_022F & 16 Byte  \\ \hline
     PCI 配置空间       & 0x1FE8\_0000 – 0x1FE8\_FFFF & 64 KByte \\ \hline
     LPC I/O 空间       & 0x1FF0\_0000 – 0x1FF0\_FFFF & 64 Kbyte \\ \hline
-    PCI MEM            & 其它                         & \\ \hline
   \end{tabular}
   \label{tab:lsioAddrSpace}
 \end{table}
@@ -38,6 +37,7 @@ PCI/PCI-X 控制器
 0x1FE0\_0000 开始的 256 字节。 表 \ref{tab:pcixConfHeader} 列出了所有的 PCI-X
 控制器配置寄存器。
 
+\setlength{\tabcolsep}{2pt}
 \begin{longtable}[c]{*{4}{|>{\centering}p{3.4cm}}|c|}
   \caption{PCI-X 控制器配置头} \label{tab:pcixConfHeader} \\ \hline
   字节 3 & 字节 2 & 字节 1 & 字节 0 & 偏移  \\ \hhline
@@ -75,6 +75,7 @@ PCI/PCI-X 控制器
   \cmcolvb{4}{PCI-X Command Register}                              & E0 \\ \hline
   \cmcolvb{4}{PCI-X Status Register}                               & E4 \\ \hline
 \end{longtable}
+\setlength{\tabcolsep}{6pt}
 
 ### 龙芯 PCI 实现有关寄存器位域说明
 
@@ -170,16 +171,32 @@ PCI-X I/O 配置寄存器主要用于配置 PCI/PCI-X 控制器的地址窗口�
   \cmcolvb{4}{--保留--}                            & 34 \\ \hline
   \cmcolvb{4}{--保留--}                            & 38 \\ \hline
   \cmcolvb{4}{--保留--}                            & 3C \\ \hline
-  \cmcolvb{4}{Mem\_Win\_Base：可预取窗口基址}      & \ftabincell{p{.7cm}}{40 \\ \hline 44} \\ \hline
-  \cmcolvb{4}{Mem\_Win\_Mask：可预取窗口掩码}      & \ftabincell{p{.7cm}}{48 \\ \hline 4C} \\ \hline
-  \cmcolvb{4}{PCI\_Hit0\_Sel：PCI窗口0控制}        & \ftabincell{p{.7cm}}{50 \\ \hline 54} \\ \hline
-  \cmcolvb{4}{PCI\_Hit1\_Sel：PCI窗口1控制}        & \ftabincell{p{.7cm}}{58 \\ \hline 5C} \\ \hline
-  \cmcolvb{4}{PCI\_Hit2\_Sel：PCI窗口2控制}        & 60 \\ \hline
+  \cmcolvb{4}{Mem\_Win\_Base：可预取窗口基址}      & \ftabincell{P{.7cm}}{40 \\ \hline 44} \\ \hline
+  \cmcolvb{4}{Mem\_Win\_Mask：可预取窗口掩码}      & \ftabincell{P{.7cm}}{48 \\ \hline 4C} \\ \hline
+  \cmcolvb{4}{PCI\_Hit0\_Sel：PCI窗口0控制}        & \ftabincell{P{.7cm}}{50 \\ \hline 54} \\ \hline
+  \cmcolvb{4}{PCI\_Hit1\_Sel：PCI窗口1控制}        & \ftabincell{P{.7cm}}{58 \\ \hline 5C} \\ \hline
+  \cmcolvb{4}{PCI\_Hit2\_Sel：PCI窗口2控制}        & \ftabincell{P{.7cm}}{60 \\ \hline 64} \\ \hline
   \cmcolvb{4}{PXArb\_Config：PCI-X仲裁器配置}      & 68 \\ \hline
   \cmcolvb{4}{PXArb\_Status：PCI-X仲裁器状态}      & 6C \\ \hline
+  \cmcolvb{4}{--保留--}                            & 70 \\ \hline
+  \cmcolvb{4}{--保留--}                            & 74 \\ \hline
+  \cmcolvb{4}{--保留--}                            & 78 \\ \hline
+  \cmcolvb{4}{--保留--}                            & 7C \\ \hline
+  \cmcolvb{4}{Chip\_Config}      & \ftabincell{P{.7cm}}{80 \\ \hline 84 \\ \hline 88 \\ \hline 8C} \\ \hline
+  \cmcolvb{4}{Chip\_Sample}      & \ftabincell{P{.7cm}}{90 \\ \hline 94 \\ \hline 98 \\ \hline 9C} \\ \hline
+  \cmcolvb{4}{--保留--}                            & A0 \\ \hline
+  \cmcolvb{4}{--保留--}                            & A4 \\ \hline
+  \cmcolvb{4}{--保留--}                            & A8 \\ \hline
+  \cmcolvb{4}{--保留--}                            & AC \\ \hline
+  \cmcolvb{4}{Node\_ClkSel}      & \ftabincell{P{.7cm}}{B0 \\ \hline B4 \\ \hline B8 \\ \hline BC} \\ \hline
+  \cmcolvb{4}{MEM\_HT\_ClkSel}   & \ftabincell{P{.7cm}}{C0 \\ \hline C4 \\ \hline C8 \\ \hline CC} \\ \hline
+  \cmcolvb{4}{Core\_FreqCtrl}    & \ftabincell{P{.7cm}}{D0 \\ \hline D4 \\ \hline D8 \\ \hline DC} \\ \hline
 \end{longtable}
 
-这些寄存器的详细说明则在表 \ref{tab:ioConfigRegDetail} 中给出。
+其中，`Chip_Config` 和 `Chip_Sample` 这两个寄存器在[芯片配置及采样寄存器][]
+一节有详细说明； 同时 `Node_ClkSel` 、 `MEM_HT_ClkSel`、 `Core_FreqCtrl` 这三个寄
+存器的说明见[倍频设置寄存器][]一节。而其他寄存器的详细说明则在
+表\ \ref{tab:ioConfigRegDetail} 中给出。
 
 \begin{iolongtable}{IO 控制寄存器位域解释}{tab:ioConfigRegDetail}
   \lmcolvb{5}{CR00: PonCfg} \\* \hline
@@ -296,7 +313,8 @@ PXArb\_Config 和 PXArb\_Status 寄存器控制。PCI/PCI-X
 能够停靠，则可以将仲裁器设置为停靠到默认 0 号主设备（内部控制器），且设置依靠
 延迟为 0。
 
-\section{LPC 控制器}
+LPC 控制器
+----------
 
 \noindent LPC (Low-Pin Count) 控制器具有以下特性：
 
@@ -316,7 +334,7 @@ PXArb\_Config 和 PXArb\_Status 寄存器控制。PCI/PCI-X
 与 LPC 相关的地址空间中， LPC Boot
 是系统启动时处理器最先访问的地址空间。这个地址空间支持 LPC Memory 或 Firmware
 Memory 这两种不同访问类型。系统启动时发出哪种访问类型由 LPC\_ROM\_INTEL
-引脚控制(\remark{where is the definition of this signal?})。LPC\_ROM\_INTEL
+引脚控制。LPC\_ROM\_INTEL
 引脚上拉时发出 LPC Firmware Memory 访问，下拉时发出 LPC Memory 访问 类型。
 
 LPC Memory 地址空间是系统用 Memory/Firmware Memory 访问的地址空间。 LPC
@@ -340,7 +358,8 @@ LPC\_MEM\_IS\_FWH 位决定。 处理器发往这个地址空间的地址可以�
   17:0  & LPC\_INT\_CLEAR    & 写   & 0 & LPC SIRQ 中断清除           \\ \hline
 \end{iolongtable}
 
-\section{UART 控制器}
+UART 控制器
+-----------
 
 \noindent 龙芯 3 号的 UART 控制器具有以下特性
 
@@ -474,22 +493,57 @@ DLAB值下的设置。
   CTS, DSR, RI or DCD & 读 MSR \\ \hline
 \end{longtable}
 
-\section{SPI 控制器}
+SPI 控制器
+----------
 
-龙芯 3 号的 SPI (serial peripheral interface) 控制器具有以下特性：
+串行外围设备接口（serial peripheral interface，简称SPI）总线技术是 Motorola 公
+司推出的多种微处理器、微控制器以及外围设备之间的一种全双工、同步、串行数据接口
+标准。龙芯 SPI 控制器模块寄存器物理地址基址为 `0x1FE0_0220` [^1]。
 
- - 全双工同步串口数据传输；
- - 支持到 4 个的变长字节传输；
- - 主模式支持；
- - 模式故障产生错误标志并发出中断请求；
- - 双缓冲接收器；
- - 极性和相位可编程的串行时钟；
- - 可在等待模式下对 SPI 进行控制。
+[^1]: 龙芯 3A 上 SPI 控制器模块寄存器物理地址基址为 `0x1FE0_01F0`。
 
-SPI 控制器模块寄存器物理地址基址为 0x1FE001F0。
+### SPI 总控制器结构
+
+龙芯的 SPI 控制器，在一个单纯 SPI 主控制器的基础上，还增加了专门的硬件逻辑，实
+现了 Flash 控制的功能。 SPI Flash 控制器使得 SPI 控制器对外除了有若干 IO 寄存器
+外还有一段只读内存空间。而这段内存空间映射到 SPI Flash 中，复位后不需要软件干预
+就可以直接访问。从而支持处理器从 SPI Flash 启动。图\ \ref{fig:spi-structure} 显
+示了由 AXI 接口、简单的 SPI 主控制器、SPI Flash 读引擎和总线选择模块组成。根据
+访问的地址和类型，AXI 上的合法请求转发到 SPI 主控制器或者 SPI Flash 读引擎中(非
+法请求被丢弃)。
+
+![SPI 总控制器结构\label{fig:spi-structure}](../images/spi-structure-cn.pdf)
+
+SPI 主控制器只接收单字节的读写访问，实现了 SPI 主设备的功能，并为 SPI Flash 读
+引擎提供参数配置。SPI 主控制器的系统寄存器包括控制寄存器，状态寄存器、外部寄存
+器和 SPI Flash 相关控制寄存器。分频器生成 SPI 总线工作的时钟信号，数据读、写缓
+冲器（FIFO）允许 SPI 同时进行串行发送和接收数据。
+
+SPI Flash 读引擎将读请求打包成 SPI Flash 的读命令，读出数据后返回。为了加快接口
+速度，SPI Flash 生产厂商在最早的 SPI Flash 协议基础上作了若干扩展。根据受支持的
+情况和实现开销，本引擎实现了三种增强模式，分别为
+
+ 1. 连续地址读：在传送完一个字节数据后 SPI Flash 自动准备好下一个地址的数据，只
+    要片选不拉高就可以继续传输。
+ 2. 快速读模式：可工作在高频率的读模式，在命令地址后还附了一个字节的空数据供数
+    据读出。
+ 3. 双 I/O 模式：在发完命令编码后，SDI 和 SDO 两根线不再遵循 SPI 协议，而是同时
+    同向进行数据传输。
+
+\noindent 其中，双 I/O 模式与快速读模式互斥，二者只能选其一。连续地址读则与其它
+两种模式可共存。综上所述，龙芯 SPI 控制器具有以下特性：
+
+ - 全双工同步串口数据传输
+ - 支持到 4 个的变长字节传输
+ - 主模式支持
+ - 极性和相位可编程的串行时钟
+ - 支持系统启动
+ - 支持标准读、连续地址读、快速读、双路 I/O 等 SPI Flash 读模式
+
+### SPI 控制器模块寄存器
 
 \begin{iolongtable}{SPI 控制器模块寄存器}{tab:spiReg}
-  \lmcolvb{5}{控制寄存器（SPCR）  0x00 0x10} \\ \hline
+  \lmcolvb{5}{控制寄存器（SPCR）  偏移：0x00 复位值：0x10} \\ \hline
   7 & Spie & 1 & RW & 中断输出使能信号 高有效 \\
   6 & spe & 1 & RW & 系统工作使能信号高有效 \\
   5 & -- & 1 & RW & 保留 \\
@@ -498,7 +552,7 @@ SPI 控制器模块寄存器物理地址基址为 0x1FE001F0。
   2 & cpha & 1 & RW & 时钟相位位1则相位相反，为0则相同 \\
   1:0 & spr & 2 & RW & 与SPER:spre一起设定sclk\_o分频 \\ \hhline
 
-  \lmcolvb{5}{状态寄存器（SPSR）  0x01 0x05} \\ \hline
+  \lmcolvb{5}{状态寄存器（SPSR）  偏移：0x01 复位值：0x05} \\ \hline
   7 & spif & 1 & RW & 中断标志位1表示有中断申请，写1则清零 \\
   6 & wcol & 1 & RW & 写寄存器溢出标志位 为1表示已经溢出,写1则清零 \\
   5:4 & -- & 2 & RW & 保留 \\
@@ -507,14 +561,31 @@ SPI 控制器模块寄存器物理地址基址为 0x1FE001F0。
   1 & rffull & 1 & RW & 读寄存器满标志1表示已经满 \\
   0 & rfempty & 1 & RW & 读寄存器空标志1表示空 \\ \hhline
 
-  \lmcolvb{5}{数据寄存器（TxFIFO）0x02 0x00} \\ \hline
+  \lmcolvb{5}{数据寄存器（TxFIFO）偏移：0x02 复位值：0x00} \\ \hline
   7:0 & Tx FIFO & 8 & W & 数据传输寄存器 \\ \hhline
 
-  \lmcolvb{5}{外部寄存器（SPER）  0x03 0x00} \\ \hline
+  \lmcolvb{5}{外部寄存器（SPER）  偏移：0x03 复位值：0x00} \\ \hline
   7:6 & icnt & 2 & RW &
   传输完多少个字节后送出中断申请信号。 00: 1字节; 01: 2字节; 10: 3字节; 11:
   3字节(??)。 \\ 5:2 & -- & 4 & RW & 保留 \\
   1:0 & spre & 2 & RW & 与SPCR:spr一起设定分频比率 \\ \hline
+
+  \lmcolvb{5}{参数控制寄存器（SFC\_PARAM） 偏移： 0x04 复位值： 0x21} \\ \hline
+  7:4 & clk\_div   & 4 & RW & 时钟分频数选择（分频系数与{spre,spr}组合相同） \\
+  3   & dual\_io   & 1 & RW & 使用双 I/O 模式，优先级高于快速读模式 \\
+  2   & fast\_read & 1 & RW & 使用快速读模式 \\
+  1   & burst\_en  & 1 & RW & spi flash 支持连续地址读模式 \\
+  0   & memory\_en & 1 & RW & spi flash 读使能，无效时 csn[0]可由软件控制。 \\ \hhline
+  
+  \lmcolvb{5}{片选控制寄存器（SFC\_SOFTCS）偏移： 0x05 复位值： 0x00} \\ \hline
+  7:4 & csn  & 4 & RW & csn 引脚输出值 \\
+  3:0 & csen & 4 & RW & 为 1 时对应位的 cs 线由 7:4 位控制 \\ \hhline
+  
+  \lmcolvb{5}{时序控制寄存器（SFC\_TIMING）偏移：0x06 复位值：0x03} \\ \hline
+  7:2 & Reserved & 6 & RW & 保留 \\
+  1:0 & tCSH     & 2 & RW & SPI Flash 的片选信号最短无效时间，以分频后时钟周期 T 计算
+                            00: 1T； 01: 2T； 10: 4T； 11: 8T \\ \hline
+
 \end{iolongtable}
 
 \begin{table}[htpb]
@@ -527,4 +598,64 @@ SPI 控制器模块寄存器物理地址基址为 0x1FE001F0。
   \end{tabular}
   \label{tab:SPIFreqTable}
 \end{table}
+
+### SPI 控制器使用指南
+
+#### SPI 主控制器的读写操作 {-}
+
+ - 模块初始化
+    1. 设置片选控制寄存器（SFC_SOFTCS），并使能控制寄存器
+    1. 停止 SPI 控制器工作，对控制寄存器 spcr 的 spe 位写 0
+    1. 重置状态寄存器 spsr，对寄存器写入 8'b1100_0000
+    1. 设置外部寄存器 sper，包括中断申请条件 sper[7:6]和分频系数 sper[1:0]，具
+       体参考寄存器说明
+    1. 配置 SPI 时序，包括 spcr 的 cpol、cpha 和 sper 的 mode 位。mode 为 1 时
+       是标准 SPI 实现，为 0 时为兼容模式。
+    1. 配置中断使能，spcr 的 spie 位
+    1. 启动 SPI 控制器，对控制寄存器 spcr 的 spe 位写 1
+
+ - 模块的发送/传输操作
+    1. 往数据传输寄存器写入数据
+    1. 传输完成后从数据传输寄存器读出数据。由于发送和接收同时进行，即使 SPI 从
+       设备没有发送有效数据也必须进行读出操作。
+
+ - 中断处理
+    1.  接收到中断申请
+    1.  读状态寄存器 spsr 的值，若 spsr[2]为 1 则表示数据发送完成，若 spsr[0]为
+        1 则表示已经接收数据
+    1.  读或写数据传输寄存器
+    1.  往状态寄存器 spsr 的 spif 位写 1，清除控制器的中断申请
+
+#### 硬件 SPI Flash 读 {-}
+
+ - 初始化
+
+     将 SFC_PARAM 的 memory_en 位写 1。当 SPI 被选为启动设备时此位复位为 1。
+     设置读参数(时钟分频、连续地址读、快速读、双 I/O、tCSH 等)。这些参数复位值
+     均为最保守的值。
+
+ - 更改参数
+
+     如果所使用的 SPI Flash 支持更高的频率或者提供增强功能，修改相应参数可以大
+     大加快 Flash 的访问速度。参数的修改不需要关闭 SPI Flash 读使能 (memory_en)
+     。具体参考寄存器说明。
+
+
+#### 混合访问 SPI Flash 和 SPI 主控制器 {-}
+
+ - 使用多个 SPI 外设
+
+     SPI Flash 控制器提供 4 个软件可控制的片选 cs[3:0]，其中 cs[0]专用于 SPI
+     Flash。在龙芯 3B1500 中，SPI Flash 控制器的片选与 GPIO[3:0]对应。
+
+     软件可通过 SFC_SOFTCS 控制寄存器设置 cs[3:1]，来访问所选择的 SPI 设备，当
+     SFC_SOFTCS 的 csen 有效时，对应的 GPIO 位由 SPI Flash 控制器控制。如果软件
+     选中了其它 SPI 设备，此时又出现 SPI Flash 读访问(比如取指)，cs[3:1]会自动
+     无效，Flash 访问结束后恢复原值。
+
+ - 对 SPI Flash 进行读以外的访问
+
+     将 SPI Flash 读使能关闭后，软件就可直接控制 cs[0]，并通过 SPI 主控制器访问
+     SPI 总线。这意味着在进行此操作时，不能从 SPI Flash 中取指。除了读以外，SPI
+     Flash 还实现了很多命令(如擦除、写入)，具体参见相关文档。
 

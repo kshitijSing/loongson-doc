@@ -128,7 +128,7 @@ DDR2/3 SDRAM 参数配置格式
 \end{longtable}
 \setlength\LTleft{0in}
 \setlength\LTright{0in}
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{6pt}
 
 DDR2/3 SDRAM 配置参数寄存器格式
 -------------------------------

@@ -87,7 +87,8 @@
 }{\hline \end{longtable}}
 
 \newenvironment{iolongtable}[2]{
-  \begin{longtable}[c]{|>{\centering}p{1cm}|p{3cm}|>{\centering}p{1cm}|p{1.6cm}|p{8cm}|}
+  \setlength{\tabcolsep}{2pt}
+  \begin{longtable}[c]{|>{\centering}p{1cm}|>{\tt}p{3.4cm}|>{\centering}p{1cm}|p{1.6cm}|p{8cm}|}
   \caption{#1}\label{#2} \\
   \hline 位域 & 字段名 & 访问 & 复位值 & 说明\\ \hhline \endfirsthead
   \caption{#1（续）} \\
@@ -96,6 +97,7 @@
   \endlastfoot
 }{
   \end{longtable}
+  \setlength{\tabcolsep}{6pt}
 }
 
 % Definitions for Chapter 3: overlay an image over a table
