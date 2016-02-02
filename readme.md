@@ -14,6 +14,7 @@ Download
 
 Below is a list of documents prepared by the loongson-doc project.
 
+  - [龙芯3B1500 用户手册（上）](https://db.tt/PKhgXelz)
   - [龙芯3B1500 用户手册（下）](https://db.tt/Y5DblTOK)
 
 Tools
