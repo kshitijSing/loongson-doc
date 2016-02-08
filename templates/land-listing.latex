@@ -1,0 +1,53 @@
+\documentclass[border={0 15pt 15pt 0}]{standalone}
+\usepackage{tabu}
+\usepackage{graphicx}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+\makeatletter
+\newcommand{\thickhline}{%
+    \noalign {\ifnum 0=`}\fi \hrule height 1pt
+    \futurelet \reserved@a \@xhline
+}
+\newcolumntype{"}{@{\hskip\tabcolsep\vrule width 1pt\hskip\tabcolsep}}
+\newcommand{\thickcline}[1]{%
+    \@thickcline #1\@nil%
+}
+
+\def\@thickcline#1-#2\@nil{%
+  \omit
+  \@multicnt#1%
+  \advance\@multispan\m@ne
+  \ifnum\@multicnt=\@ne\@firstofone{&\omit}\fi
+  \@multicnt#2%
+  \advance\@multicnt-#1%
+  \advance\@multispan\@ne
+  \leaders\hrule\@height1pt\hfill
+  \cr
+  \noalign{\vskip-1pt}%
+}
+\makeatother
+
+\newcommand{\e}{\multicolumn{1}{c}{}}
+\newcommand{\ec}[1]{\multicolumn{1}{c}{\small\tt #1}}
+\newcommand{\el}[1]{\multicolumn{1}{|[1pt]l}{\small #1}}
+\newcommand{\er}[1]{\multicolumn{1}{r|[1pt]}{\small #1}}
+
+\newcommand{\HToLOLDTSTOPn}{\resizebox{2.34cm}{!}{\tt HT1\_LO\_LDT\_STOPn}}
+\newcommand{\HToLOLDTREQn} {\resizebox{2.34cm}{!}{\tt HT1\_LO\_LDT\_REQn}}
+\newcommand{\HToLOHOSTMODE}{\resizebox{2.34cm}{!}{\tt HT1\_LO\_HOSTMODE}}
+\newcommand{\HToHILDTSTOPn}{\resizebox{2.34cm}{!}{\tt HT1\_HI\_LDT\_STOPn}}
+\newcommand{\HToHILDTREQn} {\resizebox{2.34cm}{!}{\tt HT1\_HI\_LDT\_REQn}}
+\newcommand{\HToHIHOSTMODE}{\resizebox{2.34cm}{!}{\tt HT1\_HI\_HOSTMODE}}
+\newcommand{\HTzLOLDTSTOPn}{\resizebox{2.34cm}{!}{\tt HT0\_LO\_LDT\_STOPn}}
+\newcommand{\HTzLOLDTREQn} {\resizebox{2.34cm}{!}{\tt HT0\_LO\_LDT\_REQn}}
+\newcommand{\HTzLOHOSTMODE}{\resizebox{2.34cm}{!}{\tt HT0\_LO\_HOSTMODE}}
+\newcommand{\HTzHILDTSTOPn}{\resizebox{2.34cm}{!}{\tt HT0\_HI\_LDT\_STOPn}}
+\newcommand{\HTzHILDTREQn} {\resizebox{2.34cm}{!}{\tt HT0\_HI\_LDT\_REQn}}
+\newcommand{\HTzHIHOSTMODE}{\resizebox{2.34cm}{!}{\tt HT0\_HI\_HOSTMODE}}
+
+\begin{document}
+\pagestyle{empty}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.4}
+$body$
+\end{document}

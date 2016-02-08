@@ -6,7 +6,7 @@ TEXFILE  = $(FILEBASE)-v${VERSION}.tex
 JSONFILE = $(FILEBASE)-v${VERSION}.json
 LOTFILE  = $(FILEBASE)-v${VERSION}.lot
 TEMPLATE = ../templates/loongson-3b1500-cn.latex
-OPTIONS  = --chapters --template=$(TEMPLATE)
+OPTIONS  = --from markdown+grid_tables --chapters --template=$(TEMPLATE)
 
 all: $(SOURCES) $(TARGET) $(TEMPLATE)
 

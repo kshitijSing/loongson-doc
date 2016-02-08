@@ -7,86 +7,11 @@
 龙芯 3B1500 的接口信号与龙芯 3A/3B 接口信号引脚定义兼容（注：电源部分不兼容），
 如图 2-1 所示。
 
-                                 MC0/1_DDR2_RESETn                     HTCLK
-                                MC0/1_DDR2_CLKp/n[5:0]                HT0/1_8x2
-                                 MC0/1_DDR2_CKE[3:0]            HT0/1_HI_HOSTMODE
-                                 MC0/1_DDR2_ODT[3:0]               HT0/1_HI_RSTn
-                                 MC0/1_DDR2_SCSn[3:0]            HT0/1_HI_POWEROK
-             CH0/1_DDR2/3信号
-
-                                  MC0/1_DDR2_A[14:0]             HT0/1_HI_LDT_REQn
-                                 MC0/1_DDR2_BA[2:0]             HT0/1_HI_LDT_STOPn
-
-HyperTransport信号
-
-                                  MC0/1_DDR2_RASn               HT0/1_LO_HOSTMODE
-                                  MC0/1_DDR2_CASn                  HT0/1_LO_RSTn
-                                   MC0/1_DDR2_WEn               HT0/1_LO_POWEROK
-                                 MC0/1_DDR2_DQ[63:0]            HT0/1_LO_LDT_REQn
-                                 MC0/1_DDR2_CB[7:0]             HT0/1_LO_LDT_STOPn
-                                MC0/1_DDR2_DQSp/n[8:0]              HT0/1CLKp/n
-                                MC0/1_DDR2_DQM[8:0]             HT0/1_RX_CLKp/n[1:0]
-                                                                HT0/1_RX_CTLp/n[1:0]
-                                     PCI_AD[31:0]               HT0/1_RX_CADp/n[15:0]
-                                     PCI_CBEn[3:0]              HT0/1_TX_CLKp/n[1:0]
-                                    PCI_REQn[6:0]               HT0/1_TX_CTLp/n[1:0]
-                                    PCI_GNTn[6:0]               HT0/1_TX_CADp/n[15:0]
-                                    PCI_IRQn[D:A]
-                                      PCI_IDSEL                      EJTAG_TCK
-                                       PCI_CLK                       EJTAG_TDI
-                                                                     EJTAG
-
-PCI_X信号
-
-                                       PCI_PAR                       EJTAG_TMS
-                                      PCI_PERR                      EJTAG_TRST
-                                      PCI_SERR                       EJTAG_TDO
-                                     PCI_RESETn          龙芯3C
-                                     PCI_FRAMEn                         TCK
-                                      PCI_IRDYn                         TDI
-                                                                                        JTAG
-
-
-
-
-                                      PCI_TRDYn                         TMS
-                                     PCI_DEVSELn                        TRST
-                                      PCI_STOPn                         TDO
-                                   PCI_CONFIG[7:0]
-                                                                    UART0/1_TXD
-                                     LPC_LAD[3:0]                   UART0/1_RXD
-                                    LPC_LFRAMEn                     UART0/1_RTS
-
-LPC信号
-
-UART信号
-
-                                     LPC_SERIRQ                     UART0/1_CTS
-                                    LPC_ROMINTEL                    UART0/1_DSR
-                                   LPC_ROM8MBITS                    UART0/1_DCD
-                                                                    UART0/1_DTR
-                                      SYSRESETn                      UART0/1_RI
-                                       SYSCLK
-
-SYSTEM CONTROL信号
-
-                                       MEMCLK
-                                     CLKSEL[15:0]                     SPI_SCK
-                                      GPIO[15:0]                      SPI_SDO
-                                                                      SPI
-                                       INTn[3:0]                       SPI_SDI
-                                         NMIn
-                                     NODE_ID[1:0]
-                                       ICCC_EN
-                                       TESTCLK
-                                       DOTEST
-
-
-
-
 图 2-1 龙芯 3B1500 处理器接口信号框图
 
 注：箭头指示信号方向，有输入、输出和双向。
+
+\newpage
 
 PCI 总线接口信号
 ----------------
@@ -97,40 +22,44 @@ PCI 总线接口信号
  - 4 位命令数据 ID 总线信号；
  - 14 位总线仲裁信号；
  - 7 位接口控制信号；
- - 2 位错误报告信号；
+ - 2 位错误报告信号。
 
-龙芯 3B1500 处理器 PCI 控制器工作频率为 33MHz，处理器引脚电压为 1.8v。
+\noindent 
+龙芯 3B1500 处理器 PCI 控制器工作频率为 33MHz，处理器引脚电压为 1.8v。所有这些
+信号的电压域都为 `VDDE1V8`。 表 \ref{tab:pcibus-signals} 列出了所有 PCI 总线接
+口信号的具体定义及描述。
 
-    表 2-1 PCI 总线信号是龙芯 3B1500 处理器的 PCI 总线接口信号定义。
-                                表 2-1 PCI 总线信号
-      信号名称          类型                  描述           是否三态    电压域
-    PCI_AD[31:0]     t/s    PCI 地址/数据信号                是    VDDE1V8
-    PCI_CBEn[3:0]    t/s    PCI 命令/字节使能信号，使用时外部上拉      是    VDDE1V8
-      PCI_PAR        t/s    地址/数据奇偶检测信号，使用时外部上拉        是    VDDE1V8
-                            外部设备总线占用请求输入信号，使用时外部
-    PCI_REQn[6:1]    t/s                               否    VDDE1V8
-                            上拉
-                            根据仲裁模式，可为外部设备总线请求输入，
-                            或为到外部仲裁器的总线请求输出信号。使用
-    PCI_REQn[0]      t/s                               是    VDDE1V8
-                            时外部上拉。当使用外部仲裁器时，该信号作
-                            为输出信号。
-                            到外部设备的 PCI 总线允许输出信号，使用时
-    PCI_GNTn[6:1]    t/s                               否    VDDE1V8
-                            外部上拉
-                            根据仲裁模式，可为外部仲裁器返回的总线允
-                            许输入，或为到外部设备的 PCI 总线允许输出。
-    PCI_GNTn[0]      t/s                               是    VDDE1V8
-                            使用时外部上拉。当使用外部仲裁器时，该信
-                            号作为输入信号。
-    PCI_FRAMEn      s/t/s   PCI 帧周期信号，使用时外部上拉          是    VDDE1V8
-     PCI_IRDYn      s/t/s   PCI 主设备准备好信号，使用时外部上拉       是    VDDE1V8
-     PCI_TRDYn      s/t/s   PCI 目标设备准备好信号，使用时外部上拉      是    VDDE1V8
-     PCI_STOPn      s/t/s   PCI 停止数据传送信号，使用时外部上拉       是    VDDE1V8
-    PCI_DEVSELn     s/t/s   PCI 设备选择，使用时外部上拉           是    VDDE1V8
-     PCI_IDSEL       in     PCI 配置片选，作为主桥时应拉低          否    VDDE1V8
-     PCI_PERRn      s/t/s   PCI 数据奇偶错误报告信号，使用时外部上拉     是    VDDE1V8
-     PCI_SERRn      o/d     PCI 系统错误报告，使用时外部上拉         否    VDDE1V8
+\begin{longtable}[c]{>{\tt}lccp{9.5cm}}
+  \caption{PCI 总线信号} \label{tab:pcibus-signals} \\ \toprule
+  \multicolumn{1}{c}{信号名称} & 类型 & 三状态 & \multicolumn{1}{c}{描述} \\
+  \midrule \endfirsthead
+  \caption{PCI 总线信号（续）} \\ \toprule
+  \multicolumn{1}{c}{信号名称} & 类型 & 三状态 & \multicolumn{1}{c}{描述} \\
+  \midrule \endhead
+  \rmcol{4}{\tiny 未完待续} \endfoot
+  \bottomrule \endlastfoot
+
+  PCI\_AD[31:0]  & t/s   & 是 & PCI 地址/数据信号                                 \\
+  PCI\_CBEn[3:0] & t/s   & 是 & PCI 命令/字节使能信号，使用时外部上拉             \\
+  PCI\_PAR       & t/s   & 是 & 地址/数据奇偶检测信号，使用时外部上拉             \\
+  PCI\_REQn[6:1] & t/s   & 否 & 外部设备总线占用请求输入信号，使用时外部上拉      \\
+  PCI\_REQn[0]   & t/s   & 是 & 根据仲裁模式，可为外部设备总线请求输入，         
+                                或为到外部仲裁器的总线请求输出信号。使用          
+                                时外部上拉。当使用外部仲裁器时，该信号作          
+                                为输出信号。                                       \\
+  PCI\_GNTn[6:1] & t/s   & 否 & PCI 总线允许输出信号（到外部设备） ，使用时外部上拉 \\
+  PCI\_GNTn[0]   & t/s   & 是 & 根据仲裁模式，可为外部仲裁器返回的总线允         
+                                许输入，或为到外部设备的 PCI 总线允许输出。使用
+                                时外部上拉。当使用外部仲裁器时，该信号作为输入信号。                                   \\
+  PCI\_FRAMEn    & s/t/s & 是 & PCI 帧周期信号，使用时外部上拉                    \\
+  PCI\_IRDYn     & s/t/s & 是 & PCI 主设备准备好信号，使用时外部上拉              \\
+  PCI\_TRDYn     & s/t/s & 是 & PCI 目标设备准备好信号，使用时外部上拉            \\
+  PCI\_STOPn     & s/t/s & 是 & PCI 停止数据传送信号，使用时外部上拉              \\
+  PCI\_DEVSELn   & s/t/s & 是 & PCI 设备选择，使用时外部上拉                      \\
+  PCI\_IDSEL     & in    & 否 & PCI 配置片选，作为主桥时应拉低                    \\
+  PCI\_PERRn     & s/t/s & 是 & PCI 数据奇偶错误报告信号，使用时外部上拉          \\
+  PCI\_SERRn     & o/d   & 否 & PCI 系统错误报告，使用时外部上拉                  \\
+\end{longtable}
 
 
 HyperTransport 总线接口信号
@@ -149,245 +78,113 @@ HTx_Lo 与 HTx_Hi）。其中每组 HyperTransport 总线信号包括：
  - 4 个 16 位/低 8 位总线控制信号；
  - 4 个高 8 位总线控制信号；
 
-表 2-2 HT 总线信号是龙芯 3B1500 处理器的 HyperTransport 总线接口信号定义。
+\noindent 表 \ref{tab:htbus-signals} 列出了龙芯 3B1500 处理器的 HyperTransport
+总线接口信号定义。
 
-表 2-2 HT 总线信号
+\setlength{\tabcolsep}{2pt}
+\begin{longtable}[c]{>{\tt}lc>{\tt}ccp{8.8cm}}
+  \caption{HT 总线信号} \label{tab:htbus-signals} \\ \toprule
+  信号名称 & I/O & 电源域  & 上下拉 & 描述 \\
+  \midrule \endfirsthead
+  \caption{HT 总线信号（续）} \\ \toprule
+  信号名称 & I/O & 电源域  & 上下拉 & 描述 \\
+  \midrule \endhead
+  \rmcol{5}{\tiny 未完待续} \endfoot
+  \bottomrule \endlastfoot
 
-HT0 总线信号
-                      输入/输                                                   默认上下
-      信号名称                                         描述              电源域
-                       出                                                       拉
-HT0_REXT               IO 需要通过 400 欧姆（400 ohm+/-1%）电阻连接到地          VDDESB      -
-                           为 1 时有效，表示将 HT0 分为 HT0_Lo 与 HT0_Hi 分别使用
-HT0_8x2                 I                                           VDDESB    下拉
-                           为 0 时无效，表示将 HT0 作为 16 位总线使用
-                           为 1 时有效，表示将 HT0_Lo 控制器作为主模式，控制复位等信号
-HT0_Lo_Hostmode         I  为 0 时无效，表示将 HT0_Lo 控制器作为从模式，复位等信号仅为输 VDDESB       上拉
-                           入模式
-                           为 1 时有效，表示将 HT0_Hi 控制器作为主模式，控制复位等信号
-HT0_Hi_Hostmode         I  为 0 时无效，表示将 HT0_Hi 控制器作为从模式，复位等信号仅为输 VDDESB       上拉
-                           入模式
-                           当 HT0_8x2 无效时为 HT0 总线 PowerOK 信号，
-                           当 HT0_8x2 有效时为 HT0_Lo 总线 PowerOK 信号。
-HT0_Lo_PowerOK         I/O                                         VDDESB     上拉
-                           当 HT0_Lo_Hostmode 有效时为双向信号，
-                           当 HT0_Lo_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时为 HT0 总线 Resetn 信号，
-                           当 HT0_8x2 有效时为 HT0_Lo 总线 Resetn 信号。
-HT0_Lo_Resetn          I/O                                         VDDESB     上拉
-                           当 HT0_Lo_Hostmode 有效时为双向信号，
-                           当 HT0_Lo_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时为 HT0 总线 Ldt_Stopn 信号，
-                           当 HT0_8x2 有效时为 HT0_Lo 总线 Ldt_Stopn 信号。
-HT0_Lo_Ldt_Stopn       I/O                                         VDDESB     上拉
-                           当 HT0_Lo_Hostmode 有效时为双向信号，
-                           当 HT0_Lo_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时为 HT0 总线 Ldt_Reqn 信号，
-HT0_Lo_Ldt_reqn        I/O                                          VDDESB    上拉
-                           当 HT0_8x2 有效时为 HT0_Lo 总线 Ldt_Reqn 信号。
-                           当 HT0_8x2 无效时该信号无效，
-                           当 HT0_8x2 有效时为 HT0_Hi 总线 PowerOK 信号。
-HT0_Hi_PowerOK         I/O                                         VDDESB     上拉
-                           当 HT0_Hi_Hostmode 有效时为双向信号，
-                           当 HT0_Hi_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时该信号无效，
-                           当 HT0_8x2 有效时为 HT0_Hi 总线 Resetn 信号。
-HT0_Hi_Resetn          I/O                                         VDDESB     上拉
-                           当 HT0_Hi_Hostmode 有效时为双向信号，
-                           当 HT0_Hi_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时该信号无效，
-                           当 HT0_8x2 有效时为 HT0_Hi 总线 Ldt_Stopn 信号。
-HT0_Hi_LDT_Stopn       I/O                                         VDDESB     上拉
-                           当 HT0_Hi_Hostmode 有效时为双向信号，
-                           当 HT0_Hi_Hostmode 无效时为输入信号。
-                           当 HT0_8x2 无效时该信号无效，
-HT0_Hi_LDT_reqn        I/O                                          VDDESB    上拉
-                           当 HT0_8x2 有效时为 HT0_Hi 总线 Ldt_Reqn 信号。
-                           当 HT0_8x2 无效时，该总线为 HT0 总线发送数据命令总线，
-HT0_Tx_CADp[15:0]       O  当 HT0_8x2 有效时，                          HT_VDDE    无
-                               [7:0]位为 HT0_Lo 总线发送数据命令总线，
-                             [15:0]位为 HT0_Hi 总线发送数据命令总线。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线发送数据命令总线，
-                          当 HT0_8x2 有效时，
-HT0_Tx_CADn[15:0]     O                                            HT_VDDE    无
-                             [7:0]位为 HT0_Lo 总线发送数据命令总线，
-                             [15:0]位为 HT0_Hi 总线发送数据命令总线。
-                          当 HT0_8x2 无效时，
-                             [0]位为 HT0 总线发送控制信号，
-                             [1]位无效。
-HT0_Tx_CTLp[1:0]      O                                            HT_VDDE    无
-                          当 HT0_8x2 有效时，
-                             [0]位为 HT0_Lo 总线发送控制信号，
-                             [1]位为 HT0_Hi 总线发送控制信号。
-                          当 HT0_8x2 无效时，
-                             [0]位为 HT0 总线发送控制信号，
-                             [1]位无效。
-HT0_Tx_CTLn[1:0]      O                                            HT_VDDE    无
-                          当 HT0_8x2 有效时，
-                             [0]位为 HT0_Lo 总线发送控制信号，
-                             [1]位为 HT0_Hi 总线发送控制信号。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线发送时钟总线，
-                          当 HT0_8x2 有效时，
-HT0_Tx_CLKp[1:0]      O                                            HT_VDDE    无
-                             [0]位为 HT0_Lo 总线发送时钟信号，
-                             [1]位为 HT0_Hi 总线发送时钟信号。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线发送时钟总线，
-                          当 HT0_8x2 有效时，
-HT0_Tx_CLKn[1:0]      O                                            HT_VDDE    无
-                             [0]位为 HT0_Lo 总线发送时钟信号，
-                             [1]位为 HT0_Hi 总线发送时钟信号。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线接收数据命令总线，
-                          当 HT0_8x2 有效时，
-HT0_Rx_CADp[15:0]     I                                            HT_VDDE    无
-                             [7:0]位为 HT0_Lo 总线接收数据命令总线，
-                             [15:0]位为 HT0_Hi 总线接收数据命令总线。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线接收数据命令总线，
-                          当 HT0_8x2 有效时，
-HT0_Rx_CADn[15:0]     I                                            HT_VDDE    无
-                             [7:0]位为 HT0_Lo 总线接收数据命令总线，
-                             [15:0]位为 HT0_Hi 总线接收数据命令总线。
-                          当 HT0_8x2 无效时，
-                             [0]位为 HT0 总线接收控制信号，
-                             [1]位无效。
-HT0_Rx_CTLp[1:0]      I                                            HT_VDDE    无
-                          当 HT0_8x2 有效时，
-                             [0]位为 HT0_Lo 总线接收控制信号，
-                             [1]位为 HT0_Hi 总线接收控制信号。
-                          当 HT0_8x2 无效时，
-                             [0]位为 HT0 总线接收控制信号，
-                             [1]位无效。
-HT0_Rx_CTLn[1:0]      I                                            HT_VDDE    无
-                          当 HT0_8x2 有效时，
-                             [0]位为 HT0_Lo 总线接收控制信号，
-                             [1]位为 HT0_Hi 总线接收控制信号。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线接收时钟总线，
-                          当 HT0_8x2 有效时，
-HT0_Rx_CLKp[1:0]      I                                            HT_VDDE    无
-                             [0]位为 HT0_Lo 总线接收时钟信号，
-                             [1]位为 HT0_Hi 总线接收时钟信号。
-                          当 HT0_8x2 无效时，该总线为 HT0 总线接收时钟总线，
-                          当 HT0_8x2 有效时，
-HT0_Rx_CLKn[1:0]      I                                            HT_VDDE    无
-                             [0]位为 HT0_Lo 总线接收时钟信号，
-                             [1]位为 HT0_Hi 总线接收时钟信号。
-                                          HT1 总线信号
-                    输入/输                                                     默认上下
-      信号名称                                   描述                    电源域
-                     出                                                         拉
-HT1_REXT             IO 需要通过 400 欧姆（400 ohm+/-1%）电阻连接到地            VDDESB      -
-                         为 1 时有效，表示将 HT1 分为 HT0_Lo 与 HT0_Hi 分别使用
-HT1_8x2              I                                             VDDESB     下拉
-                         为 0 时无效，表示将 HT1 作为 16 位总线使用
-                          为 1 时有效，表示将 HT1_Lo 控制器作为主模式，控制复位等信号
-HT1_Lo_Hostmode     I     为 0 时无效，表示将 HT1_Lo 控制器作为从模式，复位等信号仅为输     VDDESB    上拉
-                          入模式
-                          为 1 时有效，表示将 HT1_Hi 控制器作为主模式，控制复位等信号
-HT1_Hi_Hostmode     I     为 0 时无效，表示将 HT1_Hi 控制器作为从模式，复位等信号仅为输     VDDESB    上拉
-                          入模式
-                          当 HT1_8x2 无效时为 HT1 总线 PowerOK 信号，
-                          当 HT1_8x2 有效时为 HT1_Lo 总线 PowerOK 信号。
-HT1_Lo_PowerOK      I/O                                            VDDESB    上拉
-                          当 HT1_Lo_Hostmode 有效时为双向信号，
-                          当 HT1_Lo_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时为 HT1 总线 Resetn 信号，
-                          当 HT1_8x2 有效时为 HT1_Lo 总线 Resetn 信号。
-HT1_Lo_Resetn       I/O                                            VDDESB    上拉
-                          当 HT1_Lo_Hostmode 有效时为双向信号，
-                          当 HT1_Lo_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时为 HT1 总线 Ldt_Stopn 信号，
-                          当 HT1_8x2 有效时为 HT1_Lo 总线 Ldt_Stopn 信号。
-HT1_Lo_Ldt_Stopn    I/O                                            VDDESB    上拉
-                          当 HT1_Lo_Hostmode 有效时为双向信号，
-                          当 HT1_Lo_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时为 HT1 总线 Ldt_Reqn 信号，
-HT1_Lo_Ldt_reqn     I/O                                            VDDESB    上拉
-                          当 HT1_8x2 有效时为 HT1_Lo 总线 Ldt_Reqn 信号。
-                          当 HT1_8x2 无效时该信号无效，
-                          当 HT1_8x2 有效时为 HT1_Hi 总线 PowerOK 信号。
-HT1_Hi_PowerOK      I/O                                            VDDESB    上拉
-                          当 HT1_Hi_Hostmode 有效时为双向信号，
-                          当 HT1_Hi_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时该信号无效，
-                          当 HT1_8x2 有效时为 HT1_Hi 总线 Resetn 信号。
-HT1_Hi_Resetn       I/O                                            VDDESB    上拉
-                          当 HT1_Hi_Hostmode 有效时为双向信号，
-                          当 HT1_Hi_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时该信号无效，
-                          当 HT1_8x2 有效时为 HT1_Hi 总线 Ldt_Stopn 信号。
-HT1_Hi_LDT_Stopn    I/O                                            VDDESB    上拉
-                          当 HT1_Hi_Hostmode 有效时为双向信号，
-                          当 HT1_Hi_Hostmode 无效时为输入信号。
-                          当 HT1_8x2 无效时该信号无效，
-HT1_Hi_LDT_reqn     I/O                                            VDDESB    上拉
-                          当 HT1_8x2 有效时为 HT1_Hi 总线 Ldt_Reqn 信号。
-                          当 HT1_8x2 无效时，该总线为 HT1 总线发送数据命令总线，
-                          当 HT1_8x2 有效时，
-HT1_Tx_CADp[15:0]   O                                              HT_VDDE   无
-                              [7:0]位为 HT1_Lo 总线发送数据命令总线，
-                              [15:0]位为 HT1_Hi 总线发送数据命令总线。
-                          当 HT1_8x2 无效时，该总线为 HT1 总线发送数据命令总线，
-                          当 HT1_8x2 有效时，
-HT1_Tx_CADn[15:0]   O                                              HT_VDDE   无
-                              [7:0]位为 HT1_Lo 总线发送数据命令总线，
-                          [15:0]位为 HT1_Hi 总线发送数据命令总线。
-                          当 HT1_8x2 无效时，
-                              [0]位为 HT1 总线发送控制信号，
-                              [1]位无效。
-HT1_Tx_CTLp[1:0]    O                                              HT_VDDE   无
-                          当 HT1_8x2 有效时，
-                              [0]位为 HT1_Lo 总线发送控制信号，
-                              [1]位为 HT1_Hi 总线发送控制信号。
-                          当 HT1_8x2 无效时，
-                              [0]位为 HT1 总线发送控制信号，
-                              [1]位无效。
-HT1_Tx_CTLn[1:0]    O                                              HT_VDDE   无
-                          当 HT1_8x2 有效时，
-                              [0]位为 HT1_Lo 总线发送控制信号，
-                              [1]位为 HT1_Hi 总线发送控制信号。
-                          当 HT1_8x2 无效时，该总线为 HT0 总线发送时钟总线，
-                          当 HT1_8x2 有效时，
-HT1_Tx_CLKp[1:0]    O                                              HT_VDDE   无
-                              [0]位为 HT1_Lo 总线发送时钟信号，
-                              [1]位为 HT1_Hi 总线发送时钟信号。
-HT1_Tx_CLKn[1:0]    O     当 HT1_8x2 无效时，该总线为 HT0 总线发送时钟总线，         HT_VDDE   无
-                             当 HT1_8x2 有效时，
-                                [0]位为 HT1_Lo 总线发送时钟信号，
-                                [1]位为 HT1_Hi 总线发送时钟信号。
-                             当 HT1_8x2 无效时，该总线为 HT1 总线接收数据命令总线，
-                             当 HT1_8x2 有效时，
-HT1_Rx_CADp[15:0]        I                                        HT_VDDE   无
-                                [7:0]位为 HT1_Lo 总线接收数据命令总线，
-                                [15:0]位为 HT1_Hi 总线接收数据命令总线。
-                             当 HT1_8x2 无效时，该总线为 HT1 总线接收数据命令总线，
-                             当 HT1_8x2 有效时，
-HT1_Rx_CADn[15:0]        I                                        HT_VDDE   无
-                                [7:0]位为 HT1_Lo 总线接收数据命令总线，
-                                [15:0]位为 HT1_Hi 总线接收数据命令总线。
-                             当 HT1_8x2 无效时，
-                                [0]位为 HT1 总线接收控制信号，
-                                [1]位无效。
-HT1_Rx_CTLp[1:0]         I                                        HT_VDDE   无
-                             当 HT1_8x2 有效时，
-                                [0]位为 HT1_Lo 总线接收控制信号，
-                                [1]位为 HT1_Hi 总线接收控制信号。
-                             当 HT1_8x2 无效时，
-                                [0]位为 HT1 总线接收控制信号，
-                                [1]位无效。
-HT1_Rx_CTLn[1:0]         I                                        HT_VDDE   无
-                             当 HT1_8x2 有效时，
-                                [0]位为 HT1_Lo 总线接收控制信号，
-                                [1]位为 HT1_Hi 总线接收控制信号。
-                             当 HT1_8x2 无效时，该总线为 HT0 总线发送时钟总线，
-                             当 HT1_8x2 有效时，
-HT1_Rx_CLKp[1:0]         I                                        HT_VDDE   无
-                                [0]位为 HT1_Lo 总线发送时钟信号，
-                                [1]位为 HT1_Hi 总线发送时钟信号。
-                             当 HT1_8x2 无效时，该总线为 HT0 总线接收时钟总线，
-                             当 HT1_8x2 有效时，
-HT1_Rx_CLKn[1:0]         I                                        HT_VDDE   无
-                                [0]位为 HT1_Lo 总线接收时钟信号，
-                                [1]位为 HT1_Hi 总线接收时钟信号。
-
+ HT\textsl{x}\_REXT          & IO        & VDDESB  & -      & 需要通过 400 欧姆（$\pm1\%$）电阻接地 \\ \midrule
+ HT0\_8x2           & I         & VDDESB  & 下拉   & 1：有效，将 HT0 分为 HT0\_Lo 与 HT0\_Hi 分别使用 \newline
+                                                     0：无效，将 HT0 作为一个 16 位总线使用 \\ \midrule
+ HT0\_Lo\_Mode   & I         & VDDESB  & 上拉   & 1：HT0\_Lo 控制器为主模式，控制复位等信号
+                                                    0：HT0\_Lo 控制器为从模式，复位等信号为输入模式 \\ \midrule
+ HT0\_Hi\_Mode   & I         & VDDESB  & 上拉   & 1：HT0\_Hi 控制器为主模式，控制复位等信号
+                                                    0：HT0\_Hi 控制器为从模式，复位等信号仅为输入模式 \\ \midrule
+ HT0\_Lo\_PowerOK    & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时为 HT0 总线 PowerOK 信号，
+                                                    当 HT0\_8x2 有效时为 HT0\_Lo 总线 PowerOK 信号。
+                                                    当 HT0\_Lo\_Mode 有效时为双向信号，
+                                                    当 HT0\_Lo\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Lo\_Resetn     & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时为 HT0 总线 Resetn 信号，
+                                                    当 HT0\_8x2 有效时为 HT0\_Lo 总线 Resetn 信号。
+                                                    当 HT0\_Lo\_Mode 有效时为双向信号，
+                                                    当 HT0\_Lo\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Lo\_Ldt\_Stopn  & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时为 HT0 总线 Ldt\_Stopn 信号，
+                                                    当 HT0\_8x2 有效时为 HT0\_Lo 总线 Ldt\_Stopn 信号。
+                                                    当 HT0\_Lo\_Mode 有效时为双向信号，
+                                                    当 HT0\_Lo\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Lo\_Ldt\_reqn   & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时为 HT0 总线 Ldt\_Reqn 信号，
+                                                    当 HT0\_8x2 有效时为 HT0\_Lo 总线 Ldt\_Reqn 信号。 \\ \midrule
+ HT0\_Hi\_PowerOK    & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时该信号无效，
+                                                    当 HT0\_8x2 有效时为 HT0\_Hi 总线 PowerOK 信号。
+                                                    当 HT0\_Hi\_Mode 有效时为双向信号，
+                                                    当 HT0\_Hi\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Hi\_Resetn     & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时该信号无效，
+                                                    当 HT0\_8x2 有效时为 HT0\_Hi 总线 Resetn 信号。
+                                                    当 HT0\_Hi\_Mode 有效时为双向信号，
+                                                    当 HT0\_Hi\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Hi\_LDT\_Stopn  & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时该信号无效，
+                                                    当 HT0\_8x2 有效时为 HT0\_Hi 总线 Ldt\_Stopn 信号。
+                                                    当 HT0\_Hi\_Mode 有效时为双向信号，
+                                                    当 HT0\_Hi\_Mode 无效时为输入信号。 \\ \midrule
+ HT0\_Hi\_LDT\_reqn   & I/O       & VDDESB  & 上拉   & 当 HT0\_8x2 无效时该信号无效，
+                                                    当 HT0\_8x2 有效时为 HT0\_Hi 总线 Ldt\_Reqn 信号。 \\ \midrule
+ HT0\_Tx\_CADp[15:0] & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线发送数据命令总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [7:0]位为 HT0\_Lo 总线发送数据命令总线，
+                                                    [15:0]位为 HT0\_Hi 总线发送数据命令总线。 \\ \midrule
+ HT0\_Tx\_CADn[15:0] & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线发送数据命令总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [7:0]位为 HT0\_Lo 总线发送数据命令总线，
+                                                    [15:0]位为 HT0\_Hi 总线发送数据命令总线。 \\ \midrule
+ HT0\_Tx\_CTLp[1:0]  & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，
+                                                    [0]位为 HT0 总线发送控制信号，
+                                                    [1]位无效。
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线发送控制信号，
+                                                    [1]位为 HT0\_Hi 总线发送控制信号。 \\ \midrule
+ HT0\_Tx\_CTLn[1:0]  & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，
+                                                    [0]位为 HT0 总线发送控制信号，
+                                                    [1]位无效。
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线发送控制信号，
+                                                    [1]位为 HT0\_Hi 总线发送控制信号。 \\ \midrule
+ HT0\_Tx\_CLKp[1:0]  & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线发送时钟总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线发送时钟信号，
+                                                    [1]位为 HT0\_Hi 总线发送时钟信号。 \\ \midrule
+ HT0\_Tx\_CLKn[1:0]  & O         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线发送时钟总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线发送时钟信号，
+                                                    [1]位为 HT0\_Hi 总线发送时钟信号。 \\ \midrule
+ HT0\_Rx\_CADp[15:0] & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线接收数据命令总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [7:0]位为 HT0\_Lo 总线接收数据命令总线，
+                                                    [15:0]位为 HT0\_Hi 总线接收数据命令总线。 \\ \midrule
+ HT0\_Rx\_CADn[15:0] & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线接收数据命令总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [7:0]位为 HT0\_Lo 总线接收数据命令总线，
+                                                    [15:0]位为 HT0\_Hi 总线接收数据命令总线。 \\ \midrule
+ HT0\_Rx\_CTLp[1:0]  & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，
+                                                    [0]位为 HT0 总线接收控制信号，
+                                                    [1]位无效。
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线接收控制信号，
+                                                    [1]位为 HT0\_Hi 总线接收控制信号。 \\ \midrule
+ HT0\_Rx\_CTLn[1:0]  & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，
+                                                    [0]位为 HT0 总线接收控制信号，
+                                                    [1]位无效。
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线接收控制信号，
+                                                    [1]位为 HT0\_Hi 总线接收控制信号。 \\ \midrule
+ HT0\_Rx\_CLKp[1:0]  & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线接收时钟总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线接收时钟信号，
+                                                    [1]位为 HT0\_Hi 总线接收时钟信号。 \\ \midrule
+ HT0\_Rx\_CLKn[1:0]  & I         & HT\_VDDE & 无     & 当 HT0\_8x2 无效时，该总线为 HT0 总线接收时钟总线，
+                                                    当 HT0\_8x2 有效时，
+                                                    [0]位为 HT0\_Lo 总线接收时钟信号，
+                                                    [1]位为 HT0\_Hi 总线接收时钟信号。
+\end{longtable}
+\setlength{\tabcolsep}{6pt}
 
 DDR2/3 SDRAM 总线接口信号
 -------------------------
@@ -406,103 +203,110 @@ DDR2/3 SDRAM 总线接口信号
  - 4 位 ODT(On Die Termination)信号；
  - 1 位复位控制信号。
 
-表 2-3 DDR2 SDRAM 控制器接口信号是龙芯 3B1500 每一组 DDR2 SDRAM 控制器接口信号
-。共有两组，分别在电源域上分为 0/1。
+表 \ref{tab:ddr-signals} 列出了所有 DDR2 SDRAM 控制器接口信号。注意，龙芯
+3B1500 每一组 DDR2 SDRAM 控制器接口信号，共有两组：表中的 `*` 可以分别为 0 或 1
+。
 
-表 2-3 DDR2 SDRAM 控制器接口信号
+Table: DDR2 SDRAM 控制器接口信号 \label{tab:ddr-signals}
 
-             信号名称          输入/输出                    描述                    电源域
-                                      需要通过 240 欧姆（240 ohm+/-1%）电阻连     MEM_VDDE_0/1
-       MC*_DDR_REXT              IO
-                                      接到地
-       MC*_DDR_DQ[63:0]          IO   DDR2/3 SDRAM 数据总线信号              MEM_VDDE_0/1
-       MC*_DDR_CB[7:0]           IO   DDR2/3 SDRAM 数据总线 ECC 信号         MEM_VDDE_0/1
-       MC*_DDR_DQSp[8:0]         IO   DDR2/3 SDRAM 数据选通（包括 ECC）        MEM_VDDE_0/1
-       MC*_DDR_DQSn[8:0]         IO   DDR2/3 SDRAM 数据选通（包括 ECC）        MEM_VDDE_0/1
-       MC*_DDR_DQM[8:0]           O   DDR2/3 SDRAM 数据屏蔽（包括 ECC）        MEM_VDDE_0/1
-       MC*_DDR_A[15:0]            O   DDR2/3 SDRAM 地址总线信号              MEM_VDDE_0/1
-       MC*_DDR_BA[2:0]            O   DDR2/3 SDRAM 逻辑 Bank 地址信号        MEM_VDDE_0/1
-       MC*_DDR_WEn                O   DDR2/3 SDRAM 写使能信号               MEM_VDDE_0/1
-       MC*_DDR_CASn               O   DDR2/3 SDRAM 列地址选择信号             MEM_VDDE_0/1
-       MC*_DDR_RASn               O   DDR2/3 SDRAM 行地址选择信号             MEM_VDDE_0/1
-       MC*_DDR_CSn[3:0]           O   DDR2/3 SDRAM 片选信号                MEM_VDDE_0/1
-       MC*_DDR_CKE[3:0]           O   DDR2/3 SDRAM 时钟使能信号              MEM_VDDE_0/1
-                                      DDR2/3 SDRAM 差分时钟输出信号            MEM_VDDE_0/1
-       MC*_DDR_CKp[5:0]          O    {1,3,5}为一组 DIMM 时钟，
-                                      {0,2,4}为另一组 DIMM 时钟
-                                      DDR2/3 SDRAM 差分时钟输出信号            MEM_VDDE_0/1
-       MC*_DDR_CKn[5:0]          O    {1,3,5}为一组 DIMM 时钟，
-                                      {0,2,4}为另一组 DIMM 时钟
-       MC*_DDR_ODT[3:0]          O    DDR2/3 SDRAM ODT 信号              MEM_VDDE_0/1
-       MC*_DDR_Resetn            O    DDR2/3 SDRAM 复位控制信号              MEM_VDDE_0/1
+| 信号名称            | I/O | 电源域         | 描述                              |
+| ------------------- | --- | -------------- | --------------------------------- |
+| `MC*_DDR_REXT`      | IO  | `MEM_VDDE_0/1` | 需要通过 240 欧姆（-1\%）电阻接地 |
+| `MC*_DDR_DQ[63:0]`  | IO  | `MEM_VDDE_0/1` | DDR2/3 SDRAM 数据总线信号         |
+| `MC*_DDR_CB[7:0]`   | IO  | `MEM_VDDE_0/1` | DDR2/3 SDRAM 数据总线 ECC 信号    |
+| `MC*_DDR_DQSp[8:0]` | IO  | `MEM_VDDE_0/1` | DDR2/3 SDRAM 数据选通（包括 ECC） |
+| `MC*_DDR_DQSn[8:0]` | IO  | `MEM_VDDE_0/1` | DDR2/3 SDRAM 数据选通（包括 ECC） |
+| `MC*_DDR_DQM[8:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 数据屏蔽（包括 ECC） |
+| `MC*_DDR_A[15:0]`   | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 地址总线信号         |
+| `MC*_DDR_BA[2:0]`   | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 逻辑 Bank 地址信号   |
+| `MC*_DDR_WEn`       | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 写使能信号           |
+| `MC*_DDR_CASn`      | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 列地址选择信号       |
+| `MC*_DDR_RASn`      | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 行地址选择信号       |
+| `MC*_DDR_CSn[3:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 片选信号             |
+| `MC*_DDR_CKE[3:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 时钟使能信号         |
+| `MC*_DDR_CKp[5:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 差分时钟输出信号     |
+|                     |     |                | {1,3,5}为一组 DIMM 时钟，         |
+|                     |     |                | {0,2,4}为另一组 DIMM 时钟         |
+| `MC*_DDR_CKn[5:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 差分时钟输出信号     |
+|                     |     |                | {1,3,5}为一组 DIMM 时钟，         |
+|                     |     |                | {0,2,4}为另一组 DIMM 时钟         |
+| `MC*_DDR_ODT[3:0]`  | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM ODT 信号             |
+| `MC*_DDR_Resetn`    | O   | `MEM_VDDE_0/1` | DDR2/3 SDRAM 复位控制信号         |
 
 
 初始化信号
 ----------
 
 表 2-4 初始化接口信号 提供了初始化信号的名称，方向和描述。 PCI 控制器只支持
-1.8V 信号环境。
+1.8V 信号环境。                电压域            VDDE1V8
 
 表 2-4 初始化接口信号
 
-        信号名称          输入/输出                           描述                 电压域
-                                      系统复位信号，该信号的低电平状态需要维持              VDDE1V8
-    SYSRESETn               I         多于一个 SYSCLK 周期，它可异步于 SYSCLK
-                                      信号。
-    PCI_RESETn             I/O        PCI 接口复位信号                        VDDE1V8
-                                      PCI 配置                            VDDE1V8
-                                      7     HT 参考时钟选择
-                                      6:5 PCIX 总线速度选择
-                                      4     PCIX 总线模式选择
-                                      3     PCI 主桥模式选择
-                                      2     PCI 启动模式选择
-                                      1     外部仲裁选择
-                                      0     保留
-                                      注:
-    PCI_CONFIG[7:0]         I             6      5  4   PCIX 总线模式
-                                          0      0  0   PCI 33
+\begin{longtable}[c]{>{\tt}lcp{10cm}}
+  \caption{控制引脚说明}\label{tab:sysPinControl} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endfirsthead
+  \caption{控制引脚说明（续）} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endhead
+  \hline \multicolumn{3}{r}{\tiny 未完待续} \endfoot \bottomrule \endlastfoot
+                               
+  SYSRESETn        & I    & 系统复位信号，该信号的低电平状态需要维持多于一个
+                            SYSCLK 周期，它可异步于 SYSCLK 信号。 \\
 
-                                        3   PCI 主桥模式
-                                        0   作为从设备
-                                        1   作为主桥
+  PCI\_RESETn       & I/O  & PCI 接口复位信号 \\
 
-                                        2   PCI 启动模式
-                                        0   从 LPC/SPI 启动（GPIO0 决定）
-                                        1   从 PCI 总线的 0x1fc00000 处启动
-                                 1   外部仲裁选择
-                                 0   使用内部 PCI 仲裁器
-                                 1   使用外部 PCI 仲裁器
+  PCI\_CONFIG[7]   & I & 输入时钟 \newline
+                     \hspace*{.5cm} 1：普通输入时钟 100MHz（HTCLK），\newline
+                     \hspace*{.5cm} 0：差分输入时钟 200MHz（HTnCLKp/n）\\
 
-                                  7 HT 参考时钟选择
-                                  1 使用单端 100MHz 参考时钟
-                                  0 使用差分 200MHz 参考时钟
-                             1   芯片内时钟延迟控制使能，默认情况需要
-                                 下拉
-    GPIO[1:0]         I/O
-                             0   芯片启动设置，上拉表示从 SPI Flash 取指，
-                                 下拉表示从 LPC Flash 取指
+  PCI\_CONFIG[6:5] & I & PCIX 总线速度选择 \\
 
-           SYSRESETn：这个复位信号是唯一能复位整个龙芯 3B1500 处理器的信号。
-            SYSCLK 和 MEMCLK 必须在 SYSRESETn 释放到无效前就保持稳定。
-                                                     SYSRESETn
-            的有效时间必须大于一个时钟周期。处理器内部的复位控制逻辑在 SYSRESETn
-            无效时才开始复位处理器。处理器内部复位将在 64K 个 SYSCLK 周期后完成，之
-            后复位异常处理才可以被执行
-           PCI_RESETn：当龙芯 3B1500 作为 PCI 总线主桥时，这个信号工作为输出，系统
-            中的 PCI/PCI-X 设备的复位必须由该信号控制。当龙芯 3B1500 作为 PCI/PCI-X 设
-            备工作时，该信号作为输入用来复位龙芯 3B1500 的 PCI 接口。
-                注：当龙芯 3B1500 作为 PCI 总线主桥时，处理器仅在系统上电复位时会产生
-                  PCI_RESETn 复位信号，龙芯 3B1500 软复位时，需使用 GPIO 和外部复位
-                  电路配合，使处理器产生 PCI_RESETn 复位信号。
-           PCI_CONFIG[7:0]：定义了龙芯 3B1500 PCI/PCI-X 接口的工作模式以及其它需要
-            静态配置的信号，它在系统复位时必须保持稳定。系统开始运行时软件从内部寄
-            存器中读取该值。如果系统设置成从 PCI 地址空间启动，则第一条指令的 PCI 地
-            址是 0x1fc00000，否则系统将从 LPC 或 SPI 总线的 ROM 空间 0 地址处开始取指
-            （由 GPIO00 决定）。
-           GPIO[1:0]：这两个信号只有在 SYSRESETn 有效时在处理器内部进行采样。第 0
-            位用于指定处理器的启动时使用的 Flash，上拉时表示使用 SPI Flash，下拉表示使
-            用 LPC Flash。第 1 位用于控制是否采用 EJTAG 控制处理器内部各个不同部分的
-            延迟，下拉时为正常延迟模式，上拉时使用 EJTAG 控制。
+  PCI\_CONFIG[4]   & I & PCIX 总线模式选择 \\
+
+  PCI\_CONFIG[3]   & I & PCI 主设备模式 \newline
+                     0：从设备；1：主设备 \\
+
+  PCI\_CONFIG[2]   & I & 系统启动空间信号\newline
+                     \hspace*{.5cm} 1: 系统从 PCI 空间（\texttt{0x1FC0\_0000}）启动 \newline
+                     \hspace*{.5cm} 0: GPIO[0] 决定启动空间 \\
+
+  PCI\_CONFIG[1]   & I & 外部仲裁选择 \newline
+                      \hspace*{.5cm} 0   使用内部 PCI 仲裁器 \newline
+                      \hspace*{.5cm} 1   使用外部 PCI 仲裁器 \\
+
+  PCI\_CONFIG[0]   & I & HT 控制信号引脚电压控制位 0 \\[.1cm]
+
+  GPIO[1]          & I & 芯片内时钟延迟控制使能（调试模式），默认下拉 \\
+
+  GPIO[0]          & I & 芯片启动设置 \newline
+                     \hspace*{.5cm} 上拉表示从 SPI Flash 取指，
+                     下拉表示从 LPC Flash 取指 \\
+\end{longtable}                     
+
+  - SYSRESETn 是唯一能复位整个龙芯 3B1500 处理器的信号。 SYSCLK 和 MEMCLK 必须
+    在 SYSRESETn 释放到无效前保持稳定。 SYSRESETn 的有效时间必须大于一个时钟周
+    期。处理器内部的复位控制逻辑在 SYSRESETn 无效时才开始复位处理器。处理器内部
+    复位将在 64K 个 SYSCLK 周期后完成，之后复位异常处理才可以被执行
+
+  - PCI_RESETn：当龙芯 3B1500 作为 PCI 总线主桥时，这个信号工作为输出，系统
+    中的 PCI/PCI-X 设备的复位必须由该信号控制。当龙芯 3B1500 作为 PCI/PCI-X 设备
+    工作时，该信号作为输入用来复位龙芯 3B1500 的 PCI 接口。
+
+    注意：当龙芯 3B1500 作为 PCI 总线主桥时，处理器仅在系统上电复位时会产生
+    PCI_RESETn 复位信号，龙芯 3B1500 软复位时，需使用 GPIO 和外部复位电路配合，
+    使处理器产生 PCI_RESETn 复位信号。
+
+  - PCI_CONFIG[7:0]：定义了龙芯 3B1500 PCI/PCI-X 接口的工作模式以及其它需要
+    静态配置的信号，它在系统复位时必须保持稳定。系统开始运行时软件从内部寄存器中
+    读取该值。如果系统设置成从 PCI 地址空间启动，则第一条指令的 PCI 地址是
+    0x1fc00000，否则系统将从 LPC 或 SPI 总线的 ROM 空间 0 地址处开始取指（由
+    GPIO00 决定）。
+
+  - GPIO[1:0]：这两个信号只有在 SYSRESETn 有效时在处理器内部进行采样。第 0 位用
+    于指定处理器的启动时使用的 Flash，上拉时表示使用 SPI Flash，下拉表示使用 LPC
+    Flash。第 1 位用于控制是否采用 EJTAG 控制处理器内部各个不同部分的延迟，下拉
+    时为正常延迟模式，上拉时使用 EJTAG 控制。
 
 低速 I/O 接口
 -------------
@@ -547,38 +351,47 @@ UART 控制器具有以下特性
 
 这些低速 I/O 接口包含的信号如下：
 
-表 2-5 LPC 接口信号
-
-信号名称        输入/输出                          描述                    电压域
-L_AD[3:0]    I/O      LPC 总线地址数据信号                              VDDE1V8
-L_FRAME       O       LPC 总线数据开始/结束信号                           VDDE1V8
- L_SIRQ      I/O      LPC 总线 serial IRQ 信号，用于传输串行中断信号           VDDE1V8
-                      LPC 启动 flash 8Mbits 和 4Mbits 设置。该信号为高表示
-L_8MBits       I      LPC 所接的启动 flash 为 8Mbits，该信号为低表示 LPC      VDDE1V8
-                      所接的启动 flash 为 4Mbits
-                      LPC 启动 flash 类型设置。   该信号为高表示所接启动 flash
-L_INTEL        I                                                VDDE1V8
-                      为 INTEL 类型，否则为 AMD 类型
-
-                              表 2-6 SPI 接口信号
- 信号名称         输入/输出                  描述                  电压域
- SPI_SCK        O   SPI 总线时钟                            VDDE1V8
- SPI_SDO        O   SPI 总线数据输出                          VDDE1V8
- SPI_SDI        I   SPI 总线数据输入                          VDDE1V8
+LPC 接口信号
+SPI 接口信号
+UART 接口信号
 
 
 
-                             表 2-7 UART 接口信号
-  信号名称           输入/输出                描述                电压域
-   TXD             O      串口数据输出                       VDDE1V8
-   RXD             I      串口数据输入                       VDDE1V8
-   RTS             O      串口数据传输请求                     VDDE1V8
-   CTS             I      设备接受数据就绪                     VDDE1V8
-   DTR             O      串口初始化完成                      VDDE1V8
-   DSR             I      设备初始化完成                      VDDE1V8
-   DCD             I      外部 MODEM 探测到载波信号             VDDE1V8
-    RI             I      外部 MODEM 探测到振铃信号             VDDE1V8
 
+信号名称   输入/输出                          描述                           电压域
+
+\begin{longtable}[c]{>{\tt}lc>{\tt}cp{9cm}}
+  \caption{控制引脚说明}\label{tab:sysPinControl} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} &
+  \multicolumn{1}{c}{电压域}   & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endfirsthead
+  \caption{控制引脚说明（续）} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} &
+  \multicolumn{1}{c}{电压域}   & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endhead
+  \hline \multicolumn{4}{r}{\tiny 未完待续} \endfoot \bottomrule \endlastfoot
+                               
+ L\_AD[3:0] & I/O & VDDE1V8 & LPC 总线地址数据信号                                   \\
+ L\_FRAME   & O   & VDDE1V8 & LPC 总线数据开始/结束信号                              \\
+ L\_SIRQ    & I/O & VDDE1V8 & LPC 总线 Serial IRQ 信号，用于传输串行中断信号         \\
+ L\_8MBits  & I   & VDDE1V8 & LPC 启动闪存设置。
+                             高：LPC 启动闪存为 8Mbits；低： LPC启动闪存为 4Mbits   \\
+ L\_INTEL   & I   & VDDE1V8 & LPC 启动 flash 类型设置。该信号为高表示所接启动 flash 
+                             为 INTEL 类型，否则为 AMD 类型                         \\
+
+ SPI\_SCK   & O   & VDDE1V8 & SPI 总线时钟                                           \\
+ SPI\_SDO   & O   & VDDE1V8 & SPI 总线数据输出                                       \\
+ SPI\_SDI   & I   & VDDE1V8 & SPI 总线数据输入                                       \\
+
+ TXD       & O   & VDDE1V8 & 串口数据输出                                           \\
+ RXD       & I   & VDDE1V8 & 串口数据输入                                           \\
+ RTS       & O   & VDDE1V8 & 串口数据传输请求                                       \\
+ CTS       & I   & VDDE1V8 & 设备接受数据就绪                                       \\
+ DTR       & O   & VDDE1V8 & 串口初始化完成                                         \\
+ DSR       & I   & VDDE1V8 & 设备初始化完成                                         \\
+ DCD       & I   & VDDE1V8 & 外部 MODEM 探测到载波信号                              \\
+ RI        & I   & VDDE1V8 & 外部 MODEM 探测到振铃信号                              \\
+\end{longtable}
 
 芯片引脚中断信号
 ----------------
@@ -597,22 +410,27 @@ CR_STATUS 的 IP2-5 位)四根中断中的任意一个。有关中断的详细�
 
 表 2-8 引脚中断信号描述
 
-          信号名称          输入/输出               描述              电压域
-                                不可屏蔽中断信号，（复位为低有效），
-            NMIn          I                                VDDE1V8
-                                需视实际情况上下拉。
-                                4 个外部中断信号，这些信号分别连接到
-          INTn[3:0]       I     处理器中断寄存器(CR_CAUSE IP 域)的   VDDE1V8
-                                位 3 到位 0，需视实际情况上下拉。
-                                这些中断信号应在中断控制器中使能，低
-        PCI_IRQ[3:0]      I     电平有效。这些中断能够被路由到中断寄         VDDE1V8
-                                存器的第 7 到 4 位，需外部上拉。
-                                PCI 总线奇偶错信号，低电平有效。这些
-        PCI_PERRn        I/O    中断能够被路由到中断寄存器的第 15 位，      VDDE1V8
-                                需外部上拉。
-                                PCI 总线系统错，低电平有效。这些中断
-        PCI_SERRn        I/O    能够被路由到中断寄存器的第 15 位（与       VDDE1V8
-                                PCI_SERRn 共享），需外部上拉。
+\begin{longtable}[c]{>{\tt}lc>{\tt}cp{9.5cm}}
+  \caption{控制引脚说明}\label{tab:sysPinControl} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} &
+  \multicolumn{1}{c}{电压域}   & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endfirsthead
+  \caption{控制引脚说明（续）} \tabularnewline \toprule
+  \multicolumn{1}{c}{信号名称} & \multicolumn{1}{c}{I/O} &
+  \multicolumn{1}{c}{电压域}   & \multicolumn{1}{c}{描述}
+  \tabularnewline \midrule \endhead
+  \hline \multicolumn{4}{r}{\tiny 未完待续} \endfoot \bottomrule \endlastfoot
+
+ NMIn         & I   & VDDE1V8 & 不可屏蔽中断信号（复位为低有效），视实际情况上下拉 \\
+ INTn[3:0]    & I   & VDDE1V8 & 4 个外部中断信号，这些信号分别连接到处理器中断
+                                寄存器(CP0\_CAUSE IP 域)的位 3 到位 0，视实际情况上下拉 \\
+ PCI\_IRQ[3:0] & I   & VDDE1V8 & 这些中断信号应在中断控制器中使能，低电平有效。
+                                这些中断能够被路由到中断寄存器的第 7 到 4 位，需外部上拉 \\
+ PCI\_PERRn    & I/O & VDDE1V8 & PCI 总线奇偶错信号，低电平有效。这些中断
+                                被路由到中断寄存器的第 15 位需外部上拉 \\
+ PCI\_SERRn    & I/O & VDDE1V8 & PCI 总线系统错，低电平有效。这些中断能够被路由到中断
+                                寄存器的第 15 位（与 PCI\_SERRn 共享），需外部上拉 \\
+\end{longtable}                                
 
 JTAG 及 EJTAG 信号
 ------------------
@@ -622,52 +440,51 @@ JTAG 及 EJTAG 信号
 
 表 2-9 JTAG 接口信号
 
-          信号名称        输入/输出`            描述                                 电压域
-           TDI           I   JTAG 串行扫描数据输入。                               VDDE1V8
-           TDO          O    JTAG 串行扫描数据输出。                               VDDE1V8
-                             JTAG 命令，指示输入的串行数据是一个命
-           TMS        I                                                VDDE1V8
-                             令。
-           TRST       I   JTAG 重启信号。                                   VDDE1V8
-          TCK        I   JTAG 串行扫描时钟。                                 VDDE1V8
+| 信号名称 | IO | 电压域  | 描述                                      |
+|----------|----|---------|-------------------------------------------|
+| TDI      | I  | VDDE1V8 | JTAG 串行扫描数据输入。                   |
+| TDO      | O  | VDDE1V8 | JTAG 串行扫描数据输出。                   |
+| TMS      | I  | VDDE1V8 | JTAG 命令，指示输入的串行数据是一个命令。 |
+| TRST     | I  | VDDE1V8 | JTAG 重启信号。                           |
+| TCK      | I  | VDDE1V8 | JTAG 串行扫描时钟。                       |
 
 
+\noindent JTAG 模式只有在配置了表 2-10 JTAG 模式的配置的管脚时有效。
 
-      JTAG 模式只有在配置了表 2-10 JTAG 模式的配置的管脚时有效。
-                                      表 2-10 JTAG 模式的配置
-          DOTEST          GPIO15     GPIO10   GPIO09   GPIO08    GPIO07     GPIO06
-                0           1          0        1          1       1          0
+Table: JTAG 模式配置
 
-
-
-      此外，龙芯 3B1500 还提供了 EJTAG 调试接口，用于调试底层应用软件。
-      表 2-11 提供了 EJTAG 信号的名称，方向和描述。
+| DOTEST | GPIO15 | GPIO10 | GPIO09 | GPIO08 | GPIO07 | GPIO06 |
+|--------|--------|--------|--------|--------|--------|--------|
+| 0      | 1      | 0      | 1      | 1      | 1      | 0      |
 
 
-                                       表 2-11 EJTAG 接口信号
-           信号名称            输入/输出`                描述                        电压域
-          EJTAG_TDI          I         EJTAG 串行扫描数据输入。                    VDDE1V8
-          EJTAG_TDO          O         EJTAG 串行扫描数据输出。                    VDDE1V8
-                                       EJTAG 命令，指示输入的串行数据是一
-          EJTAG_TMS             I                                         VDDE1V8
-                                       个命令。
-          EJTAG_TRST            I      EJTAG 重启信号。                        VDDE1V8
-          EJTAG_TCK             I      EJTAG 串行扫描时钟。                      VDDE1V8
+此外，龙芯 3B1500 还提供了 EJTAG 调试接口，用于调试底层应用软件。表 2-11 提供了
+EJTAG 信号的名称，方向和描述。
+
+表 2-11 EJTAG 接口信号
+
+| 信号名称   | IO | 电压域  | 描述                                       |
+|------------|----|---------|--------------------------------------------|
+| EJTAG_TDI  | I  | VDDE1V8 | EJTAG 串行扫描数据输入。                   |
+| EJTAG_TDO  | O  | VDDE1V8 | EJTAG 串行扫描数据输出。                   |
+| EJTAG_TMS  | I  | VDDE1V8 | EJTAG 命令，指示输入的串行数据是一个命令。 |
+| EJTAG_TRST | I  | VDDE1V8 | EJTAG 重启信号。                           |
+| EJTAG_TCK  | I  | VDDE1V8 | EJTAG 串行扫描时钟。                       |
 
 
 测试和控制信号
 --------------
 
 龙芯 3B1500 芯片的测试信号仅仅用于芯片物理测试，如扫描链测试。当芯片正常工作，
-这些信号应设置为无效。通常这些信号进行上拉处理。用于测试的控制信号为 DOTEST 信
-号，管脚定义在表 2-12 中。
+这些信号应设置为无效。通常这些信号进行上拉处理。芯片正常工作时，需通过 4.7K 电
+阻上拉至 1.8V。用于测试的控制信号为 `DO_TEST` 信号，管脚定义在表 2-12 中。
 
-表 2-12 测试接口信号
+Table: 测试接口信号
 
-     信号 名称           输入/输出                       描述                          默认上下拉
-                                   DOTEST=0,芯片处于测试模式；DOTEST=1 芯片处
-     DOTEST           I            于正常功能模式。芯片正常工作时，需通过 4.7K 电                     上拉
-                                   阻上拉至 1.8V。
+| 信号 名称 | IO | 描述                            | 上下拉 |
+|-----------|----|---------------------------------|--------|
+| DOTEST    | I  | DOTEST=0,芯片处于测试模式；     | 上拉   |
+|           |    | DOTEST=1 芯片处于正常功能模式。 |        |
 
 时钟信号
 --------
@@ -677,7 +494,7 @@ SYSCLK，MEMCLK，PCI_CLK，HTCLK， 差分时钟 HT0_CLKp/HT0_CLKn 及差分时
 HT1_CLKp/HT1_CLKn）。龙芯 3B1500 的 Core 时钟通过 SYSCLK 产生，DDR2/3 时钟通过
 MEMCLK 产生。HT 的时钟产生较为复杂。首先，差分时钟对 HT0_CLKp/HT0_CLKn 与
 HT1_CLKp/HT1_CLKn 分别给 HT0 和 HT1 使用。此外，也可以使用单端时钟 HTCLK 替代
-ht0_clkp/ht0_clkn，采用 CLKSEL[15:10]进行相关控制。CLKSEL 控制分频的方法参见表
+ht2_clkp/ht0_clkn，采用 CLKSEL[15:10]进行相关控制。CLKSEL 控制分频的方法参见表
 2-14、MEMCLK 必须在 25MHz ~ 200MHz 之间。
 
 内存控制器时钟是由 MEMCLK 的倍频决定，当 CLKSEL[9]为 1 时，倍频关系由
@@ -764,53 +581,52 @@ CLKSEL[8:6] 决定；当 CLKSEL[9]为 0 时，倍频关系由软件进行设置�
                    3’b111 表示 PHY 时钟取决于 PCICONF[7]： 1’b1 普通输入时钟 100MHz，1’b0
                              差分输入时钟 200MHz
 
-
-
 GPIO 信号
 ---------
 
-龙芯 3B1500 处理器包含 16 个 GPIO，其引脚定义见下表。
+龙芯 3B1500 处理器包含 16 个通用输入输出 GPIO 信号，分别为 `GPIO00-GPIO15`。这
+16 个信号的特征相同，都是通过“输出高阻”实现状态复位。
+表 GPIO 列出了信号。
 
-表 2-17 GPIO 信号
+Table: GPIO 信号
 
-      信号名称   输入/输出           描述     复位状态    电压域
-       GPIO00    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO01    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO02    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO03    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO04    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO05    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO06    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO07    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO08    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO09    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO10    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO11    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO12    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO13    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO14    I/O         通用输入输出     输出高阻   VDDE1V8
-       GPIO15    I/O         通用输入输出     输出高阻   VDDE1V8
+| 信号名称 | 输入/输出 | 描述         | 复位状态 | 电压域  |
+|----------|-----------|--------------|----------|---------|
+| GPIO01   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO02   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO03   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO04   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO05   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO06   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO07   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO08   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO09   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO10   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO11   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO12   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO13   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO14   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
+| GPIO15   | I/O       | 通用输入输出 | 输出高阻 | VDDE1V8 |
 
 电源引脚
 --------
 
-表 2-18 电源引脚
+Table: 电源引脚
 
-          Parameter               Description            Power Voltage
-            VDD                  处理器核外电源                     1.1V
-          VDD_N0/1               节点 0/1 电源                 1.1 – 1.3V
-          VDDE1V8                处理器 IO 电源                   1.8V
-                              DDR2 通道 0/1 IO 电源              1.8V
-       MEM_VDDE_0/1
-                              DDR3 通道 0/1 IO 电源              1.5V
-                              DDR2 通道 0/1 参考电源               0.9V
-       MEM_VREF_0/1
-                              DDR3 通道 0/1 参考电源              0.75V
-          HT_VDDE                 HT IO 电源                   1.2V
-       CORE_PLL_AVDD           Core PLL 模拟电源                1.15V
-       CORE_PLL_DVDD           Core PLL 数字电源                1.15V
-       DDR_PLL_AVDD            DDR2 PLL 模拟电源                1.15V
-       DDR_PLL_DVDD            DDR2 PLL 数字电源                1.15V
-       HT0/1_PLL_AVDD          HT0/1 PLL 模拟电源               1.15V
-       HT0/1_PLL_DVDD          HT0/1 PLL 数字电源               1.15V
+| Parameter      | Description            | Power Voltage |
+|----------------|------------------------|---------------|
+| VDD            | 处理器核外电源         | 1.1V          |
+| VDD_N0/1       | 节点 0/1 电源          | 1.1 – 1.3V    |
+| VDDE1V8        | 处理器 IO 电源         | 1.8V          |
+| MEM_VDDE_0/1   | DDR2 通道 0/1 IO 电源  | 1.8V          |
+|                | DDR3 通道 0/1 IO 电源  | 1.5V          |
+| MEM_VREF_0/1   | DDR2 通道 0/1 参考电源 | 0.9V          |
+|                | DDR3 通道 0/1 参考电源 | 0.75V         |
+| HT_VDDE        | HT IO 电源             | 1.2V          |
+| CORE_PLL_AVDD  | Core PLL 模拟电源      | 1.15V         |
+| CORE_PLL_DVDD  | Core PLL 数字电源      | 1.15V         |
+| DDR_PLL_AVDD   | DDR2 PLL 模拟电源      | 1.15V         |
+| DDR_PLL_DVDD   | DDR2 PLL 数字电源      | 1.15V         |
+| HT0/1_PLL_AVDD | HT0/1 PLL 模拟电源     | 1.15V         |
+| HT0/1_PLL_DVDD | HT0/1 PLL 数字电源     | 1.15V         |
 
