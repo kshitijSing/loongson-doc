@@ -1,4 +1,4 @@
-Purpose
+# Purpose
 =======
 
 This project is an effort to create a complete set of community-based
@@ -9,7 +9,7 @@ The priority of the project for now is to create a relative complete document
 (two volumes) for the Loongson 3B1500 processor in Chinese first, then in
 English.
 
-Download
+# Download
 ========
 
 Below is a list of documents prepared by the loongson-doc project.
@@ -17,14 +17,14 @@ Below is a list of documents prepared by the loongson-doc project.
   - [龙芯3B1500 用户手册（上）](https://db.tt/PKhgXelz)
   - [龙芯3B1500 用户手册（下）](https://db.tt/Y5DblTOK)
 
-Tools
+# Tools
 =====
 
 The pandoc markdown is picked as the main tool due to its simplicity and
 flexibility, while LaTeX is still employed to handle hard cases: mostly complex
 tables. In the end, pandoc would convert the whole document to the pdf format.
 
-Required packages
+# Required packages
 =================
 
 Packages required to compile the loongson-doc project are (under Debian)
