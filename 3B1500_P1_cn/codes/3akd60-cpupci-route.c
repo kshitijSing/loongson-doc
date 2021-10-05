@@ -6,3 +6,6 @@
 
 /* Route PCI interrupt to Core0 INT3,对应 CP0_Status 的 IP5*/
 *(volatile unsigned char *)(0x900000003ff01404) = 0x81;
+
+
+*(volatile unsigned char*)0x900000003ff0141f = 0x21;
