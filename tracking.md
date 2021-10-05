@@ -10,3 +10,4 @@ Issues
 ------
 
   - Many registers in the SDRAM chapter are missing
+  - Some of the files are not in english and hard to understand them. 
