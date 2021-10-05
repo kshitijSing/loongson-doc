@@ -516,6 +516,31 @@ Cause 寄存器的 ExcCode 字段被置为 INT 编码值。根据当前配置，
 Cause 寄存器中的 IP 域指明了当前的中断请求。不止一个的中断位可能同时被设置(如果
 中断触发并且在寄存器被读到之前被撤消，甚至没有位被设置)。
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+English Translation-
+
+Processor exception
+This chapter introduces Loongson GS464V processor core exceptions, including: exception generation and return, exception vector location and supported exception types. For each type of supported exception type, the introduction includes the reason, treatment and service of the exception.
+
+Exception overview
+Generation and return of exceptions
+When the processor starts to handle an exception, the EXL bit of the status register is set to 1, which means that the system is running in kernel mode. After saving the appropriate field status, the exception handler usually sets the KSU field of the status register to kernel mode, and resets the EXL position to 0 at the same time. When the scene state is restored and executed again, the processing program will restore the KSU field to the last value and set the EXL bit to 1. Returning from an exception will also set the EXL position to 0.
+
+Exception vector location \label{sec:excVectorLocation}
+The vector address outside the cold reset, soft reset and non-masked interrupt (NMI) exception is a special reset example. The outside vector address is 0xFFFFFFFFBFC00000. This address is neither accessed through the Cache nor requires address mapping. In addition, the entry of the EJTAG debug interrupt is based on the entry in its control register
+
 IP[7]中断有三个源，除中断线 5 外，在 Count 寄存器内容与 Compare 寄存器内容相等时
 或者 CP0 性能计数器溢出时产生中断。时钟中断和性能计数器溢出中断由 Cause 寄存器中
 的 TI 和 PCI 位指示。
