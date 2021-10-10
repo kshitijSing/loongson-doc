@@ -6,7 +6,7 @@ documentations for the series of Loongson MIPS chips. See MIPS run, and see
 Loongson run!
 
 The priority of the project for now is to create a relative complete document
-(two volumes) for the Loongson 3B1500 processor in Chinese first, then in
+(two volumes) for the Loongson 3B1500 processor in Hindi first, then in
 English.
 
 # Download
