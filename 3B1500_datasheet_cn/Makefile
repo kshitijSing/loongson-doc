@@ -1,4 +1,4 @@
-VERSION  = 1.5
+VERSION  = 1.7
 SOURCES  = $(sort $(wildcard *.md))
 FILEBASE = LS3B1500-数据手册
 TARGET   = $(FILEBASE)-v${VERSION}.pdf
