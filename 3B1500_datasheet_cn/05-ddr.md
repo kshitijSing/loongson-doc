@@ -1,88 +1,56 @@
-DDR2/3 SDRAM 控制器接口描述
-===========================
+DDR2/3 SDRAM Controller Interface Description
+The Loongson 3B1500 integrates a memory controller that is compatible with the DDR2/3 SDRAM standards.
 
-龙芯 3B1500 集成了内存控制器，兼容 DDR2/3 SDRAM 标准。
+DDR2/3 SDRAM Controller Features
+The Loongson 3B1500 processor has two memory controllers, each capable of supporting two memory modules, with a total of four chip select signals. By utilizing four chip select signals and a 19-bit address bus (16 bits for row/column addresses and 3 bits for logical Bank addresses), the maximum address space is 128G (2^37).
 
-DDR2/3 SDRAM 控制器特性
------------------------
+Before using DDR2/3 SDRAM, it is necessary to configure the parameters of the DDR2/3 controller to work correctly with the corresponding memory modules. For the Loongson 3B1500 processor, the maximum number of chip select signals (CS_n) is 4. The maximum bandwidth for row address (RAS_n) and column address (CAS_n) is 15 and 14, respectively. There are also 3 bits for logical bank signals (BANK_n).
 
-龙芯 3B1500 处理器有两个内存控制器，每个内存控制器可以支持两个内存条，共四个片选
-信号。通过四个片选信号和 19 位的地址总线（16 位行/列地址和 3 位逻辑 Bank 地址）
-实现最大地址空间是 128G (237)。
+The physical address of the CPU's memory can be translated into row/column addresses, as shown in Table 5-1. For example, with 4 CS_n signals, 8 banks, 12 bits for row addresses, and 12 bits for column addresses.
 
-在使用 DDR2/3 SDRAM 之前，需要配置 DDR2/3 控制器的参数，以使之能配合相应的内存条
-正确工作。对于龙芯 3B1500 处理器，芯片选择信号（CS_n）的最大数目是 4。行地址（
-RAS_n）和列地址（CAS_n）的最大带宽分别是 15 和 14。还有 3 位的逻辑 bank 信号（
-BANK_n）。
+Table 5-1 Clock Signal DDR2 SDRAM Row/Column Address Translation
+36 32 31 30 29 18 17 15 14 3 2 0
+CS_n RAS_n BANK_n CAS_n Byte
 
-CPU 内存的物理地址能被转换位行/列地址，见表 5-1。例如，4 个 CS_n 信号，8 个
-banks， 12 位行地址和 12 位列地址。
+The memory controller receives memory read/write requests sent from the processor or external devices.
+
+The memory controller implements dynamic page management functionality. For a single access to memory, without the intervention of software designers, the controller will select the Open Page/Close Page strategy in hardware circuits. The features of the memory controller include:
+
+Supported memory types include: DDR2/3 chips, DDR2/3 UDIMM, DDR2/3 SO-DIMM, DDR2/3 RDIMM;
+Fully pipelined command and data read/write operations;
+Increased bandwidth through merging and reordering;
+Basic parameters can be modified through rich register read/write ports;
+Built-in Delay Compensation Circuit (DCC) for reliable data transmission/reception;
+1-bit and 2-bit error detection, 1-bit error correction through ECC;
+Frequency: 400MHz-667MHz;
+Selectable bus widths of 16/32/64 bits.
+DDR2/3 SDRAM Read Protocol
+Figure 5-1 illustrates the DDR2 SDRAM read protocol, where the commands (CMD) include RAS_n, CAS_n, and WE_n. When a read request occurs, RAS_n=1, CAS_n=0, WE_n=1.
+
+Figure 5-1 DDR2 SDRAM Read Protocol
+Note: Cas Latency = 3, Read Latency = 3, Burst Length = 8
+
+DDR2/3 SDRAM Write Protocol
+Figure 5-2 shows the DDR2 SDRAM write protocol, where the commands (CMD) include RAS_n, CAS_n, and WE_n. When a write request occurs, RAS_n=1, CAS_n=0, WE_n=0. Unlike the read protocol, DQM is used to identify the number of bytes to be written. DQM and DQS are synchronous.
+
+Figure 5-2 DDR2 SDRAM Write Protocol
+Note: Cas Latency = 3, Write Latency = Read Latency - 1 = 2, Burst Length = 4.
+
+DDR2/3 SDRAM Parameter Setting Sequence
+To support different DDR2/3 SDRAM chips in the system, DDR2/3 SDRAM needs to be configured after power-on reset. Detailed configuration operations and procedures are defined in the DDR2/3 standards. DDR2/3 is not available before memory initialization. The initialization operation starts when software writes 1 to the Init_start register (0x018). Before setting the Init_start signal, all other registers must be set to the correct values. The software-hardware coordinated DRAM initialization process is as follows:
+
+Software writes correct configuration values to all registers, but Init_start (0x018) must remain 0 during this process.
+Software sets Init_start (0x018) to 1, which triggers the start of hardware initialization.
+The internal PHY starts the initialization operation, and the DLL attempts to perform a locking operation. If the locking is successful, the corresponding status can be read from Dll_init_done (0x000), and the current number of locked delay lines can be read/written from Dll_value_ck (0x000). If the locking fails, the initialization will not continue (it can be continued by setting Dll_bypass (0x018)).
+After DLL locking (or bypass setting), the controller will send the corresponding initialization sequence to the DRAM based on the initialization requirements of the corresponding DRAM, such as MRS commands, ZQCL commands, etc.
+Software can sample the Dram_init (0x160) register to determine if the memory initialization operation is completed.
+Fine-Grained Multi-Channel Mode
+The Loongson 3B1500 supports a memory access mode called Fine-Grained Multi-Channel, which effectively increases memory bandwidth utilization and reduces memory power consumption.
+
+To use the Fine-Grained Multi-Channel mode, each CS/ODT is connected to 16-bit DQ during hardware connection, where CS0/ODT0 corresponds to DQ[15:0], CS1/ODT1 corresponds to DQ[31:16], CS2/ODT2 corresponds to DQ[47:32], and CS3/ODT3 corresponds to DQ[63:48]. The address lines are connected to all memory chips. In this mode, ECC cannot be used.
+
+Change it
 
 
-表 5-1 时钟信号 DDR2 SDRAM 行/列地址转换
-36        32 31          30 29           18   17            15 14           3 2          0
-CS_n           RAS_n             BANK_n           CAS_n         Byte
 
-
-内存控制器接收从处理器或外部设备发送的内存读写请求。
-
-内存控制器中实现了动态页管理功能。对于内存的一次存取，不需软件设计者的干预，控制
-器会在硬件电路上选择 Open Page/Close Page 策略。内存控制器特性包括：
-
-  - 支持的内存类型包括：DDR2/3 颗粒、 DDR2/3 UDIMM、 DDR2/3 SO-DIMM、DDR2/3 RDIMM；
-  - 全流水的命令和数据读写；
-  - 通过合并和重排序增加带宽；
-  - 通过丰富的寄存器读写端口修改基本的参数；
-  - 内置 Delay Compensation Circuit(DCC)，用来可靠的发送/接收数据；
-  - 1 位和 2 位错误检测，通过 ECC 进行 1 位的错误修正;
-  - 频率：400MHz-667MHz;
-  - 16/32/64 位软件可选择总线宽度。
-
-DDR2/3 SDRAM 读协议
--------------------
-
-图 5-1 中显示 DDR2 SDRAM 读协议，命令（CMD）包括 RAS_n，CAS_n 和 WE_n。当一个读
-请求发生时，RAS_n=1，CAS_n=0，WE_n=1。
-
-图 5-1 DDR2 SDRAM 读协议
-注：Cas Latency = 3, Read Latency = 3, Burst Length = 8
-
-DDR2/3 SDRAM 写协议
--------------------
-
-在图 5-2 中显示 DDR2 SDRAM 写协议，命令（CMD）包括 RAS_n，CAS_n 和 WE_n。当写请
-求发生时，RAS_n=1，CAS_n＝0，WE_n＝0。与读协议不同，DQM 用来识别需要被写的字节数
-。DQM 和 DQS 是同步的。
-
-图 5-2 DDR2 SDRAM 写协议
-注：Cas Latency = 3, Write Latency = Read Latency -1 = 2, Burst Length = 4.
-
-DDR2/3 SDRAM 参数设置顺序
--------------------------
-
-为了在系统中支持不同的 DDR2/3 SDRAM 颗粒，DDR2/3 SDRAM 需要在加电复位后配置。
-DDR2/3 标准定义了详细的配置操作和过程。DDR2/3 在内存初始化前是不可用的，初始化
-操作由软件向寄存器 Init_start（0x018）写入 1 时开始，在设置 Init_start 信号之前
-，必须将其它所有寄存器设置为正确的值。软硬件协同的 DRAM 初始化过程如下：
-
- 1. 软件向所有的寄存器写入正确的配置值，但是 Init_start（0x018）在这一过程中必
-    须保持为 0；
- 2. 软件将 Init_start（0x018）设置为 1，这将导致硬件初始化的开始；
- 3. PHY 内部开始初始化操作，DLL 将尝试进行锁定操作。如果锁定成功，则可以从
-    Dll_init_done（0x000）读出对应状态，并可以从 Dll_value_ck（0x000）读写当前
-    锁定延迟线个数；如果锁定不成功，则初始化不会继续进行（此时可以通过设置
-    Dll_bypass（0x018）使得初始化继续执行）；
- 4. DLL 锁定（或者 bypass 设置）之后，控制器将根据对应 DRAM 的初始化要求向 DRAM
-    发出相应的初始化序列，例如对应的 MRS 命令，ZQCL 命令等等；
- 5. 软件可以通过采样 Dram_init（0x160）寄存器来判断内存初始化操作是否完成。
-
-细粒度多通道模式
-----------------
-
-龙芯 3B1500 支持一种称为细粒度多通道的内存访问模式，这种模式能够有效提高内存
-带宽利用率，有效降低内存功耗。
-
-需要使用细粒度多通道模式，硬件连接时每个 CS/ODT 连接 16 位 DQ，也即 CS0/ODT0
-对应 DQ[15:0]，CS1/ODT1 对应 DQ[31:16]，CS2/ODT2 对应 DQ[47:32]，CS3/ODT3 对应
-DQ[63:48]。地址线与其它控制线连接所有内存颗粒。这种方式下，ECC 模式无法使用。
 
