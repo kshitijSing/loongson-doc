@@ -13,26 +13,30 @@
 \definecolor{brick}{HTML}{7B0C00}
 
 \lstset{
-  basicstyle={\ttfamily},
-  extendedchars=false,
-  escapechar=`,
   language={[MIPS]Assembler},
-  basewidth={.5em},
-  keywordstyle={\color{keyword}},
-  keywordstyle=[2]{\color{type}},
-  keywordstyle=[3]{\color{function-name}},
-  keywordstyle=[4]{\color{variable-name}},
-  commentstyle={\color{comment}},
-  stringstyle={\color{string}},
-  xleftmargin={2em},
-  xrightmargin={2em},
-  tabsize=6,
-  backgroundcolor={\color{shadecolor}},
-  % numbers=left,
-  numberstyle=\tiny,
-  stepnumber=1,
-  numbersep=5pt
+  basicstyle=\ttfamily,
+  numbers=left,            % Line numbers on the left
+  numberstyle=\tiny,       % Tiny font size for line numbers
+  stepnumber=1,            % Number every line
+  numbersep=5pt,           % Distance between line numbers and code
+  tabsize=4,               % Tab size
+  showspaces=false,        % Don't show spaces as underscores
+  showstringspaces=false,  % Don't show spaces in strings
+  breaklines=true,         % Wrap long lines
+  breakatwhitespace=true,  % Wrap at whitespaces
+  frame=single,            % Add a frame around the code
+  frameround=fttt,         % Rounded frame corners
+  belowcaptionskip=1\baselineskip, % Space below the caption
+  backgroundcolor=\color{bg-color}, % Background color
+  commentstyle=\color{comment},     % Comments color
+  keywordstyle=\color{keyword},     % Keywords color
+  keywordstyle=[2]\color{type},     % Types (registers, etc.) color
+  keywordstyle=[3]\color{function-name}, % Function names color
+  keywordstyle=[4]\color{variable-name}, % Variable names color
+  stringstyle=\color{string},       % Strings color
+  escapeinside={\%*}{*)},           % Custom escape characters
 }
+
 
 \lstdefinestyle{lesscolor}{keywordstyle={\color{keyword!50!black}},
   keywordstyle=[2]{\color{type!50!black}},
